@@ -31,8 +31,11 @@ class CopKFunctionKMacros(val c: Context) {
       evG: c.WeakTypeTag[G[_]]
   ): c.Expr[F ~> G] = {
 
-    val F = evF.tpe.dealias
-    val G = evG.tpe.dealias.typeSymbol
+    val F = evF.tpe
+    val G = evG.tpe match {
+      case TypeRef(_, sym, Nil) => sym
+      case tpe => tpe.typeSymbol
+    }
 
     lazy val klists = new SharedKListMacros[c.type](c)
 
@@ -42,10 +45,10 @@ class CopKFunctionKMacros(val c: Context) {
     } yield
       q"""
         new cats.arrow.FunctionK[({type F[a] = CopK[$L, a]})#F, $G] {
-          private[this] val arrows: Array[cats.arrow.FunctionK[Any, $G]] =
-            Array[Any](
-              ..${tpes.map(tpe => q"implicitly[cats.arrow.FunctionK[$tpe, $G]]")})
-            .asInstanceOf[Array[cats.arrow.FunctionK[Any, $G]]]
+          private[this] val arrows: Vector[cats.arrow.FunctionK[Any, $G]] =
+            Vector[Any](
+              ..${tpes.map(tpe => q"scala.Predef.implicitly[cats.arrow.FunctionK[$tpe, $G]]")})
+            .asInstanceOf[Vector[cats.arrow.FunctionK[Any, $G]]]
           override def apply[A](ca: CopK[$L, A]): $G[A] = ca match {
             case CopK.Value(i, v: Any) => arrows(i)(v)
           }

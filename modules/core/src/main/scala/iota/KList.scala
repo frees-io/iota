@@ -115,7 +115,7 @@ class SharedKListMacros[C <: Context](val c: C) {
     case TypeRef(_, cons, List(headType, tailType)) if cons.asType.toType.contains(KConsSym) =>
       klistFoldLeft(tailType)(f(a0, headType))(f)
     case _ =>
-      Left(s"Unexpected type ${showRaw(tpe)} when inspecting HList")
+      Left(s"Unexpected type ${showRaw(tpe)} when inspecting KList")
   }
 
   private[this] final def klistTypes(tpe: Type): Either[String, List[Type]] =

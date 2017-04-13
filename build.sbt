@@ -31,7 +31,8 @@ lazy val `core` = module("core")
   .settings(macroSettings)
   .settings(crossVersionSharedSources)
   .settings(libraryDependencies ++= Seq(
-    "org.typelevel"     %% "cats-core"     % V.cats
+    "org.typelevel"              %% "cats-core"                 % V.cats,
+    "org.typelevel"              %% "cats-free"                 % V.cats
   ))
   .settings(libraryDependencies ++= Seq(
     "org.scalacheck"             %% "scalacheck"                % V.scalacheck,

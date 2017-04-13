@@ -4,6 +4,10 @@
 
 package iota
 
+import scala.Predef.=:=
+
+import cats.free._
+
 sealed abstract class CopK[L <: KList, A] {
   type Algebras = L
 }
@@ -23,5 +27,13 @@ object CopK {
     def apply[F[_], L <: KList](implicit ev: Inject[F, L]): Inject[F, L] = ev
     implicit def makeInject[F[_], L <: KList](implicit ev: KList.Pos[L, F]): Inject[F, L] =
       new Inject[F, L](ev.index)
+  }
+
+  def liftFree[G[_]]: LiftFreePartial[G] = new LiftFreePartial[G]
+
+  final class LiftFreePartial[G[_]] private[CopK] {
+    def apply[F[_], A, L <: KList](fa: F[A])(
+      implicit ev: CopK[L, A] =:= G[A], I: CopK.Inject[F, L]
+    ): Free[G, A] = Free.liftF(ev(I.inj(fa)))
   }
 }

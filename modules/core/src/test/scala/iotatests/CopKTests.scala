@@ -33,8 +33,6 @@ object CopKTests extends Properties("CopKTests") {
   type OneTwoThree = One :: Two :: Three :: KNil
   type ThreeTwoOne = Three :: Two :: One :: KNil
 
-  KList.AtPos[OneTwoThree, 1]
-
   def checkInject[F[_], L <: KList, A](
     gen: Gen[F[A]],
     inj: CopK.Inject[F, L],
