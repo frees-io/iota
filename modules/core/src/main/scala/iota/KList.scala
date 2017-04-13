@@ -13,6 +13,7 @@ import scala.collection.immutable.Map
 
 object KList {
   type ::[H[_], T <: KList] = KCons[H, T]
+  type :::[H[_], T <: KList] = KCons[H, T]
 
   trait Pos[L <: KList, F[_]] {
     def index: Int
@@ -37,12 +38,10 @@ object KList {
 }
 
 
-object KListMacros {
-  @volatile private[KListMacros] var klistCache: Map[Any, Any] = Map.empty
-}
-
 class KListMacros(val c: Context) {
   import c.universe._
+
+  val klists = new SharedKListMacros[c.type](c)
 
   def materializePos[L <: KList, F[_]](
     implicit
@@ -54,7 +53,7 @@ class KListMacros(val c: Context) {
     val F = evF.tpe.dealias
 
     result(for {
-      algebras <- klistTypesCached(L)
+      algebras <- klists.klistTypesCached(L)
       index    <- Right(algebras.indexWhere(_.dealias == F))
                     .filterOrElse(_ >= 0, s"$F is not a member of $L")
     } yield
@@ -71,20 +70,34 @@ class KListMacros(val c: Context) {
     val L = evL.tpe.dealias
     val I = evI.tpe.dealias
 
-    lazy val A = TypeName("A")
-
     result(for {
-      algebras <- klistTypesCached(L)
+      algebras <- klists.klistTypesCached(L)
       index    <- singletonTypeValue[Int](I)
       tpe      <- algebras.lift(index).toRight(s"index $index out of bounds for type list $algebras")
     } yield
-      q"new KList.AtPos[$L, $I] { type Out[$A] = ${tpe.typeSymbol}[$A] }")
+      q"new KList.AtPos[$L, $I] { type Out[A] = ${tpe.typeSymbol}[A] }")
   }
 
   def result[T](either: Either[String, Tree]): c.Expr[T] =
     either fold (
       error => c.abort(c.enclosingPosition, error),
       tree  => c.Expr[T](tree))
+
+  private[this] def singletonTypeValue[T](tpe: Type)(
+    implicit T: ClassTag[T]
+  ): Either[String, T] = tpe match {
+    case ConstantType(Constant(t: T)) => Right(t)
+    case _ => Left(s"$tpe is not a singleton of type $T")
+  }
+
+}
+
+object SharedKListMacros {
+  @volatile private[SharedKListMacros] var klistCache: Map[Any, Any] = Map.empty
+}
+
+class SharedKListMacros[C <: Context](val c: C) {
+  import c.universe._
 
   private[this] val KNilSym          = typeOf[KNil].typeSymbol
   private[this] val KConsSym         = typeOf[KCons[Nothing, Nothing]].typeSymbol
@@ -108,16 +121,17 @@ class KListMacros(val c: Context) {
   private[this] final def klistTypes(tpe: Type): Either[String, List[Type]] =
     klistFoldLeft(tpe)(List.empty[Type])((acc, t) => t :: acc).map(_.reverse)
 
-  private[this] final def klistTypesCached(
+  final def klistTypesCached(
     tpe: Type
-  ): Either[String, List[Type]] = KListMacros.klistCache.synchronized {
-    KListMacros.klistCache.get(tpe) match {
+  ): Either[String, List[Type]] = SharedKListMacros.klistCache.synchronized {
+    SharedKListMacros.klistCache.get(tpe) match {
       case Some(res: Either[String, List[Type]] @unchecked) =>
         res
       case _ =>
         val res = klistTypes(tpe)
-        KListMacros.klistCache += ((tpe, res))
+        SharedKListMacros.klistCache += ((tpe, res))
         res
     }
   }
+
 }

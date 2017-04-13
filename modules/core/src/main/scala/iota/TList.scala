@@ -13,6 +13,7 @@ import scala.collection.immutable.Map
 
 object TList {
   type ::[H, T <: TList] = TCons[H, T]
+  type :::[H, T <: TList] = TCons[H, T]
 
   trait Pos[L <: TList, A] {
     def index: Int
