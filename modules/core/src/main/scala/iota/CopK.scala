@@ -36,4 +36,6 @@ object CopK {
       implicit ev: CopK[L, A] =:= G[A], I: CopK.Inject[F, L]
     ): Free[G, A] = Free.liftF(ev(I.inj(fa)))
   }
+
+  val FunctionK: CopKFunctionK.type = CopKFunctionK
 }

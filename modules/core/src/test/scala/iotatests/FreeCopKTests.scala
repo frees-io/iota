@@ -54,12 +54,12 @@ object FreeCopK extends Properties("FreeCopK") {
       `-202` <- liftFree[Algebra](XTwo.Value(`-101`))
     } yield `-101` + `-202`
 
-  lazy val evalSummon = CopKFunctionK.summon[Algebra, Id]
+  lazy val evalSummon = CopK.FunctionK.summon[Algebra, Id]
 
   property("basic math program through summoned interpreter") =
     program.foldMap(evalSummon) ?= -303
 
-  lazy val evalOf     = CopKFunctionK.of[Algebra, Id](
+  lazy val evalOf     = CopK.FunctionK.of[Algebra, Id](
     evalAddOne, evalXTwo, evalHalf, evalNeg)
 
   property("basic math program regular interpreter") =
