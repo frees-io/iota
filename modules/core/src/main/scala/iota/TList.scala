@@ -12,9 +12,16 @@ import scala.annotation.tailrec
 import scala.collection.immutable.Map
 
 object TList {
+
+  /** A syntactic sugar alias for [[TCons]] */
   type ::[H, T <: TList] = TCons[H, T]
+
+  /** A syntactic sugar alias for [[TCons]] */
   type :::[H, T <: TList] = TCons[H, T]
 
+  /** A type class that witnesses the position of type `A` in type
+    * list `L`
+    */
   trait Pos[L <: TList, A] {
     def index: Int
   }
@@ -25,6 +32,12 @@ object TList {
       macro TListMacros.materializePos[L, A]
   }
 
+  /** A type class that witnesses the type at a given index in a
+    * type list
+    *
+    * @tparam L the type list
+    * @tparam I the singleton index type
+    */
   trait AtPos[L <: TList, I <: Int] {
     type Out
   }
@@ -37,6 +50,7 @@ object TList {
   }
 }
 
+//
 
 object TListMacros {
   @volatile private[TListMacros] var klistCache: Map[Any, Any] = Map.empty

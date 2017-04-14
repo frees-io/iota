@@ -12,9 +12,16 @@ import scala.annotation.tailrec
 import scala.collection.immutable.Map
 
 object KList {
+
+  /** A syntactic sugar alias for [[KCons]] */
   type ::[H[_], T <: KList] = KCons[H, T]
+
+  /** A syntactic sugar alias for [[KCons]] */
   type :::[H[_], T <: KList] = KCons[H, T]
 
+  /** A type class that witnesses the position of type constructor `F` in type
+    * constructor list `L`
+    */
   trait Pos[L <: KList, F[_]] {
     def index: Int
   }
@@ -25,6 +32,12 @@ object KList {
       macro KListMacros.materializePos[L, F]
   }
 
+  /** A type class that witnesses the type constructor at a given index in a
+    * type constructor list
+    *
+    * @tparam L the type constructor list
+    * @tparam I the singleton index type
+    */
   trait AtPos[L <: KList, I <: Int] {
     type Out[A]
   }
@@ -37,6 +50,7 @@ object KList {
   }
 }
 
+//
 
 class KListMacros(val c: Context) {
   import c.universe._

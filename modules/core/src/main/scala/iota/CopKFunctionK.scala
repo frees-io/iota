@@ -12,23 +12,29 @@ import cats.syntax.all._
 import scala.reflect.macros.whitebox.Context
 import scala.reflect.macros.TypecheckException
 
-class CopKFunctionK[L <: KList, G[_]](
-  arrows: Array[Any ~> G]
-) extends (CopK[L, ?] ~> G) {
-  override def apply[A](ca: CopK[L, A]): G[A] = ca match {
-    case CopK.Value(i, v) => arrows(i)(v)
-  }
-}
-
+/** Methods to create [[FunctionK]] instances for [[CopK]] coproducts */
 object CopKFunctionK {
 
+  /** Creates a [[FunctionK]] from `F` to `G` by fanning in respective
+    * FunctionKs for type all type constructors in the coproduct `F`.
+    *
+    * The respective FunctionKs are pulled from the input `args` on
+    * an as-needed basis; superfluous arguments are ignored.
+    */
   def of[F[a] <: CopK[_, a], G[_]](args: Any*): F ~> G =
     macro CopKFunctionKMacros.of[F, G]
 
+  /** Creates a [[FunctionK]] from `F` to `G` by fanning in respective
+    * FunctionKs for type all type constructors in the coproduct `F`.
+    *
+    * The respective FunctionKs are summoned implicitly on an an
+    * as-needed basis.
+    */
   def summon[F[a] <: CopK[_, a], G[_]]: F ~> G =
     macro CopKFunctionKMacros.summon[F, G]
 }
 
+//
 
 final class CopKFunctionKMacros(val c: Context) {
   import c.universe._
