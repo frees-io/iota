@@ -40,23 +40,29 @@ object FreeCopK extends Properties("FreeCopK") {
   import MathAlgebraKs._
   type Algebra[A]  = CopK[AddOne :: XTwo :: Neg :: Half :: KNil, A]
 
-  implicit val evalAddOne: AddOne ~> Id = λ[AddOne ~> Id] { case AddOne.Value(v) => v + 1 }
-  implicit val evalXTwo  : XTwo   ~> Id = λ[XTwo   ~> Id] { case XTwo.Value  (v) => v * 2 }
-  implicit val evalNeg   : Neg    ~> Id = λ[Neg    ~> Id] { case Neg.Value   (v) => -v    }
-  implicit val evalHalf  : Half   ~> Id = λ[Half   ~> Id] { case Half.Value  (v) => v / 2 }
-
-  val eval = CopKFunctionK.summon[Algebra, Id]
+  implicit lazy val evalAddOne: AddOne ~> Id = λ[AddOne ~> Id] { case AddOne.Value(v) => v + 1 }
+  implicit lazy val evalXTwo  : XTwo   ~> Id = λ[XTwo   ~> Id] { case XTwo.Value  (v) => v * 2 }
+  implicit lazy val evalNeg   : Neg    ~> Id = λ[Neg    ~> Id] { case Neg.Value   (v) => -v    }
+  implicit lazy val evalHalf  : Half   ~> Id = λ[Half   ~> Id] { case Half.Value  (v) => v / 2 }
 
   import CopK.liftFree
 
-  val program: Free[Algebra, Int] =
+  lazy val program: Free[Algebra, Int] =
     for {
       `101`  <- liftFree[Algebra](AddOne.Value(100))
       `-101` <- liftFree[Algebra](Neg.Value(`101`))
       `-202` <- liftFree[Algebra](XTwo.Value(`-101`))
     } yield `-101` + `-202`
 
-  property("basic math program") =
-    program.foldMap(eval) ?= -303
+  lazy val evalSummon = CopKFunctionK.summon[Algebra, Id]
+
+  property("basic math program through summoned interpreter") =
+    program.foldMap(evalSummon) ?= -303
+
+  lazy val evalOf     = CopKFunctionK.of[Algebra, Id](
+    evalAddOne, evalXTwo, evalHalf, evalNeg)
+
+  property("basic math program regular interpreter") =
+    program.foldMap(evalOf) ?= -303
 
 }
