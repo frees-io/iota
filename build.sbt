@@ -12,12 +12,14 @@ def module(modName: String): Project =
 
 addCommandAlias("validate", ";" + List(
   "compile",
+  "test",
   "readme/tut", "copyReadme", "checkDiff"
 ).mkString(";"))
 
 lazy val root = (project in file("."))
   .settings(noPublishSettings)
   .aggregate(`core`)
+  .aggregate(`bench`)
   .settings(TaskKey[Unit]("copyReadme") := {
     (tutTargetDirectory in `readme`).value.listFiles().foreach(file =>
       IO.copyFile(file, new File((baseDirectory in ThisBuild).value, file.name)))
@@ -45,6 +47,15 @@ lazy val `readme` = module("readme")
   .settings(tutSettings)
   .settings(
     tutScalacOptions ~= (_.filterNot(Set("-Yno-predef"))))
+
+lazy val `bench` = module("bench")
+  .enablePlugins(JmhPlugin)
+  .dependsOn(`core`)
+  .settings(noPublishSettings)
+  .settings(libraryDependencies ++= Seq(
+    "org.scalacheck"             %% "scalacheck"                % V.scalacheck,
+    "com.github.alexarchambault" %% "scalacheck-shapeless_1.13" % V.scalacheckShapeless
+  ))
 
 lazy val macroSettings: Seq[Setting[_]] = Seq(
   libraryDependencies ++= Seq(
