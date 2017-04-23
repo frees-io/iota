@@ -11,6 +11,9 @@ import scala.annotation.tailrec
 
 import scala.collection.immutable.Map
 
+/** A heterogenous list of types */
+trait TList
+
 object TList {
 
   /** A syntactic sugar alias for [[TCons]] */
@@ -79,8 +82,7 @@ class TListMacros(val c: Context) {
   def materializeAtPos[L <: TList, I <: Int, A](
     implicit
       evL: c.WeakTypeTag[L],
-      evI: c.WeakTypeTag[I],
-      evA: c.WeakTypeTag[A]
+      evI: c.WeakTypeTag[I]
   ): c.Expr[TList.AtPos.Aux[L, I, A]] = {
 
     val L = evL.tpe.dealias

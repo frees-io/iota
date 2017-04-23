@@ -29,9 +29,8 @@ object BuildCommon extends AutoPlugin {
     AutomateHeaderPlugin.projectSettings
 
   private[this] def baseSettings = Seq(
-    scalaVersion := "2.12.1",
-    scalaOrganization := "org.typelevel",
-    crossScalaVersions := Seq("2.11.8", "2.12.0"),
+    scalaVersion := "2.12.2",
+    crossScalaVersions := Seq("2.11.9", "2.12.2"),
 
     organization := "xyz.anamorph",
     description := "fast product/coproduct types",
@@ -63,19 +62,6 @@ object BuildCommon extends AutoPlugin {
       "-Xfuture",
       "-Yno-predef",
       "-Ypartial-unification"),
-
-    scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, 11)) => Nil
-      case Some((2, 12)) => Seq("-Yliteral-types", "-Ykind-polymorphism")
-      case _             => Nil
-    }),
-
-    libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, 11)) => Seq(
-        compilerPlugin("com.milessabin" % "si2712fix-plugin" % "1.2.0" cross CrossVersion.full))
-      case Some((2, 12)) => Nil
-      case _             => Nil
-    }),
 
     scalacOptions in (Compile, doc) :=
       (scalacOptions in (Compile, doc)).value.filter(_ != "-Xfatal-warnings"),

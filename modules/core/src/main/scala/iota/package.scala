@@ -2,10 +2,7 @@
  * Iota [iota-core]
  */
 
-package object iota {
-
-  /** A heterogenous list of type constructors */
-  type KList
+package object iota extends Scala211Compat {
 
   /** The terminal element of a type constructor list */
   type KNil <: KList
@@ -17,9 +14,6 @@ package object iota {
     * @tparam T the list of tail type constructors
     */
   type KCons[H[_], T <: KList] <: KList
-
-  /** A heterogenous list of types */
-  type TList
 
   /** The terminal element of a type list */
   type TNil <: TList
