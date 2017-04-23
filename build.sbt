@@ -68,8 +68,8 @@ lazy val crossVersionSharedSources: Seq[Setting[_]] =
     (unmanagedSourceDirectories in sc) ++= {
       (unmanagedSourceDirectories in sc ).value.flatMap { dir: File =>
         CrossVersion.partialVersion(scalaVersion.value) match {
-          case Some((2, y)) if y == 11 => Some(new File(dir.getPath + "_2.11"))
-          case _                       => None
+          case Some((2, y)) => Some(new File(dir.getPath + "_2.11"))
+          case _            => None
         }
       }
     }

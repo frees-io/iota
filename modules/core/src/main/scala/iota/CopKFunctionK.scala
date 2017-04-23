@@ -7,7 +7,6 @@ package iota
 import cats._
 import cats.data._
 import cats.instances.all._
-import cats.syntax.all._
 
 import scala.reflect.macros.whitebox.Context
 import scala.reflect.macros.TypecheckException

@@ -11,6 +11,9 @@ import scala.annotation.tailrec
 
 import scala.collection.immutable.Map
 
+/** A heterogenous list of type constructors */
+trait KList
+
 object KList {
 
   /** A syntactic sugar alias for [[KCons]] */
@@ -77,8 +80,7 @@ class KListMacros(val c: Context) {
   def materializeAtPos[L <: KList, I <: Int, F[_]](
     implicit
       evL: c.WeakTypeTag[L],
-      evI: c.WeakTypeTag[I],
-      evF: c.WeakTypeTag[F[_]]
+      evI: c.WeakTypeTag[I]
   ): c.Expr[KList.AtPos.Aux[L, I, F]] = {
 
     val L = evL.tpe.dealias
@@ -92,17 +94,17 @@ class KListMacros(val c: Context) {
       q"new KList.AtPos[$L, $I] { type Out[A] = ${tpe.typeSymbol}[A] }")
   }
 
-  def result[T](either: Either[String, Tree]): c.Expr[T] =
-    either fold (
-      error => c.abort(c.enclosingPosition, error),
-      tree  => c.Expr[T](tree))
-
   private[this] def singletonTypeValue[T](tpe: Type)(
     implicit T: ClassTag[T]
   ): Either[String, T] = tpe match {
     case ConstantType(Constant(t: T)) => Right(t)
     case _ => Left(s"$tpe is not a singleton of type $T")
   }
+
+  def result[T](either: Either[String, Tree]): c.Expr[T] =
+    either fold (
+      error => c.abort(c.enclosingPosition, error),
+      tree  => c.Expr[T](tree))
 
 }
 
@@ -115,13 +117,6 @@ class SharedKListMacros[C <: Context](val c: C) {
 
   private[this] val KNilSym          = typeOf[KNil].typeSymbol
   private[this] val KConsSym         = typeOf[KCons[Nothing, Nothing]].typeSymbol
-
-  private[this] def singletonTypeValue[T](tpe: Type)(
-    implicit T: ClassTag[T]
-  ): Either[String, T] = tpe match {
-    case ConstantType(Constant(t: T)) => Right(t)
-    case _ => Left(s"$tpe is not a singleton of type $T")
-  }
 
   @tailrec
   private[this] final def klistFoldLeft[A](tpe: Type)(a0: A)(f: (A, Type) => A): Either[String, A] = tpe match {
