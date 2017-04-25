@@ -1,5 +1,5 @@
-### Mezzo
-[![Build Status](https://api.travis-ci.org/andyscott/iota.png?branch=master)](https://travis-ci.org/andyscott/iota)
+### Iota
+[![Build Status](https://api.travis-ci.org/47deg/iota.png?branch=master)](https://travis-ci.org/47deg/iota)
 
 ### Introduction
 
