@@ -18,7 +18,7 @@ def jvmModule(modName: String): Project =
 addCommandAlias("validate", ";" + List(
   "compile",
   "test",
-  "readme/tut", "copyReadme", "checkDiff"
+  "readme/tut"
 ).mkString(";"))
 
 lazy val root = (project in file("."))
