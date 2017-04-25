@@ -50,6 +50,9 @@ private[internal] class SharedKListMacros[C <: Context](val c: C) {
   private[this] val KNilSym          = typeOf[KNil].typeSymbol
   private[this] val KConsSym         = typeOf[KCons[Nothing, Nothing]].typeSymbol
 
+  private[this] lazy val showCache =
+    !c.inferImplicitValue(typeOf[debug.optionTypes.ShowCache], true).isEmpty
+
   @tailrec
   private[this] final def klistFoldLeft[A](tpe: Type)(a0: A)(f: (A, Type) => A): Either[String, A] = tpe match {
     case TypeRef(_, KNilSym, Nil) => Right(a0)
@@ -67,10 +70,14 @@ private[internal] class SharedKListMacros[C <: Context](val c: C) {
   ): Either[String, List[Type]] = SharedKListMacros.klistCache.synchronized {
     SharedKListMacros.klistCache.get(tpe) match {
       case Some(res: Either[String, List[Type]] @unchecked) =>
+        if (showCache)
+          c.echo(c.enclosingPosition, s"ShowCache(KList): $tpe cached result $res")
         res
       case _ =>
         val res = klistTypes(tpe)
         SharedKListMacros.klistCache += ((tpe, res))
+        if (showCache)
+          c.echo(c.enclosingPosition, s"ShowCache(KList): $tpe computed result $res")
         res
     }
   }

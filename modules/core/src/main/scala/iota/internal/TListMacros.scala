@@ -43,6 +43,9 @@ class TListMacros(val c: Context) {
   private[this] val TNilSym          = typeOf[TNil].typeSymbol
   private[this] val TConsSym         = typeOf[TCons[Nothing, Nothing]].typeSymbol
 
+  private[this] lazy val showCache =
+    !c.inferImplicitValue(typeOf[debug.optionTypes.ShowCache], true).isEmpty
+
   @tailrec
   private[this] final def klistFoldLeft[A](tpe: Type)(a0: A)(f: (A, Type) => A): Either[String, A] = tpe match {
     case TypeRef(_, TNilSym, Nil) => Right(a0)
@@ -60,10 +63,14 @@ class TListMacros(val c: Context) {
   ): Either[String, List[Type]] = TListMacros.klistCache.synchronized {
     TListMacros.klistCache.get(tpe) match {
       case Some(res: Either[String, List[Type]] @unchecked) =>
+        if (showCache)
+          c.echo(c.enclosingPosition, s"ShowCache(TList): $tpe cached result $res")
         res
       case _ =>
         val res = klistTypes(tpe)
         TListMacros.klistCache += ((tpe, res))
+        if (showCache)
+          c.echo(c.enclosingPosition, s"ShowCache(TList): $tpe computed result $res")
         res
     }
   }

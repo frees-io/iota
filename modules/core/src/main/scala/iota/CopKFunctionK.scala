@@ -6,6 +6,8 @@ package iota
 
 import cats._
 
+abstract class CopKFunctionK[F[_], G[_]] extends (F ~> G)
+
 /** Methods to create [[FunctionK]] instances for [[CopK]] coproducts */
 object CopKFunctionK {
 
