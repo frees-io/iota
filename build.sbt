@@ -46,7 +46,7 @@ lazy val `readme` = module("readme")
   .settings(noPublishSettings)
   .settings(tutSettings)
   .settings(
-    tutScalacOptions ~= (_.filterNot(Set("-Yno-predef"))))
+    tutScalacOptions := Nil)
 
 lazy val `bench` = module("bench")
   .enablePlugins(JmhPlugin)
