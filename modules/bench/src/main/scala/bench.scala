@@ -12,8 +12,7 @@ import cats.data.{ State => _, _}
 import cats.free._
 
 import org.scalacheck._
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen.oneOf
+//import org.scalacheck.Gen.oneOf
 
 sealed abstract class InjK[F[_], G[_]] {
   def inj: FunctionK[F, G]

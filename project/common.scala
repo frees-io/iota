@@ -6,7 +6,7 @@ import de.heikoseeberger.sbtheader.HeaderPattern
 import de.heikoseeberger.sbtheader.HeaderPlugin
 import de.heikoseeberger.sbtheader.HeaderKey.headers
 import com.typesafe.sbt.SbtPgp.autoImport._
-//import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
+import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 import scala.{ Console => C }
 
@@ -36,8 +36,7 @@ object BuildCommon extends AutoPlugin {
     description := "fast product/coproduct types",
 
     fork in run := true,
-    fork in Test := true,
-    //fork in Test := !isScalaJSProject.value,
+    fork in Test := !isScalaJSProject.value,
     parallelExecution in Test := false,
     outputStrategy := Some(StdoutOutput),
     connectInput in run := true,
@@ -52,7 +51,7 @@ object BuildCommon extends AutoPlugin {
       "-language:implicitConversions",
       "-language:experimental.macros",
       "-unchecked",
-      //"-Xfatal-warnings",
+      "-Xfatal-warnings",
       "-Xlint",
       "-Yno-adapted-args",
       "-Ywarn-dead-code",
