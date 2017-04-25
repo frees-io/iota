@@ -16,6 +16,8 @@ final class CopKFunctionKMacros( val c: Context) {
   import c.universe._
 
   private[this] lazy val klists = new SharedKListMacros[c.type](c)
+  private[this] lazy val showTrees =
+    !c.inferImplicitValue(typeOf[debug.optionTypes.ShowTrees], true).isEmpty
 
   def of[F[a] <: CopK[_, a], G[_]](args: c.Expr[Any]*)(
     implicit
@@ -79,13 +81,17 @@ final class CopKFunctionKMacros( val c: Context) {
     val cases = namedArrs.map { case (n, _, i) =>
       cq"$i => $n(ca.value)" }
 
+    val toStringValue = s"CopKFunctionK[${F.name}, ${G.name}]<<generated>>"
+
     q"""
-    new cats.arrow.FunctionK[$F, $G] {
+    new iota.CopKFunctionK[$F, $G] {
       ..$defs
       override def apply[A](ca: $F[A]): $G[A] =
         (ca.index: @scala.annotation.switch) match {
           case ..$cases
+          case i => throw new java.lang.Exception("internal iota error")
         }
+      override def toString: String = $toStringValue
     }
     """
   }
@@ -116,5 +122,8 @@ final class CopKFunctionKMacros( val c: Context) {
   private[this] def result[T](either: Either[NonEmptyList[String], Tree]): c.Expr[T] =
     either fold (
       errors => c.abort(c.enclosingPosition, errors.toList.mkString(", and\n")),
-      tree   => c.Expr[T](tree))
+      tree   => {
+        if (showTrees) c.echo(c.enclosingPosition, s"generated tree:\n${showCode(tree)}")
+        c.Expr[T](tree)
+      })
 }

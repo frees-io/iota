@@ -135,6 +135,34 @@ The interpreters created by Iota are optimized for speed and have a
 constant evalaluation time. Behind the scenes, a macro generates an
 integer based switch statement on the coproduct's internal index value.
 
+If you'd like to see the generated code, toggle the "show trees" option by
+importing `iota.debug.options.ShowTrees` into scope.
+
+```scala
+import iota.debug.options.ShowTrees
+// import iota.debug.options.ShowTrees
+
+CopK.FunctionK.of[Algebra, Future](evalOrderOp, evalPriceOp, evalUserOp)
+// <console>:30: generated tree:
+// {
+//   final class $anon extends iota.CopKFunctionK[Algebra, Future] {
+//     private[this] def arr0 = evalUserOp.asInstanceOf[cats.arrow.FunctionK[Any, Future]];
+//     private[this] def arr1 = evalOrderOp.asInstanceOf[cats.arrow.FunctionK[Any, Future]];
+//     private[this] def arr2 = evalPriceOp.asInstanceOf[cats.arrow.FunctionK[Any, Future]];
+//     override def apply[A](ca: Algebra[A]): Future[A] = (ca.index: @scala.annotation.switch) match {
+//       case 0 => arr0(ca.value)
+//       case 1 => arr1(ca.value)
+//       case 2 => arr2(ca.value)
+//       case (i @ _) => throw new java.lang.Exception("internal iota error")
+//     };
+//     override def toString: String = "CopKFunctionK[Algebra, Future]<<generated>>"
+//   };
+//   new $anon()
+// }
+//        CopK.FunctionK.of[Algebra, Future](ev...
+// res28: iota.CopKFunctionK[Algebra,scala.concurrent.Future] = CopKFunctionK[Algebra, Future]<<generated>>
+```
+
 ### Free
 
 A `Free` example is available [in the tests][free example].

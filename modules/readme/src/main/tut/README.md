@@ -131,6 +131,14 @@ The interpreters created by Iota are optimized for speed and have a
 constant evalaluation time. Behind the scenes, a macro generates an
 integer based switch statement on the coproduct's internal index value.
 
+If you'd like to see the generated code, toggle the "show trees" option by
+importing `iota.debug.options.ShowTrees` into scope.
+
+```tut:book
+import iota.debug.options.ShowTrees
+CopK.FunctionK.of[Algebra, Future](evalOrderOp, evalPriceOp, evalUserOp)
+```
+
 ### Free
 
 A `Free` example is available [in the tests][free example].
