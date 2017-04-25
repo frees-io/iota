@@ -19,51 +19,51 @@ object CopTests extends Properties("CopTests") {
   case class Two(a: Int)
   case class Three(a: Int)
 
-  type OneTwoThree = One :: Two :: Three :: TNil
-  type ThreeTwoOne = Three :: Two :: One :: TNil
+  type OneTwoThreeL = One :: Two :: Three :: TNil
+  type ThreeTwoOneL = Three :: Two :: One :: TNil
 
-  def checkInject[A, L <: TList](
+  def checkInjectL[A, L <: TList](
     gen: Gen[A],
-    inj: Cop.Inject[A, L],
+    inj: Cop.InjectL[A, L],
     index: Int
   ): Prop =
     forAll(gen)(v =>
-      inj.inj(v) ?= Cop.Value(index, v))
+      inj.inj(v) ?= Cop(index, v))
 
-  property("inject One into OneTwoThree") =
-    checkInject(
+  property("inject One into OneTwoThreeL") =
+    checkInjectL(
       arbitrary[One],
-      Cop.Inject[One, OneTwoThree],
+      Cop.InjectL[One, OneTwoThreeL],
       0)
 
-  property("inject Two into OneTwoThree") =
-    checkInject(
+  property("inject Two into OneTwoThreeL") =
+    checkInjectL(
       arbitrary[Two],
-      Cop.Inject[Two, OneTwoThree],
+      Cop.InjectL[Two, OneTwoThreeL],
       1)
 
-  property("inject Three into OneTwoThree") =
-    checkInject(
+  property("inject Three into OneTwoThreeL") =
+    checkInjectL(
       arbitrary[Three],
-      Cop.Inject[Three, OneTwoThree],
+      Cop.InjectL[Three, OneTwoThreeL],
       2)
 
-  property("inject One into ThreeTwoOne") =
-    checkInject(
+  property("inject One into ThreeTwoOneL") =
+    checkInjectL(
       arbitrary[One],
-      Cop.Inject[One, ThreeTwoOne],
+      Cop.InjectL[One, ThreeTwoOneL],
       2)
 
-  property("inject Two into ThreeTwoOne") =
-    checkInject(
+  property("inject Two into ThreeTwoOneL") =
+    checkInjectL(
       arbitrary[Two],
-      Cop.Inject[Two, ThreeTwoOne],
+      Cop.InjectL[Two, ThreeTwoOneL],
       1)
 
-  property("inject Three into ThreeTwoOne") =
-    checkInject(
+  property("inject Three into ThreeTwoOneL") =
+    checkInjectL(
       arbitrary[Three],
-      Cop.Inject[Three, ThreeTwoOne],
+      Cop.InjectL[Three, ThreeTwoOneL],
       0)
 
   type First = Int
@@ -97,14 +97,14 @@ object CopTests extends Properties("CopTests") {
 
 
   property("inject First into Yuge") =
-    checkInject(
+    checkInjectL(
       arbitrary[First],
-      Cop.Inject[First, Yuge],
+      Cop.InjectL[First, Yuge],
       0)
 
   property("inject Last into Yuge") =
-    checkInject(
+    checkInjectL(
       arbitrary[Last],
-      Cop.Inject[Last, Yuge],
+      Cop.InjectL[Last, Yuge],
       301)
 }

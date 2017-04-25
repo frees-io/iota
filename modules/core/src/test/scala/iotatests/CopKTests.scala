@@ -33,48 +33,48 @@ object CopKTests extends Properties("CopKTests") {
   type OneTwoThree = One :: Two :: Three :: KNil
   type ThreeTwoOne = Three :: Two :: One :: KNil
 
-  def checkInject[F[_], L <: KList, A](
+  def checkInjectL[F[_], L <: KList, A](
     gen: Gen[F[A]],
-    inj: CopK.Inject[F, L],
+    inj: CopK.InjectL[F, L],
     index: Int
   ): Prop =
     forAll(gen)(v =>
-      inj.inj(v) ?= CopK.Value(index, v))
+      inj.inj(v) ?= CopK(index, v))
 
   property("inject One into OneTwoThree") =
-    checkInject(
+    checkInjectL(
       arbitrary[One.Value],
-      CopK.Inject[One, OneTwoThree],
+      CopK.InjectL[One, OneTwoThree],
       0)
 
   property("inject Two into OneTwoThree") =
-    checkInject(
+    checkInjectL(
       arbitrary[Two.Value],
-      CopK.Inject[Two, OneTwoThree],
+      CopK.InjectL[Two, OneTwoThree],
       1)
 
   property("inject Three into OneTwoThree") =
-    checkInject(
+    checkInjectL(
       arbitrary[Three.Value],
-      CopK.Inject[Three, OneTwoThree],
+      CopK.InjectL[Three, OneTwoThree],
       2)
 
   property("inject One into ThreeTwoOne") =
-    checkInject(
+    checkInjectL(
       arbitrary[One.Value],
-      CopK.Inject[One, ThreeTwoOne],
+      CopK.InjectL[One, ThreeTwoOne],
       2)
 
   property("inject Two into ThreeTwoOne") =
-    checkInject(
+    checkInjectL(
       arbitrary[Two.Value],
-      CopK.Inject[Two, ThreeTwoOne],
+      CopK.InjectL[Two, ThreeTwoOne],
       1)
 
   property("inject Three into ThreeTwoOne") =
-    checkInject(
+    checkInjectL(
       arbitrary[Three.Value],
-      CopK.Inject[Three, ThreeTwoOne],
+      CopK.InjectL[Three, ThreeTwoOne],
       0)
 
   type First[A] = A
@@ -108,14 +108,14 @@ object CopKTests extends Properties("CopKTests") {
 
 
   property("inject First into Yuge") =
-    checkInject(
+    checkInjectL(
       arbitrary[First[Int]],
-      CopK.Inject[First, Yuge],
+      CopK.InjectL[First, Yuge],
       0)
 
   property("inject Last into Yuge") =
-    checkInject(
+    checkInjectL(
       arbitrary[Last[Int]],
-      CopK.Inject[Last, Yuge],
+      CopK.InjectL[Last, Yuge],
       301)
 }
