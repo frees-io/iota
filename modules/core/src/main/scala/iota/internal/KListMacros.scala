@@ -42,7 +42,7 @@ class KListMacros(val c: Context) {
       index    <- Right(algebras.indexWhere(_.dealias == F))
                     .filterOrElse(_ >= 0, s"$F is not a member of $L")
     } yield
-      q"new KList.Pos[$L, $F]{ override val index: Int = $index }")
+      q"new _root_.iota.KList.Pos[$L, $F]{ override val index: Int = $index }")
   }
 
   def result[T](either: Either[String, Tree]): c.Expr[T] =

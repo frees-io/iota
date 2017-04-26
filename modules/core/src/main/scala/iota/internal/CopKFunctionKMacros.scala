@@ -88,7 +88,7 @@ final class CopKFunctionKMacros( val c: Context) {
       (TermName(s"arr$i"), arr, i) }
 
     val defs = namedArrs.map { case (n, arr, _) =>
-      q"private[this] def $n = $arr.asInstanceOf[cats.arrow.FunctionK[Any, $G]]" }
+      q"private[this] def $n = $arr.asInstanceOf[_root_.cats.arrow.FunctionK[Any, $G]]" }
 
     val cases = namedArrs.map { case (n, _, i) =>
       cq"$i => $n(ca.value)" }
@@ -96,12 +96,13 @@ final class CopKFunctionKMacros( val c: Context) {
     val toStringValue = s"CopKFunctionK[${F.name}, ${G.name}]<<generated>>"
 
     q"""
-    new iota.CopKFunctionK[$F, $G] {
+    new _root_.iota.CopKFunctionK[$F, $G] {
       ..$defs
       override def apply[A](ca: $F[A]): $G[A] =
-        (ca.index: @scala.annotation.switch) match {
+        (ca.index: @_root_.scala.annotation.switch) match {
           case ..$cases
-          case i => throw new java.lang.Exception("internal iota error")
+          case i => throw new _root_.java.lang.Exception(
+            s"iota internal error: index " + i + " out of bounds for " + this)
         }
       override def toString: String = $toStringValue
     }
@@ -111,7 +112,7 @@ final class CopKFunctionKMacros( val c: Context) {
   private[this] def summonFunctionK(F: Type, G: Symbol): ValidatedNel[String, Tree] =
     Validated
       .catchOnly[TypecheckException](
-        c.typecheck(q"scala.Predef.implicitly[cats.arrow.FunctionK[$F, $G]]"))
+        c.typecheck(q"_root_.scala.Predef.implicitly[_root_.cats.arrow.FunctionK[$F, $G]]"))
       .leftMap(t => NonEmptyList.of(t.msg))
 
   private[this] def destructCopK(F: Symbol): Either[String, Type] =
