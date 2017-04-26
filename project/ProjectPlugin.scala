@@ -84,6 +84,8 @@ object ProjectPlugin extends AutoPlugin {
       (baseDirectory in LocalRootProject).value / "modules" / "readme" / "src" / "main" / "tut",
     orgEnforcedFilesSetting ~= (_ filterNot (_ == ScalafmtFileType)),
 
+    orgMaintainersSetting += Dev("andyscott", Some("Andy Scott (twitter: @andygscott)"), Some("andy.g.scott@gmail.com")),
+
     coverageFailOnMinimum := false,
     fork in run := true,
     fork in Test := !isScalaJSProject.value,
