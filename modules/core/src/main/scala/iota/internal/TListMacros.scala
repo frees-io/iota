@@ -44,7 +44,7 @@ class TListMacros(val c: Context) {
       index    <- Right(algebras.indexWhere(_.dealias == A))
                     .filterOrElse(_ >= 0, s"$A is not a member of $L")
     } yield
-      q"new TList.Pos[$L, $A]{ override val index: Int = $index }")
+      q"new _root_.iota.TList.Pos[$L, $A]{ override val index: Int = $index }")
   }
 
   def result[T](either: Either[String, Tree]): c.Expr[T] =
