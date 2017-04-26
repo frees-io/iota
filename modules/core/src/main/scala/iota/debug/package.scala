@@ -22,10 +22,12 @@ package object debug {
   object optionTypes {
     sealed trait ShowTrees
     sealed trait ShowCache
+    sealed trait ShowAborts
   }
   import optionTypes._
 
   object options {
+
     /** Import this value to have Iota print the macro generated code
       * to the console during compilation
       */
@@ -35,5 +37,10 @@ package object debug {
       * during macro expansion
       */
     implicit val ShowCache: ShowCache = null.asInstanceOf[ShowCache]
+
+    /** Import this value to have Iota print aborted instance
+      * materialization for [[TList]] and [[KList]] helpers
+      */
+    implicit val ShowAborts: ShowAborts = null.asInstanceOf[ShowAborts]
   }
 }

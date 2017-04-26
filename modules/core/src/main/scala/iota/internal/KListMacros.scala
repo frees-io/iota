@@ -28,6 +28,9 @@ class KListMacros(val c: Context) {
 
   val klists = new SharedKListMacros[c.type](c)
 
+  private[this] lazy val showAborts =
+    !c.inferImplicitValue(typeOf[debug.optionTypes.ShowAborts], true).isEmpty
+
   def materializePos[L <: KList, F[_]](
     implicit
       evL: c.WeakTypeTag[L],
@@ -47,7 +50,10 @@ class KListMacros(val c: Context) {
 
   def result[T](either: Either[String, Tree]): c.Expr[T] =
     either fold (
-      error => c.abort(c.enclosingPosition, error),
+      error => {
+        if (showAborts) c.echo(c.enclosingPosition, error)
+        c.abort(c.enclosingPosition, error)
+      },
       tree  => c.Expr[T](tree))
 
 }
@@ -66,7 +72,7 @@ private[internal] class SharedKListMacros[C <: Context](val c: C) {
     !c.inferImplicitValue(typeOf[debug.optionTypes.ShowCache], true).isEmpty
 
   @tailrec
-  private[this] final def klistFoldLeft[A](tpe: Type)(a0: A)(f: (A, Type) => A): Either[String, A] = tpe match {
+  private[this] final def klistFoldLeft[A](tpe: Type)(a0: A)(f: (A, Type) => A): Either[String, A] = tpe.dealias match {
     case TypeRef(_, KNilSym, Nil) => Right(a0)
     case TypeRef(_, cons, List(headType, tailType)) if cons.asType.toType.contains(KConsSym) =>
       klistFoldLeft(tailType)(f(a0, headType))(f)
