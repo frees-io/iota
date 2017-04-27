@@ -24,7 +24,7 @@ object BenchBoiler {
   }
 
   def generate(): String = {
-    val names = (1 to 25).map(n => s"_$n").toList
+    val names = (1 to 10).map(n => s"_$n").toList
     generate(names)
   }
 
@@ -58,7 +58,6 @@ object BenchBoiler {
       |
       |import iota._
       |import cats._
-      |import cats.arrow.FunctionK
       |import cats.data.{ State => _, _ }
       |import cats.free._
       |
@@ -108,9 +107,6 @@ object BenchBoiler {
       |package Ops {
         ${ops.mkString("\n")}
       |}
-      |
-      $nonsense
-      |// fin
     """.stripMargin
 
   }
@@ -196,34 +192,5 @@ s"""|  sealed trait ${name}Op[A]
     |    case class Op1(v: Int) extends ${name}Op[Int]
     |    val eval = λ[${name}Op ~> Id] { case ${name}Op.Op1(v) => v + 1 }
     |    val gen: Gen[${name}Op[_]] = Gen.const(Op1(9000))
-    |  }
-    |  class ${name}Ops[F[_]](implicit inj: InjK[${name}Op, F]) {
-    |    def op1(v: Int): Free[F, Int] = Free.liftF(inj(${name}Op.Op1(v)))
     |  }"""
-
-
-  def nonsense: String = """
-      |sealed abstract class InjK[F[_], G[_]] {
-      |  def inj: FunctionK[F, G]
-      |  def prj: FunctionK[G, λ[α => Option[F[α]]]]
-      |  final def apply[A](fa: F[A]): G[A] = inj(fa)
-      |  final def unapply[A](ga: G[A]): Option[F[A]] = prj(ga)
-      |}
-      |
-      |object InjK {
-      |  implicit def injKFromCatsInject[F[_], G[_]](
-      |    implicit ev: Inject[F, G]
-      |  ): InjK[F, G] = new InjK[F, G] {
-      |    def inj = λ[F ~> G](ev.inj(_))
-      |    def prj = λ[G ~> λ[α => Option[F[α]]]](ev.prj(_))
-      |  }
-      |
-      |  implicit def injKfromCopKInj[F[_], L <: KList](
-      |    implicit ev: CopK.InjectL[F, L]
-      |  ): InjK[F, CopK[L, ?]] = new InjK[F, CopK[L, ?]] {
-      |    def inj = λ[F ~> CopK[L, ?]](ev.inj(_))
-      |    def prj = λ[CopK[L, ?] ~> λ[α => Option[F[α]]]](ev.proj(_))
-      |  }
-      |}"""
-
 }

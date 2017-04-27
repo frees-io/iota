@@ -1,4 +1,3 @@
-
 [comment]: # (Start Badges)
 
 [![Build Status](https://api.travis-ci.org/47deg/iota.png?branch=master)](https://travis-ci.org/47deg/iota)
@@ -157,6 +156,20 @@ import iota.debug.options.ShowTrees
 CopK.FunctionK.of[Algebra, Future](evalOrderOp, evalPriceOp, evalUserOp)
 ```
 
+#### Is it actually faster?
+
+Yes. If you look at _just the overhead_ of evaluating the deepest nested
+algebra in a linked list style coproduct, the cost goes up in a linear
+fashion as the coproduct size increase.
+
+This can be seen below using data from Iota's benchmark suite. Here, we
+compare the throughput for using Iota vs Cats for a coproducts up to 25
+element in size. This overhead isn't representative of what you'd encounter
+in real world applications as we are comparing _worst case_ performance with
+the deepest nested type in the coproduct.
+
+![bench](https://cloud.githubusercontent.com/assets/310363/25464097/6b49c0ae-2aaf-11e7-9dc4-3e7d8f0e9267.png)
+
 ## Free
 
 A `Free` example is available [in the tests][free example].
@@ -173,3 +186,5 @@ Iota is designed and developed by 47 Degrees
 Copyright (C) 2016-2017 47 Degrees. <http://47deg.com>
 
 [comment]: # (End Copyright)
+
+[free example]: modules/core/src/test/scala/iotatests/FreeCopKTests.scala

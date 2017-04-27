@@ -1,4 +1,3 @@
-
 [comment]: # (Start Badges)
 
 [![Build Status](https://api.travis-ci.org/47deg/iota.png?branch=master)](https://travis-ci.org/47deg/iota)
@@ -163,23 +162,33 @@ import iota.debug.options.ShowTrees
 CopK.FunctionK.of[Algebra, Future](evalOrderOp, evalPriceOp, evalUserOp)
 // <console>:30: generated tree:
 // {
-//   final class $anon extends iota.CopKFunctionK[Algebra, Future] {
-//     private[this] def arr0 = evalUserOp.asInstanceOf[cats.arrow.FunctionK[Any, Future]];
-//     private[this] def arr1 = evalOrderOp.asInstanceOf[cats.arrow.FunctionK[Any, Future]];
-//     private[this] def arr2 = evalPriceOp.asInstanceOf[cats.arrow.FunctionK[Any, Future]];
-//     override def apply[A](ca: Algebra[A]): Future[A] = (ca.index: @scala.annotation.switch) match {
+//   final class $anon extends _root_.iota.CopKFunctionK[Algebra, Future] {
+//     private[this] val arr0 = evalUserOp.asInstanceOf[_root_.cats.arrow.FunctionK[Any, Future]];
+//     private[this] val arr1 = evalOrderOp.asInstanceOf[_root_.cats.arrow.FunctionK[Any, Future]];
+//     private[this] val arr2 = evalPriceOp.asInstanceOf[_root_.cats.arrow.FunctionK[Any, Future]];
+//     override def apply[A](ca: Algebra[A]): Future[A] = (ca.index: @_root_.scala.annotation.switch) match {
 //       case 0 => arr0(ca.value)
 //       case 1 => arr1(ca.value)
 //       case 2 => arr2(ca.value)
-//       case (i @ _) => throw new java.lang.Exception("internal iota error")
+//       case (i @ _) => throw new _root_.java.lang.Exception(StringContext("iota internal error: index ").s().+(i).+(" out of bounds for ").+(this))
 //     };
-//     override def toString: String = "CopKFunctionK[Algebra, Future]<<generated>>"
-//   };
-//   new $anon()
-// }
-//        CopK.FunctionK.of[Algebra, Future](ev...
+//     override def toString: String = "Cop...
 // res28: iota.CopKFunctionK[Algebra,scala.concurrent.Future] = CopKFunctionK[Algebra, Future]<<generated>>
 ```
+
+#### Is it actually faster?
+
+Yes. If you look at _just the overhead_ of evaluating the deepest nested
+algebra in a linked list style coproduct, the cost goes up in a linear
+fashion as the coproduct size increase.
+
+This can be seen below using data from Iota's benchmark suite. Here, we
+compare the throughput for using Iota vs Cats for a coproducts up to 25
+element in size. This overhead isn't representative of what you'd encounter
+in real world applications as we are comparing _worst case_ performance with
+the deepest nested type in the coproduct.
+
+![bench](https://cloud.githubusercontent.com/assets/310363/25464097/6b49c0ae-2aaf-11e7-9dc4-3e7d8f0e9267.png)
 
 ## Free
 
@@ -197,3 +206,5 @@ Iota is designed and developed by 47 Degrees
 Copyright (C) 2016-2017 47 Degrees. <http://47deg.com>
 
 [comment]: # (End Copyright)
+
+[free example]: modules/core/src/test/scala/iotatests/FreeCopKTests.scala
