@@ -24,11 +24,14 @@ import scala.annotation.tailrec
 import scala.collection.immutable.Map
 
 private[internal] object TListMacros {
-  @volatile var klistCache: Map[Any, Any] = Map.empty
+  @volatile var tlistCache: Map[Any, Any] = Map.empty
 }
 
 class TListMacros(val c: Context) {
   import c.universe._
+
+  private[this] lazy val showAborts =
+    !c.inferImplicitValue(typeOf[debug.optionTypes.ShowAborts], true).isEmpty
 
   def materializePos[L <: TList, A](
     implicit
@@ -40,7 +43,7 @@ class TListMacros(val c: Context) {
     val A = evA.tpe.dealias
 
     result(for {
-      algebras <- klistTypesCached(L)
+      algebras <- tlistTypesCached(L)
       index    <- Right(algebras.indexWhere(_.dealias == A))
                     .filterOrElse(_ >= 0, s"$A is not a member of $L")
     } yield
@@ -49,7 +52,10 @@ class TListMacros(val c: Context) {
 
   def result[T](either: Either[String, Tree]): c.Expr[T] =
     either fold (
-      error => c.abort(c.enclosingPosition, error),
+      error => {
+        if (showAborts) c.echo(c.enclosingPosition, error)
+        c.abort(c.enclosingPosition, error)
+      },
       tree  => c.Expr[T](tree))
 
   private[this] val TNilSym          = typeOf[TNil].typeSymbol
@@ -59,28 +65,28 @@ class TListMacros(val c: Context) {
     !c.inferImplicitValue(typeOf[debug.optionTypes.ShowCache], true).isEmpty
 
   @tailrec
-  private[this] final def klistFoldLeft[A](tpe: Type)(a0: A)(f: (A, Type) => A): Either[String, A] = tpe match {
+  private[this] final def tlistFoldLeft[A](tpe: Type)(a0: A)(f: (A, Type) => A): Either[String, A] = tpe.dealias match {
     case TypeRef(_, TNilSym, Nil) => Right(a0)
     case TypeRef(_, cons, List(headType, tailType)) if cons.asType.toType.contains(TConsSym) =>
-      klistFoldLeft(tailType)(f(a0, headType))(f)
+      tlistFoldLeft(tailType)(f(a0, headType))(f)
     case _ =>
-      Left(s"Unexpected type ${showRaw(tpe)} when inspecting HList")
+      Left(s"Unexpected type ${showRaw(tpe)} when inspecting TList")
   }
 
-  private[this] final def klistTypes(tpe: Type): Either[String, List[Type]] =
-    klistFoldLeft(tpe)(List.empty[Type])((acc, t) => t :: acc).map(_.reverse)
+  private[this] final def tlistTypes(tpe: Type): Either[String, List[Type]] =
+    tlistFoldLeft(tpe)(List.empty[Type])((acc, t) => t :: acc).map(_.reverse)
 
-  private[this] final def klistTypesCached(
+  private[this] final def tlistTypesCached(
     tpe: Type
-  ): Either[String, List[Type]] = TListMacros.klistCache.synchronized {
-    TListMacros.klistCache.get(tpe) match {
+  ): Either[String, List[Type]] = TListMacros.tlistCache.synchronized {
+    TListMacros.tlistCache.get(tpe) match {
       case Some(res: Either[String, List[Type]] @unchecked) =>
         if (showCache)
           c.echo(c.enclosingPosition, s"ShowCache(TList): $tpe cached result $res")
         res
       case _ =>
-        val res = klistTypes(tpe)
-        TListMacros.klistCache += ((tpe, res))
+        val res = tlistTypes(tpe)
+        TListMacros.tlistCache += ((tpe, res))
         if (showCache)
           c.echo(c.enclosingPosition, s"ShowCache(TList): $tpe computed result $res")
         res

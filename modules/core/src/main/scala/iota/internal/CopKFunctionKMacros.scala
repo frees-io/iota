@@ -88,7 +88,7 @@ final class CopKFunctionKMacros( val c: Context) {
       (TermName(s"arr$i"), arr, i) }
 
     val defs = namedArrs.map { case (n, arr, _) =>
-      q"private[this] def $n = $arr.asInstanceOf[_root_.cats.arrow.FunctionK[Any, $G]]" }
+      q"private[this] val $n = $arr.asInstanceOf[_root_.cats.arrow.FunctionK[Any, $G]]" }
 
     val cases = namedArrs.map { case (n, _, i) =>
       cq"$i => $n(ca.value)" }

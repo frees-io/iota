@@ -1,0 +1,2204 @@
+[
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_1",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5522971.47752997,
+            "scoreError" : 2685125.8299734225,
+            "scoreConfidence" : [
+                2837845.6475565475,
+                8208097.307503393
+            ],
+            "scorePercentiles" : {
+                "0.0" : 4288758.865019704,
+                "50.0" : 5846162.882308903,
+                "90.0" : 5940120.004882218,
+                "95.0" : 5940120.004882218,
+                "99.0" : 5940120.004882218,
+                "99.9" : 5940120.004882218,
+                "99.99" : 5940120.004882218,
+                "99.999" : 5940120.004882218,
+                "99.9999" : 5940120.004882218,
+                "100.0" : 5940120.004882218
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    4288758.865019704,
+                    5666680.54083354,
+                    5846162.882308903,
+                    5940120.004882218,
+                    5873135.094605482
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_10",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 3806881.615976449,
+            "scoreError" : 121862.17513874362,
+            "scoreConfidence" : [
+                3685019.4408377055,
+                3928743.7911151927
+            ],
+            "scorePercentiles" : {
+                "0.0" : 3759209.7931578737,
+                "50.0" : 3819914.7934936746,
+                "90.0" : 3837457.1244918187,
+                "95.0" : 3837457.1244918187,
+                "99.0" : 3837457.1244918187,
+                "99.9" : 3837457.1244918187,
+                "99.99" : 3837457.1244918187,
+                "99.999" : 3837457.1244918187,
+                "99.9999" : 3837457.1244918187,
+                "100.0" : 3837457.1244918187
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    3837457.1244918187,
+                    3759209.7931578737,
+                    3791297.8013237487,
+                    3826528.567415129,
+                    3819914.7934936746
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_11",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 3584766.014115557,
+            "scoreError" : 820649.4854821856,
+            "scoreConfidence" : [
+                2764116.5286333715,
+                4405415.499597743
+            ],
+            "scorePercentiles" : {
+                "0.0" : 3253008.349100958,
+                "50.0" : 3688415.7516500014,
+                "90.0" : 3757770.8633160326,
+                "95.0" : 3757770.8633160326,
+                "99.0" : 3757770.8633160326,
+                "99.9" : 3757770.8633160326,
+                "99.99" : 3757770.8633160326,
+                "99.999" : 3757770.8633160326,
+                "99.9999" : 3757770.8633160326,
+                "100.0" : 3757770.8633160326
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    3688415.7516500014,
+                    3757770.8633160326,
+                    3733613.431327738,
+                    3491021.6751830536,
+                    3253008.349100958
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_12",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 3383749.4002376446,
+            "scoreError" : 622247.6916965012,
+            "scoreConfidence" : [
+                2761501.708541143,
+                4005997.091934146
+            ],
+            "scorePercentiles" : {
+                "0.0" : 3100844.8023608085,
+                "50.0" : 3430301.5685459534,
+                "90.0" : 3487447.09026076,
+                "95.0" : 3487447.09026076,
+                "99.0" : 3487447.09026076,
+                "99.9" : 3487447.09026076,
+                "99.99" : 3487447.09026076,
+                "99.999" : 3487447.09026076,
+                "99.9999" : 3487447.09026076,
+                "100.0" : 3487447.09026076
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    3100844.8023608085,
+                    3487447.09026076,
+                    3486810.802429211,
+                    3413342.7375914906,
+                    3430301.5685459534
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_13",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 3320715.6509210127,
+            "scoreError" : 190227.3126295348,
+            "scoreConfidence" : [
+                3130488.338291478,
+                3510942.9635505476
+            ],
+            "scorePercentiles" : {
+                "0.0" : 3252545.0754943467,
+                "50.0" : 3315705.3825727073,
+                "90.0" : 3384629.39756582,
+                "95.0" : 3384629.39756582,
+                "99.0" : 3384629.39756582,
+                "99.9" : 3384629.39756582,
+                "99.99" : 3384629.39756582,
+                "99.999" : 3384629.39756582,
+                "99.9999" : 3384629.39756582,
+                "100.0" : 3384629.39756582
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    3303420.13144686,
+                    3347278.2675253316,
+                    3384629.39756582,
+                    3315705.3825727073,
+                    3252545.0754943467
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_14",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 3303534.08504918,
+            "scoreError" : 213898.2361402763,
+            "scoreConfidence" : [
+                3089635.8489089035,
+                3517432.321189456
+            ],
+            "scorePercentiles" : {
+                "0.0" : 3249282.5276202634,
+                "50.0" : 3288476.2754853196,
+                "90.0" : 3363520.6294996394,
+                "95.0" : 3363520.6294996394,
+                "99.0" : 3363520.6294996394,
+                "99.9" : 3363520.6294996394,
+                "99.99" : 3363520.6294996394,
+                "99.999" : 3363520.6294996394,
+                "99.9999" : 3363520.6294996394,
+                "100.0" : 3363520.6294996394
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    3249282.5276202634,
+                    3360782.6472634096,
+                    3363520.6294996394,
+                    3288476.2754853196,
+                    3255608.3453772673
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_15",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 3062125.6243748586,
+            "scoreError" : 171411.82828832036,
+            "scoreConfidence" : [
+                2890713.796086538,
+                3233537.452663179
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2983940.5054909172,
+                "50.0" : 3076220.258947578,
+                "90.0" : 3094581.497261899,
+                "95.0" : 3094581.497261899,
+                "99.0" : 3094581.497261899,
+                "99.9" : 3094581.497261899,
+                "99.99" : 3094581.497261899,
+                "99.999" : 3094581.497261899,
+                "99.9999" : 3094581.497261899,
+                "100.0" : 3094581.497261899
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2983940.5054909172,
+                    3076220.258947578,
+                    3083467.8566461303,
+                    3094581.497261899,
+                    3072418.00352777
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_16",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 2957695.1829074444,
+            "scoreError" : 260267.56435835,
+            "scoreConfidence" : [
+                2697427.6185490945,
+                3217962.7472657943
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2870466.0775578273,
+                "50.0" : 2987813.8034648634,
+                "90.0" : 3032695.338474318,
+                "95.0" : 3032695.338474318,
+                "99.0" : 3032695.338474318,
+                "99.9" : 3032695.338474318,
+                "99.99" : 3032695.338474318,
+                "99.999" : 3032695.338474318,
+                "99.9999" : 3032695.338474318,
+                "100.0" : 3032695.338474318
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2904180.7523367926,
+                    2870466.0775578273,
+                    3032695.338474318,
+                    2987813.8034648634,
+                    2993319.9427034217
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_17",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 2942539.919622793,
+            "scoreError" : 115140.93223551958,
+            "scoreConfidence" : [
+                2827398.9873872735,
+                3057680.8518583123
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2904294.9903334677,
+                "50.0" : 2951651.035289416,
+                "90.0" : 2981197.535045867,
+                "95.0" : 2981197.535045867,
+                "99.0" : 2981197.535045867,
+                "99.9" : 2981197.535045867,
+                "99.99" : 2981197.535045867,
+                "99.999" : 2981197.535045867,
+                "99.9999" : 2981197.535045867,
+                "100.0" : 2981197.535045867
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2904294.9903334677,
+                    2981197.535045867,
+                    2951651.035289416,
+                    2922109.4958459046,
+                    2953446.5415993086
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_18",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 2855464.955799437,
+            "scoreError" : 210339.692388787,
+            "scoreConfidence" : [
+                2645125.26341065,
+                3065804.648188224
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2785309.4244868234,
+                "50.0" : 2856083.99882034,
+                "90.0" : 2923547.801998137,
+                "95.0" : 2923547.801998137,
+                "99.0" : 2923547.801998137,
+                "99.9" : 2923547.801998137,
+                "99.99" : 2923547.801998137,
+                "99.999" : 2923547.801998137,
+                "99.9999" : 2923547.801998137,
+                "100.0" : 2923547.801998137
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2821718.2098371577,
+                    2923547.801998137,
+                    2890665.3438547277,
+                    2856083.99882034,
+                    2785309.4244868234
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_19",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 2704123.65729571,
+            "scoreError" : 433536.3342674724,
+            "scoreConfidence" : [
+                2270587.3230282376,
+                3137659.9915631823
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2508397.959957453,
+                "50.0" : 2741227.805587199,
+                "90.0" : 2780667.2887092354,
+                "95.0" : 2780667.2887092354,
+                "99.0" : 2780667.2887092354,
+                "99.9" : 2780667.2887092354,
+                "99.99" : 2780667.2887092354,
+                "99.999" : 2780667.2887092354,
+                "99.9999" : 2780667.2887092354,
+                "100.0" : 2780667.2887092354
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2508397.959957453,
+                    2780667.2887092354,
+                    2775092.9778051744,
+                    2715232.2544194874,
+                    2741227.805587199
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_2",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5465380.68855228,
+            "scoreError" : 377383.09084863233,
+            "scoreConfidence" : [
+                5087997.597703648,
+                5842763.779400912
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5291193.912887003,
+                "50.0" : 5503949.79796307,
+                "90.0" : 5527596.400057965,
+                "95.0" : 5527596.400057965,
+                "99.0" : 5527596.400057965,
+                "99.9" : 5527596.400057965,
+                "99.99" : 5527596.400057965,
+                "99.999" : 5527596.400057965,
+                "99.9999" : 5527596.400057965,
+                "100.0" : 5527596.400057965
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5498425.026954426,
+                    5527596.400057965,
+                    5505738.304898934,
+                    5291193.912887003,
+                    5503949.79796307
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_20",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 2696799.28905643,
+            "scoreError" : 88246.22013664237,
+            "scoreConfidence" : [
+                2608553.0689197876,
+                2785045.5091930726
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2674447.3849494583,
+                "50.0" : 2694125.7907209853,
+                "90.0" : 2734550.9966759533,
+                "95.0" : 2734550.9966759533,
+                "99.0" : 2734550.9966759533,
+                "99.9" : 2734550.9966759533,
+                "99.99" : 2734550.9966759533,
+                "99.999" : 2734550.9966759533,
+                "99.9999" : 2734550.9966759533,
+                "100.0" : 2734550.9966759533
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2734550.9966759533,
+                    2697064.7764979117,
+                    2683807.496437842,
+                    2674447.3849494583,
+                    2694125.7907209853
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_21",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 2632211.006107171,
+            "scoreError" : 121823.05650801194,
+            "scoreConfidence" : [
+                2510387.949599159,
+                2754034.062615183
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2578453.1137871565,
+                "50.0" : 2638570.2900792616,
+                "90.0" : 2662077.5685204086,
+                "95.0" : 2662077.5685204086,
+                "99.0" : 2662077.5685204086,
+                "99.9" : 2662077.5685204086,
+                "99.99" : 2662077.5685204086,
+                "99.999" : 2662077.5685204086,
+                "99.9999" : 2662077.5685204086,
+                "100.0" : 2662077.5685204086
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2578453.1137871565,
+                    2662077.5685204086,
+                    2638570.2900792616,
+                    2637264.540360069,
+                    2644689.517788958
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_22",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 2627550.580548889,
+            "scoreError" : 205326.87486539717,
+            "scoreConfidence" : [
+                2422223.7056834917,
+                2832877.4554142863
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2555014.9000204215,
+                "50.0" : 2615490.7335357345,
+                "90.0" : 2696597.3716182234,
+                "95.0" : 2696597.3716182234,
+                "99.0" : 2696597.3716182234,
+                "99.9" : 2696597.3716182234,
+                "99.99" : 2696597.3716182234,
+                "99.999" : 2696597.3716182234,
+                "99.9999" : 2696597.3716182234,
+                "100.0" : 2696597.3716182234
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2555014.9000204215,
+                    2696597.3716182234,
+                    2615490.7335357345,
+                    2612108.02114321,
+                    2658541.8764268556
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_23",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 2507658.1418256266,
+            "scoreError" : 123175.98901478882,
+            "scoreConfidence" : [
+                2384482.1528108376,
+                2630834.1308404156
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2468332.9893743694,
+                "50.0" : 2500182.1449578945,
+                "90.0" : 2544973.159538758,
+                "95.0" : 2544973.159538758,
+                "99.0" : 2544973.159538758,
+                "99.9" : 2544973.159538758,
+                "99.99" : 2544973.159538758,
+                "99.999" : 2544973.159538758,
+                "99.9999" : 2544973.159538758,
+                "100.0" : 2544973.159538758
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2468332.9893743694,
+                    2544973.159538758,
+                    2500182.1449578945,
+                    2489452.653485109,
+                    2535349.7617720016
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_24",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 2472723.7204394117,
+            "scoreError" : 107660.45135969084,
+            "scoreConfidence" : [
+                2365063.269079721,
+                2580384.1717991023
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2437281.5167947374,
+                "50.0" : 2472133.727154184,
+                "90.0" : 2511289.369925403,
+                "95.0" : 2511289.369925403,
+                "99.0" : 2511289.369925403,
+                "99.9" : 2511289.369925403,
+                "99.99" : 2511289.369925403,
+                "99.999" : 2511289.369925403,
+                "99.9999" : 2511289.369925403,
+                "100.0" : 2511289.369925403
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2485237.8435109914,
+                    2511289.369925403,
+                    2437281.5167947374,
+                    2472133.727154184,
+                    2457676.1448117425
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_25",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 2376487.760668655,
+            "scoreError" : 52839.77376092367,
+            "scoreConfidence" : [
+                2323647.9869077313,
+                2429327.5344295786
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2360786.9866090296,
+                "50.0" : 2377225.1561438423,
+                "90.0" : 2395924.1683105943,
+                "95.0" : 2395924.1683105943,
+                "99.0" : 2395924.1683105943,
+                "99.9" : 2395924.1683105943,
+                "99.99" : 2395924.1683105943,
+                "99.999" : 2395924.1683105943,
+                "99.9999" : 2395924.1683105943,
+                "100.0" : 2395924.1683105943
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2381944.5038631675,
+                    2395924.1683105943,
+                    2366557.9884166415,
+                    2377225.1561438423,
+                    2360786.9866090296
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_3",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5215446.1131515065,
+            "scoreError" : 206600.33440432875,
+            "scoreConfidence" : [
+                5008845.778747178,
+                5422046.447555835
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5165048.67727325,
+                "50.0" : 5197171.179800847,
+                "90.0" : 5299966.260137152,
+                "95.0" : 5299966.260137152,
+                "99.0" : 5299966.260137152,
+                "99.9" : 5299966.260137152,
+                "99.99" : 5299966.260137152,
+                "99.999" : 5299966.260137152,
+                "99.9999" : 5299966.260137152,
+                "100.0" : 5299966.260137152
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5165048.67727325,
+                    5299966.260137152,
+                    5233710.629190328,
+                    5181333.819355956,
+                    5197171.179800847
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_4",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 4981398.039533516,
+            "scoreError" : 397287.5668959384,
+            "scoreConfidence" : [
+                4584110.472637578,
+                5378685.606429455
+            ],
+            "scorePercentiles" : {
+                "0.0" : 4876831.954733347,
+                "50.0" : 4962012.254870837,
+                "90.0" : 5146620.320371629,
+                "95.0" : 5146620.320371629,
+                "99.0" : 5146620.320371629,
+                "99.9" : 5146620.320371629,
+                "99.99" : 5146620.320371629,
+                "99.999" : 5146620.320371629,
+                "99.9999" : 5146620.320371629,
+                "100.0" : 5146620.320371629
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    4962012.254870837,
+                    5146620.320371629,
+                    4921266.881191865,
+                    4876831.954733347,
+                    5000258.786499906
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_5",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 4777698.83130644,
+            "scoreError" : 438688.951217291,
+            "scoreConfidence" : [
+                4339009.880089149,
+                5216387.782523731
+            ],
+            "scorePercentiles" : {
+                "0.0" : 4608165.250927135,
+                "50.0" : 4797117.140460294,
+                "90.0" : 4886140.52609132,
+                "95.0" : 4886140.52609132,
+                "99.0" : 4886140.52609132,
+                "99.9" : 4886140.52609132,
+                "99.99" : 4886140.52609132,
+                "99.999" : 4886140.52609132,
+                "99.9999" : 4886140.52609132,
+                "100.0" : 4886140.52609132
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    4797117.140460294,
+                    4886140.52609132,
+                    4869844.804982875,
+                    4727226.434070572,
+                    4608165.250927135
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_6",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 4556978.09291199,
+            "scoreError" : 285235.0218816326,
+            "scoreConfidence" : [
+                4271743.071030358,
+                4842213.114793623
+            ],
+            "scorePercentiles" : {
+                "0.0" : 4470033.220273586,
+                "50.0" : 4553584.634588027,
+                "90.0" : 4668771.415031865,
+                "95.0" : 4668771.415031865,
+                "99.0" : 4668771.415031865,
+                "99.9" : 4668771.415031865,
+                "99.99" : 4668771.415031865,
+                "99.999" : 4668771.415031865,
+                "99.9999" : 4668771.415031865,
+                "100.0" : 4668771.415031865
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    4470033.220273586,
+                    4668771.415031865,
+                    4517533.2572730165,
+                    4574967.937393452,
+                    4553584.634588027
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_7",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 4363189.29237924,
+            "scoreError" : 267126.30470295716,
+            "scoreConfidence" : [
+                4096062.9876762824,
+                4630315.597082197
+            ],
+            "scorePercentiles" : {
+                "0.0" : 4260166.723990031,
+                "50.0" : 4374819.92937274,
+                "90.0" : 4446110.352101637,
+                "95.0" : 4446110.352101637,
+                "99.0" : 4446110.352101637,
+                "99.9" : 4446110.352101637,
+                "99.99" : 4446110.352101637,
+                "99.999" : 4446110.352101637,
+                "99.9999" : 4446110.352101637,
+                "100.0" : 4446110.352101637
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    4339236.83470687,
+                    4446110.352101637,
+                    4260166.723990031,
+                    4395612.6217249185,
+                    4374819.92937274
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_8",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 4153252.360575446,
+            "scoreError" : 269523.444349909,
+            "scoreConfidence" : [
+                3883728.9162255367,
+                4422775.804925355
+            ],
+            "scorePercentiles" : {
+                "0.0" : 4038628.9270177097,
+                "50.0" : 4165863.0197968753,
+                "90.0" : 4228904.729933223,
+                "95.0" : 4228904.729933223,
+                "99.0" : 4228904.729933223,
+                "99.9" : 4228904.729933223,
+                "99.99" : 4228904.729933223,
+                "99.999" : 4228904.729933223,
+                "99.9999" : 4228904.729933223,
+                "100.0" : 4228904.729933223
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    4177123.158579018,
+                    4038628.9270177097,
+                    4165863.0197968753,
+                    4228904.729933223,
+                    4155741.9675504034
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.cats_9",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 3824321.456388142,
+            "scoreError" : 419578.7195693267,
+            "scoreConfidence" : [
+                3404742.736818815,
+                4243900.175957468
+            ],
+            "scorePercentiles" : {
+                "0.0" : 3664126.731327393,
+                "50.0" : 3821270.827548685,
+                "90.0" : 3960738.573830502,
+                "95.0" : 3960738.573830502,
+                "99.0" : 3960738.573830502,
+                "99.9" : 3960738.573830502,
+                "99.99" : 3960738.573830502,
+                "99.999" : 3960738.573830502,
+                "99.9999" : 3960738.573830502,
+                "100.0" : 3960738.573830502
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    3821270.827548685,
+                    3799981.067020319,
+                    3664126.731327393,
+                    3960738.573830502,
+                    3875490.0822138092
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_1",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5627232.763704939,
+            "scoreError" : 321074.0362908431,
+            "scoreConfidence" : [
+                5306158.727414096,
+                5948306.799995782
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5503727.82652372,
+                "50.0" : 5666714.109702262,
+                "90.0" : 5695980.493588958,
+                "95.0" : 5695980.493588958,
+                "99.0" : 5695980.493588958,
+                "99.9" : 5695980.493588958,
+                "99.99" : 5695980.493588958,
+                "99.999" : 5695980.493588958,
+                "99.9999" : 5695980.493588958,
+                "100.0" : 5695980.493588958
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5690345.902978601,
+                    5695980.493588958,
+                    5666714.109702262,
+                    5579395.485731157,
+                    5503727.82652372
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_10",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5601909.681320978,
+            "scoreError" : 264716.60193767643,
+            "scoreConfidence" : [
+                5337193.079383302,
+                5866626.283258655
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5554659.5108222,
+                "50.0" : 5577413.055422221,
+                "90.0" : 5723171.9847794445,
+                "95.0" : 5723171.9847794445,
+                "99.0" : 5723171.9847794445,
+                "99.9" : 5723171.9847794445,
+                "99.99" : 5723171.9847794445,
+                "99.999" : 5723171.9847794445,
+                "99.9999" : 5723171.9847794445,
+                "100.0" : 5723171.9847794445
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5568756.056976027,
+                    5723171.9847794445,
+                    5554659.5108222,
+                    5577413.055422221,
+                    5585547.798605003
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_11",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5256560.890103858,
+            "scoreError" : 1644377.3158740932,
+            "scoreConfidence" : [
+                3612183.5742297648,
+                6900938.205977951
+            ],
+            "scorePercentiles" : {
+                "0.0" : 4665588.37331292,
+                "50.0" : 5210450.790084515,
+                "90.0" : 5734513.663847665,
+                "95.0" : 5734513.663847665,
+                "99.0" : 5734513.663847665,
+                "99.9" : 5734513.663847665,
+                "99.99" : 5734513.663847665,
+                "99.999" : 5734513.663847665,
+                "99.9999" : 5734513.663847665,
+                "100.0" : 5734513.663847665
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5074423.210615913,
+                    5734513.663847665,
+                    5597828.412658276,
+                    4665588.37331292,
+                    5210450.790084515
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_12",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5673767.743238191,
+            "scoreError" : 297486.097435833,
+            "scoreConfidence" : [
+                5376281.645802358,
+                5971253.840674024
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5557748.73989125,
+                "50.0" : 5669417.049702455,
+                "90.0" : 5765698.370509848,
+                "95.0" : 5765698.370509848,
+                "99.0" : 5765698.370509848,
+                "99.9" : 5765698.370509848,
+                "99.99" : 5765698.370509848,
+                "99.999" : 5765698.370509848,
+                "99.9999" : 5765698.370509848,
+                "100.0" : 5765698.370509848
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5669417.049702455,
+                    5715728.135052349,
+                    5660246.421035056,
+                    5765698.370509848,
+                    5557748.73989125
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_13",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5721865.335818792,
+            "scoreError" : 398119.5430418383,
+            "scoreConfidence" : [
+                5323745.792776953,
+                6119984.87886063
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5636146.051036029,
+                "50.0" : 5688041.155496824,
+                "90.0" : 5901755.024708491,
+                "95.0" : 5901755.024708491,
+                "99.0" : 5901755.024708491,
+                "99.9" : 5901755.024708491,
+                "99.99" : 5901755.024708491,
+                "99.999" : 5901755.024708491,
+                "99.9999" : 5901755.024708491,
+                "100.0" : 5901755.024708491
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5688041.155496824,
+                    5901755.024708491,
+                    5636146.051036029,
+                    5685162.328017464,
+                    5698222.119835147
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_14",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5681532.32756634,
+            "scoreError" : 386513.40318569256,
+            "scoreConfidence" : [
+                5295018.924380647,
+                6068045.730752032
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5550180.239795551,
+                "50.0" : 5689225.365353155,
+                "90.0" : 5828455.028125619,
+                "95.0" : 5828455.028125619,
+                "99.0" : 5828455.028125619,
+                "99.9" : 5828455.028125619,
+                "99.99" : 5828455.028125619,
+                "99.999" : 5828455.028125619,
+                "99.9999" : 5828455.028125619,
+                "100.0" : 5828455.028125619
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5550180.239795551,
+                    5828455.028125619,
+                    5646107.891332653,
+                    5693693.113224723,
+                    5689225.365353155
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_15",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5710615.474907328,
+            "scoreError" : 499850.4804891436,
+            "scoreConfidence" : [
+                5210764.994418185,
+                6210465.955396472
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5560216.957473069,
+                "50.0" : 5703357.656808952,
+                "90.0" : 5898000.513535523,
+                "95.0" : 5898000.513535523,
+                "99.0" : 5898000.513535523,
+                "99.9" : 5898000.513535523,
+                "99.99" : 5898000.513535523,
+                "99.999" : 5898000.513535523,
+                "99.9999" : 5898000.513535523,
+                "100.0" : 5898000.513535523
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5628021.254737008,
+                    5898000.513535523,
+                    5703357.656808952,
+                    5763480.991982089,
+                    5560216.957473069
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_16",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5614536.668698745,
+            "scoreError" : 329356.9521676851,
+            "scoreConfidence" : [
+                5285179.71653106,
+                5943893.62086643
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5542918.52702839,
+                "50.0" : 5561909.233108312,
+                "90.0" : 5710557.306034841,
+                "95.0" : 5710557.306034841,
+                "99.0" : 5710557.306034841,
+                "99.9" : 5710557.306034841,
+                "99.99" : 5710557.306034841,
+                "99.999" : 5710557.306034841,
+                "99.9999" : 5710557.306034841,
+                "100.0" : 5710557.306034841
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5552012.157840176,
+                    5705286.119482008,
+                    5710557.306034841,
+                    5561909.233108312,
+                    5542918.52702839
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_17",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5765594.194217083,
+            "scoreError" : 326563.28914453386,
+            "scoreConfidence" : [
+                5439030.905072549,
+                6092157.483361617
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5644605.194757691,
+                "50.0" : 5780270.028836982,
+                "90.0" : 5872096.366134912,
+                "95.0" : 5872096.366134912,
+                "99.0" : 5872096.366134912,
+                "99.9" : 5872096.366134912,
+                "99.99" : 5872096.366134912,
+                "99.999" : 5872096.366134912,
+                "99.9999" : 5872096.366134912,
+                "100.0" : 5872096.366134912
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5729633.514936175,
+                    5872096.366134912,
+                    5801365.866419654,
+                    5644605.194757691,
+                    5780270.028836982
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_18",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5690761.883983774,
+            "scoreError" : 342132.71705163736,
+            "scoreConfidence" : [
+                5348629.166932137,
+                6032894.6010354115
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5615872.603611389,
+                "50.0" : 5659272.349597965,
+                "90.0" : 5842646.13819009,
+                "95.0" : 5842646.13819009,
+                "99.0" : 5842646.13819009,
+                "99.9" : 5842646.13819009,
+                "99.99" : 5842646.13819009,
+                "99.999" : 5842646.13819009,
+                "99.9999" : 5842646.13819009,
+                "100.0" : 5842646.13819009
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5688909.526006886,
+                    5842646.13819009,
+                    5659272.349597965,
+                    5647108.802512543,
+                    5615872.603611389
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_19",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5732371.056989166,
+            "scoreError" : 487026.68556144397,
+            "scoreConfidence" : [
+                5245344.371427722,
+                6219397.74255061
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5596590.049319778,
+                "50.0" : 5760845.856545538,
+                "90.0" : 5912872.475696757,
+                "95.0" : 5912872.475696757,
+                "99.0" : 5912872.475696757,
+                "99.9" : 5912872.475696757,
+                "99.99" : 5912872.475696757,
+                "99.999" : 5912872.475696757,
+                "99.9999" : 5912872.475696757,
+                "100.0" : 5912872.475696757
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5626921.4041370815,
+                    5912872.475696757,
+                    5596590.049319778,
+                    5760845.856545538,
+                    5764625.4992466755
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_2",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5558920.49969167,
+            "scoreError" : 485731.307466051,
+            "scoreConfidence" : [
+                5073189.192225619,
+                6044651.80715772
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5349705.422170478,
+                "50.0" : 5582781.091886298,
+                "90.0" : 5684063.945117663,
+                "95.0" : 5684063.945117663,
+                "99.0" : 5684063.945117663,
+                "99.9" : 5684063.945117663,
+                "99.99" : 5684063.945117663,
+                "99.999" : 5684063.945117663,
+                "99.9999" : 5684063.945117663,
+                "100.0" : 5684063.945117663
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5582781.091886298,
+                    5349705.422170478,
+                    5619310.17066052,
+                    5684063.945117663,
+                    5558741.86862339
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_20",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5561403.796415535,
+            "scoreError" : 311730.5742118491,
+            "scoreConfidence" : [
+                5249673.222203686,
+                5873134.370627384
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5433809.995060963,
+                "50.0" : 5558638.233584406,
+                "90.0" : 5648859.103298766,
+                "95.0" : 5648859.103298766,
+                "99.0" : 5648859.103298766,
+                "99.9" : 5648859.103298766,
+                "99.99" : 5648859.103298766,
+                "99.999" : 5648859.103298766,
+                "99.9999" : 5648859.103298766,
+                "100.0" : 5648859.103298766
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5608918.220663605,
+                    5648859.103298766,
+                    5556793.429469934,
+                    5433809.995060963,
+                    5558638.233584406
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_21",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5600054.610043698,
+            "scoreError" : 308298.1145387841,
+            "scoreConfidence" : [
+                5291756.495504914,
+                5908352.724582482
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5524860.262143714,
+                "50.0" : 5582140.818846069,
+                "90.0" : 5730579.576567217,
+                "95.0" : 5730579.576567217,
+                "99.0" : 5730579.576567217,
+                "99.9" : 5730579.576567217,
+                "99.99" : 5730579.576567217,
+                "99.999" : 5730579.576567217,
+                "99.9999" : 5730579.576567217,
+                "100.0" : 5730579.576567217
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5550288.7286724765,
+                    5730579.576567217,
+                    5582140.818846069,
+                    5524860.262143714,
+                    5612403.663989011
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_22",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5579303.910715351,
+            "scoreError" : 272839.8639621198,
+            "scoreConfidence" : [
+                5306464.046753231,
+                5852143.77467747
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5479818.0754579995,
+                "50.0" : 5600472.634190837,
+                "90.0" : 5645009.993778198,
+                "95.0" : 5645009.993778198,
+                "99.0" : 5645009.993778198,
+                "99.9" : 5645009.993778198,
+                "99.99" : 5645009.993778198,
+                "99.999" : 5645009.993778198,
+                "99.9999" : 5645009.993778198,
+                "100.0" : 5645009.993778198
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5479818.0754579995,
+                    5637280.189374364,
+                    5533938.660775353,
+                    5600472.634190837,
+                    5645009.993778198
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_23",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5567719.470428788,
+            "scoreError" : 277213.8669843262,
+            "scoreConfidence" : [
+                5290505.603444462,
+                5844933.3374131145
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5494270.783338266,
+                "50.0" : 5552342.458319998,
+                "90.0" : 5680622.237530486,
+                "95.0" : 5680622.237530486,
+                "99.0" : 5680622.237530486,
+                "99.9" : 5680622.237530486,
+                "99.99" : 5680622.237530486,
+                "99.999" : 5680622.237530486,
+                "99.9999" : 5680622.237530486,
+                "100.0" : 5680622.237530486
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5523563.263596306,
+                    5680622.237530486,
+                    5552342.458319998,
+                    5587798.60935888,
+                    5494270.783338266
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_24",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5541765.441220635,
+            "scoreError" : 64148.03077142287,
+            "scoreConfidence" : [
+                5477617.4104492115,
+                5605913.471992058
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5523246.169224954,
+                "50.0" : 5545558.890163458,
+                "90.0" : 5559068.820470355,
+                "95.0" : 5559068.820470355,
+                "99.0" : 5559068.820470355,
+                "99.9" : 5559068.820470355,
+                "99.99" : 5559068.820470355,
+                "99.999" : 5559068.820470355,
+                "99.9999" : 5559068.820470355,
+                "100.0" : 5559068.820470355
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5555476.861744217,
+                    5545558.890163458,
+                    5525476.464500186,
+                    5523246.169224954,
+                    5559068.820470355
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_25",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5474892.604360642,
+            "scoreError" : 273706.9470716071,
+            "scoreConfidence" : [
+                5201185.657289035,
+                5748599.551432249
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5391000.237103528,
+                "50.0" : 5473269.876273303,
+                "90.0" : 5581638.747445215,
+                "95.0" : 5581638.747445215,
+                "99.0" : 5581638.747445215,
+                "99.9" : 5581638.747445215,
+                "99.99" : 5581638.747445215,
+                "99.999" : 5581638.747445215,
+                "99.9999" : 5581638.747445215,
+                "100.0" : 5581638.747445215
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5473269.876273303,
+                    5581638.747445215,
+                    5492109.205997817,
+                    5391000.237103528,
+                    5436444.954983341
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_3",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5597328.411177421,
+            "scoreError" : 387150.0854227256,
+            "scoreConfidence" : [
+                5210178.325754696,
+                5984478.496600146
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5432523.152500157,
+                "50.0" : 5604803.209129663,
+                "90.0" : 5695490.608835982,
+                "95.0" : 5695490.608835982,
+                "99.0" : 5695490.608835982,
+                "99.9" : 5695490.608835982,
+                "99.99" : 5695490.608835982,
+                "99.999" : 5695490.608835982,
+                "99.9999" : 5695490.608835982,
+                "100.0" : 5695490.608835982
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5432523.152500157,
+                    5695490.608835982,
+                    5657174.623768182,
+                    5596650.461653123,
+                    5604803.209129663
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_4",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5618996.564777544,
+            "scoreError" : 518625.0744747826,
+            "scoreConfidence" : [
+                5100371.490302761,
+                6137621.639252326
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5455182.093344641,
+                "50.0" : 5662537.42276598,
+                "90.0" : 5743165.9432756575,
+                "95.0" : 5743165.9432756575,
+                "99.0" : 5743165.9432756575,
+                "99.9" : 5743165.9432756575,
+                "99.99" : 5743165.9432756575,
+                "99.999" : 5743165.9432756575,
+                "99.9999" : 5743165.9432756575,
+                "100.0" : 5743165.9432756575
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5455182.093344641,
+                    5662537.42276598,
+                    5497876.761408041,
+                    5736220.603093397,
+                    5743165.9432756575
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_5",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5736184.349505881,
+            "scoreError" : 437350.05725087906,
+            "scoreConfidence" : [
+                5298834.292255002,
+                6173534.40675676
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5570184.387387357,
+                "50.0" : 5730931.860707258,
+                "90.0" : 5884092.216752277,
+                "95.0" : 5884092.216752277,
+                "99.0" : 5884092.216752277,
+                "99.9" : 5884092.216752277,
+                "99.99" : 5884092.216752277,
+                "99.999" : 5884092.216752277,
+                "99.9999" : 5884092.216752277,
+                "100.0" : 5884092.216752277
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5730931.860707258,
+                    5884092.216752277,
+                    5570184.387387357,
+                    5717299.8677727105,
+                    5778413.414909807
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_6",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5799709.891212305,
+            "scoreError" : 188086.45813291828,
+            "scoreConfidence" : [
+                5611623.433079387,
+                5987796.349345223
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5756751.700975527,
+                "50.0" : 5784160.649640351,
+                "90.0" : 5881724.552213899,
+                "95.0" : 5881724.552213899,
+                "99.0" : 5881724.552213899,
+                "99.9" : 5881724.552213899,
+                "99.99" : 5881724.552213899,
+                "99.999" : 5881724.552213899,
+                "99.9999" : 5881724.552213899,
+                "100.0" : 5881724.552213899
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5803016.649924844,
+                    5881724.552213899,
+                    5784160.649640351,
+                    5772895.903306903,
+                    5756751.700975527
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_7",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5833040.58143442,
+            "scoreError" : 220395.44897513624,
+            "scoreConfidence" : [
+                5612645.132459284,
+                6053436.030409557
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5750642.360943384,
+                "50.0" : 5830392.3307623165,
+                "90.0" : 5907731.8817315865,
+                "95.0" : 5907731.8817315865,
+                "99.0" : 5907731.8817315865,
+                "99.9" : 5907731.8817315865,
+                "99.99" : 5907731.8817315865,
+                "99.999" : 5907731.8817315865,
+                "99.9999" : 5907731.8817315865,
+                "100.0" : 5907731.8817315865
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5830392.3307623165,
+                    5907731.8817315865,
+                    5750642.360943384,
+                    5856588.698536316,
+                    5819847.6351985
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_8",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5757986.950508917,
+            "scoreError" : 491825.8636710943,
+            "scoreConfidence" : [
+                5266161.086837823,
+                6249812.814180011
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5654721.7778799385,
+                "50.0" : 5719837.789344116,
+                "90.0" : 5977539.280209836,
+                "95.0" : 5977539.280209836,
+                "99.0" : 5977539.280209836,
+                "99.9" : 5977539.280209836,
+                "99.99" : 5977539.280209836,
+                "99.999" : 5977539.280209836,
+                "99.9999" : 5977539.280209836,
+                "100.0" : 5977539.280209836
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5654721.7778799385,
+                    5977539.280209836,
+                    5749579.637013011,
+                    5719837.789344116,
+                    5688256.268097684
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "benchmark" : "iota_bench.IotaBench.iota_9",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 5754020.589174378,
+            "scoreError" : 313521.8019180677,
+            "scoreConfidence" : [
+                5440498.78725631,
+                6067542.391092446
+            ],
+            "scorePercentiles" : {
+                "0.0" : 5664595.760597741,
+                "50.0" : 5732221.220757265,
+                "90.0" : 5844427.316367672,
+                "95.0" : 5844427.316367672,
+                "99.0" : 5844427.316367672,
+                "99.9" : 5844427.316367672,
+                "99.99" : 5844427.316367672,
+                "99.999" : 5844427.316367672,
+                "99.9999" : 5844427.316367672,
+                "100.0" : 5844427.316367672
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    5732221.220757265,
+                    5833910.23791669,
+                    5694948.410232524,
+                    5664595.760597741,
+                    5844427.316367672
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+
