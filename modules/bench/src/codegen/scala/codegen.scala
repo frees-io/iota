@@ -181,7 +181,7 @@ object BenchBoiler {
     name: String,
     opNames: List[String]
   ): String =
-    s"""|  val eval$name: Algebra$name ~> Id = CopK.FunctionK.of(${opNames.map(n => n + "Op.eval").mkString(", ")})"""
+    s"""|  val eval$name: Algebra$name ~> Id = CopK.FunctionK.summon"""
 
 
   def opsTemplate(
@@ -190,7 +190,7 @@ object BenchBoiler {
 s"""|  sealed trait ${name}Op[A]
     |  object ${name}Op {
     |    case class Op1(v: Int) extends ${name}Op[Int]
-    |    val eval = λ[${name}Op ~> Id] { case ${name}Op.Op1(v) => v + 1 }
+    |    implicit val eval: ${name}Op ~> Id = λ[${name}Op ~> Id] { case ${name}Op.Op1(v) => v + 1 }
     |    val gen: Gen[${name}Op[_]] = Gen.const(Op1(9000))
     |  }"""
 }
