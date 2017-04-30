@@ -1,7 +1,7 @@
 
 [comment]: # (Start Badges)
 
-[![Build Status](https://travis-ci.org/47deg/iota.svg?branch=master)](https://travis-ci.org/47deg/iota) [![Maven Central](https://img.shields.io/badge/maven%20central-0.0.1-green.svg)](https://oss.sonatype.org/#nexus-search;gav~com.47deg~iota*) [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/47deg/iota/master/LICENSE) [![Latest version](https://img.shields.io/badge/iota-0.0.1-green.svg)](https://index.scala-lang.org/47deg/iota) [![Scala.js](http://scala-js.org/assets/badges/scalajs-0.6.15.svg)](http://scala-js.org) [![GitHub Issues](https://img.shields.io/github/issues/47deg/iota.svg)](https://github.com/47deg/iota/issues)
+[![Build Status](https://travis-ci.org/47deg/iota.svg?branch=master)](https://travis-ci.org/47deg/iota) [![Maven Central](https://img.shields.io/badge/maven%20central-0.0.2-green.svg)](https://oss.sonatype.org/#nexus-search;gav~com.47deg~iota*) [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/47deg/iota/master/LICENSE) [![Latest version](https://img.shields.io/badge/iota-0.0.2-green.svg)](https://index.scala-lang.org/47deg/iota) [![Scala.js](http://scala-js.org/assets/badges/scalajs-0.6.15.svg)](http://scala-js.org) [![GitHub Issues](https://img.shields.io/github/issues/47deg/iota.svg)](https://github.com/47deg/iota/issues)
 
 [comment]: # (End Badges)
 
@@ -32,20 +32,20 @@ type Bar[A] = CopK[Option ::: List ::: Seq ::: KNil, A]
 
 ## Installation
 
-To get started with SBT, simply add the following to your build.sbt file:
+To get started with SBT, simply add the following to your build.sbt file.
 
 For Scala 2.11.x and 2.12.x:
 
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "com.47deg" %% "iota-core" % "0.0.1"
+libraryDependencies += "com.47deg" %% "iota-core" % "0.0.2"
 ```
 
 Or, if using Scala.js (0.6.x):
 
 ```scala
-libraryDependencies += "com.47deg" %%% "iota-core" % "0.0.1"
+libraryDependencies += "com.47deg" %%% "iota-core" % "0.0.2"
 ```
 
 [comment]: # (End Replace)
