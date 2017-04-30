@@ -1,5 +1,14 @@
 # Changelog
 
+## 04/30/2017 - Version 0.0.2
+
+Release changes:
+
+* Upgrades sbt-org-policies version to fix the badges ([#15](https://github.com/47deg/iota/pull/15))
+* Search KList/TList by type eqv instead eq ([#17](https://github.com/47deg/iota/pull/17))
+* Bump to 0.0.2 ([#18](https://github.com/47deg/iota/pull/18))
+
+
 ## 04/27/2017 - Version 0.0.1
 
 Release changes:
