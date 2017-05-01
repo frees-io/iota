@@ -6,7 +6,11 @@ lazy val root = (project in file("."))
 lazy val core = module("core")
   .settings(scalaMacroDependencies)
   .settings(crossVersionSharedSources)
-  .crossDepSettings(commonCrossDeps: _*)
+  .crossDepSettings(
+    %%("cats-core"),
+    %%("cats-free")       % "test",
+    %%("scalacheck")      % "test",
+    %%("scheckShapeless") % "test")
 
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
@@ -23,7 +27,9 @@ lazy val bench = jvmModule("bench")
   .settings(inConfig(Codegen)(Defaults.configSettings))
   .settings(classpathConfiguration in Codegen := Compile)
   .settings(noPublishSettings)
-  .settings(libraryDependencies ++= Seq(%%("scheckShapeless")))
+  .settings(libraryDependencies ++= Seq(
+    %%("cats-free"),
+    %%("scalacheck")))
   .settings(inConfig(Compile)(
     sourceGenerators += Def.task {
       val path = ((sourceManaged in (Compile, compile)).value / "bench.scala")

@@ -28,13 +28,6 @@ object ProjectPlugin extends AutoPlugin {
       Project(modName, file(s"""modules/$modName"""))
         .settings(moduleName := s"iota-$modName")
 
-    lazy val commonCrossDeps = Seq(
-      %%("cats-core"),
-      %%("cats-free"),
-      %%("scalacheck") % "test",
-      %%("scheckShapeless") % "test"
-    )
-
     lazy val crossVersionSharedSources: Seq[Setting[_]] =
       Seq(Compile, Test).map { sc =>
         (unmanagedSourceDirectories in sc) ++= {

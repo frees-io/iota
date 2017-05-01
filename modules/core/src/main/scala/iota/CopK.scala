@@ -16,10 +16,6 @@
 
 package iota
 
-import scala.Predef.=:=
-
-import cats.free._
-
 /** A coproduct of type constructors captured by type constructor list `L` */
 final class CopK[L <: KList, A] private[iota](
   val index: Int,
@@ -78,14 +74,6 @@ object CopK {
     def apply[F[_], L <: KList](implicit ev: InjectL[F, L]): InjectL[F, L] = ev
     implicit def makeInjectL[F[_], L <: KList](implicit ev: KList.Pos[L, F]): InjectL[F, L] =
       new InjectL[F, L](ev.index)
-  }
-
-  def liftFree[G[_]]: LiftFreePartial[G] = new LiftFreePartial[G]
-
-  final class LiftFreePartial[G[_]] private[CopK] {
-    def apply[F[_], A, L <: KList](fa: F[A])(
-      implicit ev: CopK[L, A] =:= G[A], I: CopK.InjectL[F, L]
-    ): Free[G, A] = Free.liftF(ev(I.inj(fa)))
   }
 
   val FunctionK: CopKFunctionK.type = CopKFunctionK
