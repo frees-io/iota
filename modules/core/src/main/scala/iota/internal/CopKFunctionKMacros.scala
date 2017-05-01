@@ -20,6 +20,7 @@ package internal
 import cats._
 import cats.data._
 import cats.instances.all._
+import cats.syntax.either._ //#=2.12
 
 import scala.reflect.macros.whitebox.Context
 import scala.reflect.macros.TypecheckException

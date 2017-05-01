@@ -3,9 +3,10 @@ lazy val root = (project in file("."))
   .aggregate(coreJVM, coreJS)
   .aggregate(bench)
 
-lazy val core = module("core")
+lazy val core = module("core", true)
   .settings(scalaMacroDependencies)
-  .settings(crossVersionSharedSources)
+  .settings(yax(file("modules/core/src/main/scala"), Compile,
+    yaxScala = true))
   .crossDepSettings(
     %%("cats-core"),
     %%("cats-free")       % "test",

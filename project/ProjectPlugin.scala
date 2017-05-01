@@ -20,25 +20,13 @@ object ProjectPlugin extends AutoPlugin {
 
   object autoImport {
 
-    def module(modName: String): CrossProject =
-      CrossProject(modName, file(s"""modules/$modName"""), CrossType.Pure)
+    def module(modName: String, hideFolder: Boolean = false): CrossProject =
+      CrossProject(modName, file(s"""modules/${if (hideFolder) "." else ""}$modName"""), CrossType.Pure)
         .settings(moduleName := s"iota-$modName")
 
     def jvmModule(modName: String): Project =
       Project(modName, file(s"""modules/$modName"""))
         .settings(moduleName := s"iota-$modName")
-
-    lazy val crossVersionSharedSources: Seq[Setting[_]] =
-      Seq(Compile, Test).map { sc =>
-        (unmanagedSourceDirectories in sc) ++= {
-          (unmanagedSourceDirectories in sc ).value.flatMap { dir: File =>
-            CrossVersion.partialVersion(scalaVersion.value) match {
-              case Some((2, _)) => Some(new File(dir.getPath + "_2.11"))
-              case _            => None
-            }
-          }
-        }
-      }
 
     lazy val readmeSettings: Seq[Def.Setting[_]] = tutSettings ++ Seq(
       tutScalacOptions := Nil,
