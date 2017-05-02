@@ -3,10 +3,15 @@ lazy val root = (project in file("."))
   .aggregate(coreJVM, coreJS)
   .aggregate(bench)
 
-lazy val core = module("core")
+lazy val core = module("core", true)
   .settings(scalaMacroDependencies)
-  .settings(crossVersionSharedSources)
-  .crossDepSettings(commonCrossDeps: _*)
+  .settings(yax(file("modules/core/src/main/scala"), Compile,
+    yaxScala = true))
+  .crossDepSettings(
+    %%("cats-core"),
+    %%("cats-free")       % "test",
+    %%("scalacheck")      % "test",
+    %%("scheckShapeless") % "test")
 
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
@@ -23,7 +28,9 @@ lazy val bench = jvmModule("bench")
   .settings(inConfig(Codegen)(Defaults.configSettings))
   .settings(classpathConfiguration in Codegen := Compile)
   .settings(noPublishSettings)
-  .settings(libraryDependencies ++= Seq(%%("scheckShapeless")))
+  .settings(libraryDependencies ++= Seq(
+    %%("cats-free"),
+    %%("scalacheck")))
   .settings(inConfig(Compile)(
     sourceGenerators += Def.task {
       val path = ((sourceManaged in (Compile, compile)).value / "bench.scala")
