@@ -39,4 +39,5 @@ object TList {
     implicit def materializePos[L <: TList, A]: Pos[L, A] =
       macro internal.TListMacros.materializePos[L, A]
   }
+
 }

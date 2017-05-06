@@ -7,10 +7,13 @@ lazy val core = module("core", true)
   .settings(scalaMacroDependencies)
   .settings(yax(file("modules/core/src/main/scala"), Compile,
     yaxScala = true))
+  .settings(yax(file("modules/core/src/test/scala"), Test,
+    yaxPlatform = true))
   .crossDepSettings(
     %%("cats-core"),
     %%("cats-free")       % "test",
     %%("scalacheck")      % "test",
+    %%("shapeless")       % "test",
     %%("scheckShapeless") % "test")
 
 lazy val coreJVM = core.jvm

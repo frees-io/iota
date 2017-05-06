@@ -28,9 +28,7 @@ import scala.reflect.macros.TypecheckException
 final class CopKFunctionKMacros(val c: Context) {
   import c.universe._
 
-  private[this] lazy val klists = new SharedKListMacros[c.type](c)
-  private[this] lazy val showTrees =
-    !c.inferImplicitValue(typeOf[debug.optionTypes.ShowTrees], true).isEmpty
+  private[this] val tb = IotaMacroToolbelt(c)
 
   def of[F[a] <: CopK[_, a], G[_]](args: c.Expr[Any]*)(
     implicit
@@ -43,7 +41,7 @@ final class CopKFunctionKMacros(val c: Context) {
 
     result(for {
       L    <- destructCopK(F).leftMap(NonEmptyList.of(_))
-      tpes <- klists.klistTypesCached(L).leftMap(NonEmptyList.of(_))
+      tpes <- tb.memoizedKListTypes(L).leftMap(NonEmptyList.of(_))
 
       unorderedPairs <- Traverse[List].traverse(args.toList)(arg =>
         destructFunctionKInput(arg.tree.tpe, evG.tpe.dealias).map((_, arg.tree))).toEither
@@ -65,7 +63,7 @@ final class CopKFunctionKMacros(val c: Context) {
 
     result(for {
       L    <- destructCopK(F).leftMap(NonEmptyList.of(_))
-      tpes <- klists.klistTypesCached(L).leftMap(NonEmptyList.of(_))
+      tpes <- tb.memoizedKListTypes(L).leftMap(NonEmptyList.of(_))
 
       arrs <- Traverse[List].traverse(tpes)(tpe =>
                 summonFunctionK(tpe, G)).toEither
@@ -122,7 +120,6 @@ final class CopKFunctionKMacros(val c: Context) {
       case t => Left(s"unespected type $t in destructured $F")
     }
 
-
   private[this] def destructFunctionKInput(tpe: Type, G: Type): ValidatedNel[String, Type] =
     tpe match {
       case TypeRef(_, sym, f :: g :: Nil) if g =:= G => Validated.valid(f)
@@ -137,7 +134,7 @@ final class CopKFunctionKMacros(val c: Context) {
     either fold (
       errors => c.abort(c.enclosingPosition, errors.toList.mkString(", and\n")),
       tree   => {
-        if (showTrees) c.echo(c.enclosingPosition, s"generated tree:\n${showCode(tree)}")
+        if (tb.showTrees) c.echo(c.enclosingPosition, s"generated tree:\n${showCode(tree)}")
         c.Expr[T](tree)
       })
 }
