@@ -19,12 +19,12 @@ package internal
 
 import scala.reflect.macros.blackbox.Context
 
-private[iota] final class TListMacros(val c: Context) {
+private[iota] final class TypeListMacros(
+  cc: Context
+) extends IotaMacroToolbelt(cc) {
   import c.universe._
 
-  private[this] val tb = IotaMacroToolbelt(c)
-
-  def materializePos[L <: TList, A](
+  def materializeTListPos[L <: TList, A](
     implicit
       evL: c.WeakTypeTag[L],
       evA: c.WeakTypeTag[A]
@@ -33,11 +33,29 @@ private[iota] final class TListMacros(val c: Context) {
     val L = evL.tpe.dealias
     val A = evA.tpe.dealias
 
-    tb.foldAbort(for {
-      algebras <- tb.memoizedTListTypes(L)
+    foldAbort(for {
+      algebras <- memoizedTListTypes(L)
       index    <- Right(algebras.indexWhere(_ =:= A))
                     .filterOrElse(_ >= 0, s"$A is not a member of $L")
     } yield
       q"new _root_.iota.TList.Pos[$L, $A]{ override val index: Int = $index }", true)
   }
+
+  def materializeKListPos[L <: KList, F[_]](
+    implicit
+      evL: c.WeakTypeTag[L],
+      evF: c.WeakTypeTag[F[_]]
+  ): c.Expr[KList.Pos[L, F]] = {
+
+    val L = evL.tpe.dealias
+    val F = evF.tpe.dealias
+
+    foldAbort(for {
+      algebras <- memoizedKListTypes(L)
+      index    <- Right(algebras.indexWhere(_ =:= F))
+                    .filterOrElse(_ >= 0, s"$F is not a member of $L")
+    } yield
+      q"new _root_.iota.KList.Pos[$L, $F]{ override val index: Int = $index }", true)
+  }
+
 }

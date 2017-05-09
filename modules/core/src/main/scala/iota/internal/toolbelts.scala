@@ -17,6 +17,10 @@
 package iota
 package internal
 
+import cats.Id
+import cats.Foldable
+import cats.syntax.foldable._
+
 import scala.annotation.tailrec
 import scala.collection.immutable.Map
 import scala.reflect.api.Universe
@@ -34,7 +38,7 @@ private[internal] object IotaMacroToolbelt {
   final val typeListCache: Cache = new Cache()
 }
 
-private[internal] final class IotaMacroToolbelt[C <: Context](val c: C)
+private[internal] class IotaMacroToolbelt[C <: Context](val c: C)
     extends IotaCommonToolbelt
 {
   override type Uu = c.universe.type
@@ -51,12 +55,13 @@ private[internal] final class IotaMacroToolbelt[C <: Context](val c: C)
   lazy val showTrees =
     !c.inferImplicitValue(typeOf[debug.optionTypes.ShowTrees], true).isEmpty
 
-  def foldAbort[T](
-    either: Either[String, Tree],
+  def foldAbort[F[_]: Foldable, T](
+    either: Either[F[String], Tree],
     isImplicit: Boolean = false
   ): c.Expr[T] =
     either fold (
-      error => {
+      errors => {
+        val error = errors.toList.mkString(", and\n")
         if (isImplicit && showAborts) c.echo(c.enclosingPosition, error)
         c.abort(c.enclosingPosition, error)
       },
@@ -79,10 +84,10 @@ private[internal] final class IotaMacroToolbelt[C <: Context](val c: C)
     }
   }
 
-  def memoizedTListTypes(tpe: Type): Either[String, List[Type]] =
+  def memoizedTListTypes(tpe: Type): Either[Id[String], List[Type]] =
     memoize(IotaMacroToolbelt.typeListCache)(tpe, tlistTypes)
 
-  def memoizedKListTypes(tpe: Type): Either[String, List[Type]] =
+  def memoizedKListTypes(tpe: Type): Either[Id[String], List[Type]] =
     memoize(IotaMacroToolbelt.typeListCache)(tpe, klistTypes)
 
 }
@@ -126,34 +131,36 @@ private[internal] sealed abstract class IotaCommonToolbelt {
 
   final def typeListTypes(
     nilTpe: Type, consTpe: Type
-  )(tpe: Type): Either[String, List[Type]] =
+  )(tpe: Type): Either[Id[String], List[Type]] =
     typeListFoldLeft(nilTpe, consTpe)(tpe)(List.empty[Type])((acc, t) => t :: acc).map(_.reverse)
 
-  final def tlistTypes(tpe: Type): Either[String, List[Type]] =
+  final def tlistTypes(tpe: Type): Either[Id[String], List[Type]] =
     typeListTypes(TNilTpe, TConsTpe)(tpe)
 
-  final def klistTypes(tpe: Type): Either[String, List[Type]] =
+  final def klistTypes(tpe: Type): Either[Id[String], List[Type]] =
     typeListTypes(KNilTpe, KConsTpe)(tpe)
 
-  final def klistTypeConstructors(tpe: Type): Either[String, List[Type]] =
+  final def klistTypeConstructors(tpe: Type): Either[Id[String], List[Type]] =
     klistTypes(tpe).map(_.map(_.etaExpand.resultType))
 
-  case class CopTypes(lType: Type)
-  case class CopKTypes(lType: Type, aType: Type)
+  case class CopTypes(L: Type)
+  case class CopKTypes(L: Type, A: Type)
 
   private[this] def resultType(sym: Symbol): Type =
     sym.asType.toType.etaExpand.resultType
 
-  final def destructCop(tpe: Type): Either[String, CopTypes] =
+  final def destructCop(tpe: Type): Either[Id[String], CopTypes] =
     tpe.dealias match {
       case TypeRef(_, sym, l :: Nil) if resultType(sym) <:< CopTpe => Right(CopTypes(l))
+      case TypeRef(_, sym, Nil) => destructCop(sym.asType.toType)
       case t => Left(s"unexpected type $t ${showRaw(t)} when destructuring Cop $tpe")
     }
 
-  final def destructCopK(tpe: Type): Either[String, CopKTypes] =
+  final def destructCopK(tpe: Type): Either[Id[String], CopKTypes] =
     tpe.dealias match {
       case TypeRef(_, sym, l :: a :: Nil) if resultType(sym) <:< CopKTpe => Right(CopKTypes(l, a))
-      case t => Left(s"unexpected type $t when destructuring CopK $tpe")
+      case TypeRef(_, sym, Nil) => destructCopK(sym.asType.toType)
+      case t => Left(s"unexpected type $t ${showRaw(t)} when destructuring CopK $tpe")
     }
 
 }
