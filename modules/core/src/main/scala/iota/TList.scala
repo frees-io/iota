@@ -37,6 +37,7 @@ object TList {
   object Pos {
     def apply[L <: TList, A](implicit ev: Pos[L, A]): Pos[L, A] = ev
     implicit def materializePos[L <: TList, A]: Pos[L, A] =
-      macro internal.TListMacros.materializePos[L, A]
+      macro internal.TypeListMacros.materializeTListPos[L, A]
   }
+
 }

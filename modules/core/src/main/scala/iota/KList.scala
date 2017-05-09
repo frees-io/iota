@@ -37,6 +37,6 @@ object KList {
   object Pos {
     def apply[L <: KList, F[_]](implicit ev: Pos[L, F]): Pos[L, F] = ev
     implicit def materializePos[L <: KList, F[_]]: Pos[L, F] =
-      macro internal.KListMacros.materializePos[L, F]
+      macro internal.TypeListMacros.materializeKListPos[L, F]
   }
 }
