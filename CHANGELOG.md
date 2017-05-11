@@ -1,5 +1,17 @@
 # Changelog
 
+## 05/11/2017 - Version 0.1.0
+
+Release changes:
+
+* Adds Freestyle to the Iota's in the wild section ([#22](https://github.com/47deg/iota/pull/22))
+* Misc cleanup ([#20](https://github.com/47deg/iota/pull/20))
+* Fixes typo in README ([#25](https://github.com/47deg/iota/pull/25))
+* Clean up macros; Support reflection ([#24](https://github.com/47deg/iota/pull/24))
+* Add syntax comparison to README ([#27](https://github.com/47deg/iota/pull/27))
+* Bump to & release v0.1.0 ([#28](https://github.com/47deg/iota/pull/28))
+
+
 ## 04/30/2017 - Version 0.0.2
 
 Release changes:
