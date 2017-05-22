@@ -40,7 +40,9 @@ package object iota {
   type TCons[H, T <: TList] <: TList
 
   //#+2.11
-  private[iota] implicit final class EitherCompatOps[A, B](eab: Either[A, B]) {
+  private[iota] implicit final class EitherCompatOps[A, B](
+    val eab: Either[A, B]
+  ) extends AnyVal {
     def flatMap[AA >: A, C](f: B => Either[AA, C]): Either[AA, C] =
       eab.right.flatMap(f)
     def map[AA >: A, C](f: B => C): Either[AA, C] =
@@ -58,5 +60,14 @@ package object iota {
       case Left(a)  => eab
     }
   }
+
+  private[iota] implicit final class ToEitherCompatOps[A](
+    val obj: A
+  ) extends AnyVal {
+    def asLeft[B]: Either[A, B]  = Left(obj)
+    def asRight[B]: Either[B, A] = Right(obj)
+  }
   //#-2.11
+
+  private[iota] type SingletonInt = Int with Singleton
 }

@@ -40,4 +40,23 @@ object TList {
       macro internal.TypeListMacros.materializeTListPos[L, A]
   }
 
+  object Op {
+    type Concat [L <: TList, R <: TList]        <: TList
+    type Reverse[L <: TList]                    <: TList
+    type Take   [N <: SingletonInt, L <: TList] <: TList
+    type Drop   [N <: SingletonInt, L <: TList] <: TList
+  }
+
+  trait Compute[L <: TList] {
+    type Out <: TList
+  }
+
+  object Compute {
+    type Aux[L <: TList, O <: TList] = Compute[L] { type Out = O }
+
+    def apply[L <: TList](implicit ev: Compute[L]): Compute.Aux[L, ev.Out] = ev
+    implicit def materializeCompute[L <: TList, O <: TList]: Aux[L, O] =
+      macro internal.TypeListMacros.materializeTListCompute[L, O]
+  }
+
 }

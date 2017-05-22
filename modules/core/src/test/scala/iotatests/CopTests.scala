@@ -26,6 +26,7 @@ import org.scalacheck.Shapeless._
 object CopTests extends Properties("CopTests") {
 
   import TList.::
+  import TList.Op._
 
   case class One(a: String)
   case class Two(a: Int)
@@ -82,6 +83,12 @@ object CopTests extends Properties("CopTests") {
       arbitrary[Three],
       Cop.InjectL[Three, ThreeTwoOneL],
       0)
+
+  property("inject Three into Reverse[ThreeTwoOneL]") =
+    checkInjectL(
+      arbitrary[Three],
+      Cop.InjectL[Three, Reverse[ThreeTwoOneL]],
+      2)
 
   type First = Int
   type Last  = String

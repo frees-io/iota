@@ -17,14 +17,14 @@
 package iota
 
 /** A coproduct of types captured by type list `L` */
-final class Cop[L <: TList] private[iota](
+final class Cop[LL <: TList] private[iota](
   val index: Int,
   val value: Any
 ) {
-  type Algebras = L
+  type L = LL
 
   override def equals(anyOther: Any): Boolean = anyOther match {
-    case other: Cop[L] => (index == other.index) && (value == other.value)
+    case other: Cop[LL] => (index == other.index) && (value == other.value)
     case _             => false
   }
 
