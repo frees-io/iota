@@ -17,14 +17,14 @@
 package iota
 
 /** A coproduct of type constructors captured by type constructor list `L` */
-final class CopK[L <: KList, A] private[iota](
+final class CopK[LL <: KList, A] private[iota](
   val index: Int,
   val value: Any
 ) {
-  type Algebras = L
+  type L = LL
 
   override def equals(anyOther: Any): Boolean = anyOther match {
-    case other: CopK[L, A] => (index == other.index) && (value == other.value)
+    case other: CopK[LL, A] => (index == other.index) && (value == other.value)
     case _                 => false
   }
 

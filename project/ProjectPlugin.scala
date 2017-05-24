@@ -75,11 +75,15 @@ object ProjectPlugin extends AutoPlugin {
     connectInput in run := true,
     cancelable in Global := true,
 
+    scalaOrganization := "org.typelevel",
+    scalaVersion      := "2.12.1",
+
     scalacOptions ++= Seq(
       "-Xfatal-warnings",
       "-Ywarn-unused-import",
       "-Yno-predef",
-      "-Ypartial-unification"),
+      "-Ypartial-unification",
+      "-Yliteral-types"),
 
     scalacOptions in (Compile, doc) :=
       (scalacOptions in (Compile, doc)).value.filter(_ != "-Xfatal-warnings")

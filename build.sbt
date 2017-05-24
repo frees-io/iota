@@ -1,6 +1,7 @@
 lazy val root = (project in file("."))
   .settings(noPublishSettings)
   .aggregate(coreJVM, coreJS)
+  .aggregate(examplesJVM, examplesJS)
   .aggregate(bench)
 
 lazy val core = module("core", true)
@@ -18,6 +19,13 @@ lazy val core = module("core", true)
 
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
+
+lazy val examples = module("examples")
+  .dependsOn(core)
+  .settings(noPublishSettings)
+
+lazy val examplesJVM = examples.jvm
+lazy val examplesJS  = examples.js
 
 lazy val readme = jvmModule("readme")
   .dependsOn(coreJVM)

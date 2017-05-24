@@ -26,6 +26,7 @@ import org.scalacheck.Shapeless._
 object CopKTests extends Properties("CopKTests") {
 
   import KList.::
+  import KList.Op._
 
   sealed abstract class One[A]
   object One {
@@ -93,6 +94,12 @@ object CopKTests extends Properties("CopKTests") {
       arbitrary[Three.Value],
       CopK.InjectL[Three, ThreeTwoOneL],
       0)
+
+  property("inject Three into Reverse[ThreeTwoOneL]") =
+    checkInjectL(
+      arbitrary[Three.Value],
+      CopK.InjectL[Three, Reverse[ThreeTwoOneL]],
+      2)
 
   type First[A] = String
   type Last[A] = A

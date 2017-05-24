@@ -19,9 +19,11 @@ package internal
 
 import cats.Id
 import cats.Foldable
+import cats.instances.either._
+import cats.syntax.apply._
+import cats.syntax.either._ //#=2.12
 import cats.syntax.foldable._
 
-import scala.annotation.tailrec
 import scala.collection.immutable.Map
 import scala.reflect.api.Universe
 import scala.reflect.runtime.{ universe => runtimeUniverse }
@@ -109,42 +111,100 @@ private[internal] sealed abstract class IotaCommonToolbelt {
 
   import u._
 
-  final lazy val TNilTpe  = typeOf[iota.TNil]
-  final lazy val TConsTpe = typeOf[iota.TCons[Nothing, Nothing]].etaExpand.resultType
+  object tree {
+    sealed trait Node
+    case class Cons(head: Type, tail: Node) extends Node
+    case class Concat(nodes: List[Node]) extends Node
+    case class Reverse(node: Node) extends Node
+    case class Take(n: Int, node: Node) extends Node
+    case class Drop(n: Int, node: Node) extends Node
+    case object NNil extends Node
 
-  final lazy val KNilTpe  = typeOf[iota.KNil]
-  final lazy val KConsTpe = typeOf[iota.KCons[Nothing, Nothing]].etaExpand.resultType
-
-  final lazy val CopTpe   = typeOf[iota.Cop[Nothing]].etaExpand.resultType
-  final lazy val CopKTpe  = typeOf[iota.CopK[Nothing, Nothing]].etaExpand.resultType
-
-  @tailrec
-  final def typeListFoldLeft[A](
-    nilTpe: Type, consTpe: Type
-  )(tpe: Type)(a0: A)(f: (A, Type) => A): Either[String, A] = tpe.dealias match {
-    case TypeRef(_, sym, Nil) if sym.asType.toType <:< nilTpe => Right(a0)
-    case TypeRef(_, sym, head :: tail :: Nil) if sym.asType.toType <:< consTpe =>
-      typeListFoldLeft(nilTpe, consTpe)(tail)(f(a0, head))(f)
-    case _ =>
-      Left(s"Unexpected type ${showRaw(tpe)} when inspecting type list")
+    object Concat { def apply(nodes: Node*): Concat = Concat(nodes.toList) }
+    object Cons {
+      def apply[T](tail: Node = NNil)(implicit evT: WeakTypeTag[T]): Cons = Cons(evT.tpe, tail)
+      def k[T[_]](tail: Node = NNil)(implicit evT: WeakTypeTag[T[_]]): Cons = Cons(evT.tpe.typeConstructor, tail)
+    }
   }
 
-  final def typeListTypes(
-    nilTpe: Type, consTpe: Type
-  )(tpe: Type): Either[Id[String], List[Type]] =
-    typeListFoldLeft(nilTpe, consTpe)(tpe)(List.empty[Type])((acc, t) => t :: acc).map(_.reverse)
+  import tree._
+
+  private[this] def literalInt(tpe: Type): Either[Id[String], Int] =
+    tpe match {
+      case ConstantType(Constant(value: Int)) => value.asRight
+      case _ => s"Expected $tpe to be a literal integer".asLeft
+    }
+
+  class TypeListParser private[IotaCommonToolbelt](
+    ConsSym   : Symbol,
+    NilSym    : Symbol,
+    ConcatSym : Symbol,
+    ReverseSym: Symbol,
+    TakeSym   : Symbol,
+    DropSym   : Symbol
+  ) {
+
+    final def apply(tpe: Type): Either[Id[String], Node] = tpe.dealias match {
+      case TypeRef(_, sym, args) =>
+        sym.asType.toType.dealias.typeSymbol match {
+          case ConsSym    => apply(args(1)).map(Cons(args(0), _))
+          case NilSym     => NNil.asRight
+          case ConcatSym  => apply(args(0)).map2(apply(args(1)))(Concat(_, _))
+          case ReverseSym => apply(args(0)).map(Reverse(_))
+          case TakeSym    => literalInt(args(0)).map2(apply(args(1)))(Take(_, _))
+          case DropSym    => literalInt(args(0)).map2(apply(args(1)))(Drop(_, _))
+          case sym        =>
+            s"Unexpected symbol $sym for type $tpe".asLeft
+        }
+      case ExistentialType(_, res) => apply(res)
+      case _ => s"Unable to parse type $tpe".asLeft
+    }
+
+  }
+
+  private[this] def symbolOf[T](implicit evT: WeakTypeTag[T]): Symbol = evT.tpe.typeSymbol
+
+  final lazy val parseTList: TypeListParser = new TypeListParser(
+    NilSym     = symbolOf[iota.TNil],
+    ConsSym    = symbolOf[iota.TCons[Nothing, Nothing]],
+    ConcatSym  = symbolOf[iota.TList.Op.Concat[Nothing, Nothing]],
+    ReverseSym = symbolOf[iota.TList.Op.Reverse[Nothing]],
+    TakeSym    = symbolOf[iota.TList.Op.Take[Nothing, Nothing]],
+    DropSym    = symbolOf[iota.TList.Op.Drop[Nothing, Nothing]])
+
+  final lazy val parseKList: TypeListParser = new TypeListParser(
+    NilSym     = symbolOf[iota.KNil],
+    ConsSym    = symbolOf[iota.KCons[Nothing, Nothing]],
+    ConcatSym  = symbolOf[iota.KList.Op.Concat[Nothing, Nothing]],
+    ReverseSym = symbolOf[iota.KList.Op.Reverse[Nothing]],
+    TakeSym    = symbolOf[iota.KList.Op.Take[Nothing, Nothing]],
+    DropSym    = symbolOf[iota.KList.Op.Drop[Nothing, Nothing]])
+
+  final def evalTree(tree: Node): List[Type] = tree match {
+    case Cons(head, tail) => head :: evalTree(tail)
+    case Concat(nodes)    => nodes.flatMap(evalTree)
+    case Reverse(node)    => evalTree(node).reverse
+    case Take(n, node)    => evalTree(node).take(n)
+    case Drop(n, node)    => evalTree(node).drop(n)
+    case NNil             => Nil
+  }
 
   final def tlistTypes(tpe: Type): Either[Id[String], List[Type]] =
-    typeListTypes(TNilTpe, TConsTpe)(tpe)
+    parseTList(tpe) map evalTree
 
   final def klistTypes(tpe: Type): Either[Id[String], List[Type]] =
-    typeListTypes(KNilTpe, KConsTpe)(tpe)
+    parseKList(tpe) map evalTree
 
   final def klistTypeConstructors(tpe: Type): Either[Id[String], List[Type]] =
     klistTypes(tpe).map(_.map(_.etaExpand.resultType))
 
   case class CopTypes(L: Type)
   case class CopKTypes(L: Type, A: Type)
+
+  private[this] final lazy val CopTpe =
+    typeOf[iota.Cop[Nothing]].etaExpand.resultType
+  private[this] final lazy val CopKTpe =
+    typeOf[iota.CopK[Nothing, Nothing]].etaExpand.resultType
 
   private[this] def resultType(sym: Symbol): Type =
     sym.asType.toType.etaExpand.resultType
@@ -162,5 +222,31 @@ private[internal] sealed abstract class IotaCommonToolbelt {
       case TypeRef(_, sym, Nil) => destructCopK(sym.asType.toType)
       case t => Left(s"unexpected type $t ${showRaw(t)} when destructuring CopK $tpe")
     }
+
+  class TypeListBuilder private[IotaCommonToolbelt](
+    consTpe: Type,
+    nilTpe: Type
+  ) {
+    final def apply(tpes: List[Type]): Type =
+      tpes.foldRight(nilTpe)((h, t) => makeCons(h, t))
+
+    private[this] lazy val (consPrefix, consSym) = consTpe match {
+      case TypeRef(prefix, sym, _) => (prefix, sym)
+      case _ => sys.error("internal iota initialization error")
+    }
+
+    private[this] def makeCons(head: Type, tail: Type): Type =
+      internal.typeRef(consPrefix, consSym, head :: tail :: Nil)
+  }
+
+  final lazy val buildTList: TypeListBuilder =
+    new TypeListBuilder(
+      weakTypeOf[TCons[_, _]].typeConstructor,
+      weakTypeOf[TNil])
+
+  final lazy val buildKList: TypeListBuilder =
+    new TypeListBuilder(
+      weakTypeOf[KCons[Nothing, _]].typeConstructor,
+      weakTypeOf[KNil])
 
 }

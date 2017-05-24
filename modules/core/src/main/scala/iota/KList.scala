@@ -39,4 +39,24 @@ object KList {
     implicit def materializePos[L <: KList, F[_]]: Pos[L, F] =
       macro internal.TypeListMacros.materializeKListPos[L, F]
   }
+
+  object Op {
+    type Concat [L <: KList, R <: KList]        <: KList
+    type Reverse[L <: KList]                    <: KList
+    type Take   [N <: SingletonInt, L <: KList] <: KList
+    type Drop   [N <: SingletonInt, L <: KList] <: KList
+  }
+
+  trait Compute[L <: KList] {
+    type Out <: KList
+  }
+
+  object Compute {
+    type Aux[L <: KList, O <: KList] = Compute[L] { type Out = O }
+
+    def apply[L <: KList](implicit ev: Compute[L]): Compute.Aux[L, ev.Out] = ev
+    implicit def materializeCompute[L <: KList, O <: KList]: Aux[L, O] =
+      macro internal.TypeListMacros.materializeKListCompute[L, O]
+  }
+
 }
