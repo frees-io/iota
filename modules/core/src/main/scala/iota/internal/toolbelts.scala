@@ -17,12 +17,16 @@
 package iota
 package internal
 
-import cats.Id
-import cats.Foldable
+import Recursion._
+
+import cats.{Id, Eval}
+import cats.{Applicative, FlatMap, Foldable, Traverse}
 import cats.instances.either._
-import cats.syntax.apply._
+import cats.instances.list._
+import cats.syntax.applicative._
 import cats.syntax.either._ //#=2.12
 import cats.syntax.foldable._
+import cats.syntax.functor._
 
 import scala.collection.immutable.Map
 import scala.reflect.api.Universe
@@ -109,24 +113,65 @@ class IotaReflectiveToolbelt[U <: Universe](override val u: U)
     extends IotaCommonToolbelt { override type Uu = U }
 
 private[internal] sealed abstract class IotaCommonToolbelt {
+
   type Uu <: Universe
   val u: Uu
 
   import u._
 
   object tree {
-    sealed trait Node
-    case class Cons(head: Type, tail: Node) extends Node
-    case class Concat(nodes: List[Node]) extends Node
-    case class Reverse(node: Node) extends Node
-    case class Take(n: Int, node: Node) extends Node
-    case class Drop(n: Int, node: Node) extends Node
-    case object NNil extends Node
+    sealed trait NodeF[A]
+    case class Cons[A](head: Type, tail: A) extends NodeF[A]
+    case class Concat[A](nodes: List[A]) extends NodeF[A]
+    case class Reverse[A](node: A) extends NodeF[A]
+    case class Take[A](n: Int, node: A) extends NodeF[A]
+    case class Drop[A](n: Int, node: A) extends NodeF[A]
+    case class NNil[A]() extends NodeF[A]
 
-    object Concat { def apply(nodes: Node*): Concat = Concat(nodes.toList) }
+    object Concat { def apply[A](nodes: A*): Concat[A] = Concat(nodes.toList) }
     object Cons {
-      def apply[T](tail: Node = NNil)(implicit evT: WeakTypeTag[T]): Cons = Cons(evT.tpe, tail)
-      def k[T[_]](tail: Node = NNil)(implicit evT: WeakTypeTag[T[_]]): Cons = Cons(evT.tpe.typeConstructor, tail)
+      def apply[T]: TPartiallyApplied[T] = new TPartiallyApplied[T]
+
+      class TPartiallyApplied[T] {
+        def apply[A](tail: A)(implicit evT: WeakTypeTag[T]): Cons[A] = Cons[A](evT.tpe, tail)
+      }
+
+      def k[T[_]]: KPartiallyApplied[T] = new KPartiallyApplied[T]()
+
+      class KPartiallyApplied[T[_]] {
+        def apply[A](tail: A)(implicit evT: WeakTypeTag[T[_]]): Cons[A] = Cons[A](evT.tpe.typeConstructor, tail)
+      }
+    }
+
+    object NodeF {
+      implicit val nodeTraverse: Traverse[NodeF] = new Traverse[NodeF] {
+        def traverse[G[_]: Applicative, A, B](fa: NodeF[A])(f: A => G[B]): G[NodeF[B]] = fa match {
+          case Cons(hd, a) => f(a).map(b => Cons(hd, b))
+          case Concat(as) => Traverse[List].traverse(as)(f).map(bs => Concat(bs))
+          case Reverse(a) => f(a).map(b => Reverse(b))
+          case Take(n, a) => f(a).map(b => Take(n, b))
+          case Drop(n, a) => f(a).map(b => Drop(n, b))
+          case NNil()     => (NNil(): NodeF[B]).pure[G]
+        }
+
+        def foldLeft[A, B](fa: NodeF[A], b: B)(f: (B, A) => B): B = fa match {
+          case Cons(_, a) => f(b, a)
+          case Concat(as) => Foldable[List].foldLeft(as, b)(f)
+          case Reverse(a) => f(b, a)
+          case Take(_, a) => f(b, a)
+          case Drop(_, a) => f(b, a)
+          case NNil()     => b
+        }
+
+        def foldRight[A, B](fa: NodeF[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B] = fa match {
+          case Cons(_, a) => f(a, lb)
+          case Concat(as) => Foldable[List].foldRight(as, lb)(f)
+          case Reverse(a) => f(a, lb)
+          case Take(_, a) => f(a, lb)
+          case Drop(_, a) => f(a, lb)
+          case NNil()     => lb
+        }
+      }
     }
   }
 
@@ -146,24 +191,28 @@ private[internal] sealed abstract class IotaCommonToolbelt {
     TakeSym   : Symbol,
     DropSym   : Symbol
   ) {
-
-    final def apply(tpe: Type): Either[Id[String], Node] = tpe.dealias match {
+    private final def coalgH: Type => Either[Id[String], NodeF[Type]] = tpe => tpe.dealias match {
       case TypeRef(_, sym, args) =>
         sym.asType.toType.dealias.typeSymbol match {
-          case ConsSym    => apply(args(1)).map(Cons(args(0), _))
-          case NilSym     => NNil.asRight
-          case ConcatSym  => apply(args(0)).map2(apply(args(1)))(Concat(_, _))
-          case ReverseSym => apply(args(0)).map(Reverse(_))
-          case TakeSym    => literalInt(args(0)).map2(apply(args(1)))(Take(_, _))
-          case DropSym    => literalInt(args(0)).map2(apply(args(1)))(Drop(_, _))
+          case ConsSym    => Cons(args(0), args(1)).asRight
+          case NilSym     => NNil().asRight
+          case ConcatSym  => Concat(args(0), args(1)).asRight
+          case ReverseSym => Reverse(args(0)).asRight
+          case TakeSym    => literalInt(args(0)).map(Take(_, args(1)))
+          case DropSym    => literalInt(args(0)).map(Drop(_, args(1)))
           case sym        =>
             s"Unexpected symbol $sym for type $tpe".asLeft
         }
-      case ExistentialType(_, res) => apply(res)
+      case ExistentialType(_, res) => coalgH(res)
       case _ => s"Unable to parse type $tpe".asLeft
     }
 
+    final def parse: CoalgebraM[Either[Id[String], ?], NodeF, List[Type]] = {
+      case tpe :: Nil => coalgH(tpe).map(_.map(_ :: Nil))
+      case tpes => s"Unable to parse type $tpes".asLeft
+    }
   }
+
 
   private[this] def symbolOf[T](implicit evT: WeakTypeTag[T]): Symbol = evT.tpe.typeSymbol
 
@@ -183,20 +232,25 @@ private[internal] sealed abstract class IotaCommonToolbelt {
     TakeSym    = symbolOf[iota.KList.Op.Take[Nothing, Nothing]],
     DropSym    = symbolOf[iota.KList.Op.Drop[Nothing, Nothing]])
 
-  final def evalTree(tree: Node): List[Type] = tree match {
-    case Cons(head, tail) => head :: evalTree(tail)
-    case Concat(nodes)    => nodes.flatMap(evalTree)
-    case Reverse(node)    => evalTree(node).reverse
-    case Take(n, node)    => evalTree(node).take(n)
-    case Drop(n, node)    => evalTree(node).drop(n)
-    case NNil             => Nil
+
+  final def evalTree: Algebra[NodeF, List[Type]] = {
+    case Cons(head, types) => head :: types
+    case Concat(typeLists) => FlatMap[List].flatten(typeLists)
+    case Reverse(types)    => types.reverse
+    case Take(n, types)    => types.take(n)
+    case Drop(n, types)    => types.drop(n)
+    case NNil()            => Nil
   }
 
   final def tlistTypes(tpe: Type): Either[Id[String], List[Type]] =
-    parseTList(tpe) map evalTree
+    hyloM(tpe :: Nil)(
+      evalTree.generalizeM[Either[Id[String], ?]],
+      parseTList.parse)
 
   final def klistTypes(tpe: Type): Either[Id[String], List[Type]] =
-    parseKList(tpe) map evalTree
+    hyloM(tpe :: Nil)(
+      evalTree.generalizeM[Either[Id[String], ?]],
+      parseKList.parse)
 
   final def klistTypeConstructors(tpe: Type): Either[Id[String], List[Type]] =
     klistTypes(tpe).map(_.map(_.etaExpand.resultType))
@@ -231,7 +285,7 @@ private[internal] sealed abstract class IotaCommonToolbelt {
     nilTpe: Type
   ) {
     final def apply(tpes: List[Type]): Type =
-      tpes.foldRight(nilTpe)((h, t) => makeCons(h, t))
+      tpes.foldRight(nilTpe)(makeCons)
 
     private[this] lazy val (consPrefix, consSym) = consTpe match {
       case TypeRef(prefix, sym, _) => (prefix, sym)
