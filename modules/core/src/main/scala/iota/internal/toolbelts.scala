@@ -67,7 +67,10 @@ private[internal] class IotaMacroToolbelt[C <: Context](val c: C)
         if (isImplicit && showAborts) c.echo(c.enclosingPosition, error)
         c.abort(c.enclosingPosition, error)
       },
-      tree  => c.Expr[T](tree))
+      tree  => {
+        if (showTrees) c.echo(c.enclosingPosition, showCode(tree))
+        c.Expr[T](tree)
+      })
 
   def memoize[A, B](cache: IotaMacroToolbelt.Cache)(
     a: A, f: A => B
