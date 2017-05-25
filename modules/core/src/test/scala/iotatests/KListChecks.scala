@@ -48,4 +48,12 @@ object KListChecks {
   check[Concat[OptionList[_]#L, ListOption[_]#L],
     Option :: List :: List :: Option :: KNil]
 
+
+  check[Concat[Option :: KNil, List :: KNil], OptionListL]
+
+  check[Concat[Reverse[OptionListL], OptionListL],
+    List :: Option :: Option :: List :: KNil]
+
+  check[Drop[1, OptionListL], List :: KNil]
+
 }

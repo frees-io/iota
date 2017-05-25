@@ -20,6 +20,7 @@ package iotatests
 
 import iota._
 import iota.internal.IotaReflectiveToolbelt
+import iota.internal.Recursion.{anaM, cata, Fix}
 
 import cats._
 import cats.instances.all._
@@ -100,13 +101,24 @@ class IotaReflectiveToolbeltTests extends Properties("IotaReflectiveToolbelt") {
   property("destructCopK BazBarFooK") =
     tb.destructCopK(weakTypeOf[BazBarFooK[Int]]) ?=:= Right(tb.CopKTypes(weakTypeOf[BazBarFooKL], typeOf[Int]))
 
-  import tb.tree._
 
   implicit final class ArrowAssoc[A](self: A) {
     @inline def -> [B](y: B): Tuple2[A, B] = Tuple2(self, y)
   }
 
   def t[T](implicit evT: WeakTypeTag[T]): Type = evT.tpe
+
+  import tb.tree._
+
+  def cons[T](node: Fix[NodeF] = nnil)(implicit evT: WeakTypeTag[T]) =
+    Fix[NodeF](Cons[T](node)(evT))
+  def consk[T[_]](node: Fix[NodeF] = nnil)(implicit evT: WeakTypeTag[T[_]]) =
+    Fix[NodeF](Cons.k[T](node)(evT))
+  def concat(nodes: Fix[NodeF]*)     = Fix[NodeF](Concat(nodes.toList))
+  def reverse(node: Fix[NodeF])      = Fix[NodeF](Reverse(node))
+  def take(n: Int, node: Fix[NodeF]) = Fix[NodeF](Take(n, node))
+  def drop(n: Int, node: Fix[NodeF]) = Fix[NodeF](Drop(n, node))
+  val nnil: Fix[NodeF] = Fix(NNil())
 
   import TList.Op.{
     Concat  => TConcat,
@@ -115,29 +127,30 @@ class IotaReflectiveToolbeltTests extends Properties("IotaReflectiveToolbelt") {
     Drop    => TDrop
   }
 
-  val parseTListChecks: List[(Type, Node)] = List(
-    t[TNil] -> NNil,
-    t[Int :: TNil] -> Cons[Int](),
-    t[String :: Int :: TNil] -> Cons[String](Cons[Int]()),
+  val parseTListChecks: List[(Type, Fix[NodeF])] = List(
+    t[TNil] -> nnil,
+    t[Int :: TNil] -> cons[Int](),
+    t[String :: Int :: TNil] -> cons[String](cons[Int]()),
 
-    t[TReverse[TNil]] -> Reverse(NNil),
+    t[TReverse[TNil]] -> reverse(nnil),
 
-    t[Cop[BazBarFooL]#L] -> Cons[Baz](Cons[Bar](Cons[Foo]())),
+    t[Cop[BazBarFooL]#L] -> cons[Baz](cons[Bar](cons[Foo]())),
 
-    t[TConcat[BazBarFoo#L, FooBarBaz#L]] -> Concat(
-      Cons[Baz](Cons[Bar](Cons[Foo]())),
-      Cons[Foo](Cons[Bar](Cons[Baz]()))
+    t[TConcat[BazBarFoo#L, FooBarBaz#L]] -> concat(
+      cons[Baz](cons[Bar](cons[Foo]())),
+      cons[Foo](cons[Bar](cons[Baz]()))
     ),
 
-    t[TTake[0, BazBarFoo#L]] -> Take(0, Cons[Baz](Cons[Bar](Cons[Foo]()))),
-    t[TTake[1, BazBarFoo#L]] -> Take(1, Cons[Baz](Cons[Bar](Cons[Foo]()))),
+    t[TTake[0, BazBarFoo#L]] -> take(0, cons[Baz](cons[Bar](cons[Foo]()))),
+    t[TTake[1, BazBarFoo#L]] -> take(1, cons[Baz](cons[Bar](cons[Foo]()))),
 
-    t[TDrop[2, BazBarFoo#L]] -> Drop(2, Cons[Baz](Cons[Bar](Cons[Foo]()))),
-    t[TDrop[3, BazBarFoo#L]] -> Drop(3, Cons[Baz](Cons[Bar](Cons[Foo]())))
+    t[TDrop[2, BazBarFoo#L]] -> drop(2, cons[Baz](cons[Bar](cons[Foo]()))),
+    t[TDrop[3, BazBarFoo#L]] -> drop(3, cons[Baz](cons[Bar](cons[Foo]())))
   )
 
   parseTListChecks.foreach { case (in, out) =>
-    property(s"parseTList $in") = tb.parseTList(in) ?= Right(out) }
+    property(s"parseTList $in") = anaM(in :: Nil)(tb.parseTList.parse) ?= Right(out) }
+
 
   import KList.Op.{
     Concat  => KConcat,
@@ -146,79 +159,79 @@ class IotaReflectiveToolbeltTests extends Properties("IotaReflectiveToolbelt") {
     Drop    => KDrop
   }
 
-  val parseKListChecks: List[(Type, Node)] = List(
+  val parseKListChecks: List[(Type, Fix[NodeF])] = List(
 
-    t[KReverse[KNil]] -> Reverse(NNil),
+    t[KReverse[KNil]] -> reverse(nnil),
 
-    t[CopK[BazBarFooKL, Nothing]#L] -> Cons.k[BazK](Cons.k[BarK](Cons.k[FooK]())),
+    t[CopK[BazBarFooKL, Nothing]#L] -> consk[BazK](consk[BarK](consk[FooK]())),
 
-    t[KConcat[BazBarFooK[_]#L, FooBarBazK[_]#L]] -> Concat(
-      Cons.k[BazK](Cons.k[BarK](Cons.k[FooK]())),
-      Cons.k[FooK](Cons.k[BarK](Cons.k[BazK]()))
+    t[KConcat[BazBarFooK[_]#L, FooBarBazK[_]#L]] -> concat(
+      consk[BazK](consk[BarK](consk[FooK]())),
+      consk[FooK](consk[BarK](consk[BazK]()))
     ),
 
-    t[KTake[0, BazBarFooK[_]#L]] -> Take(0, Cons.k[BazK](Cons.k[BarK](Cons.k[FooK]()))),
-    t[KTake[1, BazBarFooK[_]#L]] -> Take(1, Cons.k[BazK](Cons.k[BarK](Cons.k[FooK]()))),
+    t[KTake[0, BazBarFooK[_]#L]] -> take(0, consk[BazK](consk[BarK](consk[FooK]()))),
+    t[KTake[1, BazBarFooK[_]#L]] -> take(1, consk[BazK](consk[BarK](consk[FooK]()))),
 
-    t[KDrop[2, BazBarFooK[_]#L]] -> Drop(2, Cons.k[BazK](Cons.k[BarK](Cons.k[FooK]()))),
-    t[KDrop[3, BazBarFooK[_]#L]] -> Drop(3, Cons.k[BazK](Cons.k[BarK](Cons.k[FooK]())))
+    t[KDrop[2, BazBarFooK[_]#L]] -> drop(2, consk[BazK](consk[BarK](consk[FooK]()))),
+    t[KDrop[3, BazBarFooK[_]#L]] -> drop(3, consk[BazK](consk[BarK](consk[FooK]())))
   )
 
   parseKListChecks.foreach { case (in, out) =>
-    property(s"parseKList $in") = tb.parseKList(in) ?= Right(out) }
+    property(s"parseKList $in") = anaM(in :: Nil)(tb.parseKList.parse) ?= Right(out) }
 
-  val evalChecks: List[(Node, List[Type])] = List(
+  val evalChecks: List[(Fix[NodeF], List[Type])] = List(
 
-    NNil               -> (Nil),
-    Reverse(NNil)      -> (Nil),
-    Concat(NNil)       -> (Nil),
-    Concat(NNil, NNil) -> (Nil),
+    nnil               -> (Nil),
+    reverse(nnil)      -> (Nil),
+    concat(nnil)       -> (Nil),
+    concat(nnil, nnil) -> (Nil),
 
-    Cons[Int]()        -> (t[Int] :: Nil),
-    Cons[String]()     -> (t[String] :: Nil),
-    Cons[Double]()     -> (t[Double] :: Nil),
+    cons[Int]()        -> (t[Int] :: Nil),
+    cons[String]()     -> (t[String] :: Nil),
+    cons[Double]()     -> (t[Double] :: Nil),
 
-    Cons[Double](Cons[String](Cons[Int]()))
+    cons[Double](cons[String](cons[Int]()))
       -> (t[Double] :: t[String] :: t[Int] :: Nil),
 
-    Reverse(Cons[Double](Cons[String](Cons[Int]())))
+    reverse(cons[Double](cons[String](cons[Int]())))
       -> (t[Int] :: t[String] :: t[Double] :: Nil),
 
-    Concat(
-      Cons[Double](Cons[String](Cons[Int]())),
-      Cons[Double](Cons[String](Cons[Int]()))
+    concat(
+      cons[Double](cons[String](cons[Int]())),
+      cons[Double](cons[String](cons[Int]()))
     ) -> (t[Double] :: t[String] :: t[Int] :: t[Double] :: t[String] :: t[Int] :: Nil),
 
-    Concat(
-      Cons[Double](Cons[String](Cons[Int]())),
-      NNil,
-      Cons[Double](Cons[String](Cons[Int]()))
+    concat(
+      cons[Double](cons[String](cons[Int]())),
+      nnil,
+      cons[Double](cons[String](cons[Int]()))
     ) -> (t[Double] :: t[String] :: t[Int] :: t[Double] :: t[String] :: t[Int] :: Nil),
 
-    Concat(
-      Cons[Double](Cons[String](Cons[Int]())),
-      Reverse(Cons[Double](Cons[String](Cons[Int]())))
+    concat(
+      cons[Double](cons[String](cons[Int]())),
+      reverse(cons[Double](cons[String](cons[Int]())))
     ) -> (t[Double] :: t[String] :: t[Int] :: t[Int] :: t[String] :: t[Double] :: Nil),
 
-    Take(0, Cons[Double]())               -> (Nil),
-    Take(1, Cons[Double]())               -> (t[Double] :: Nil),
-    Take(2, Cons[Double]())               -> (t[Double] :: Nil),
-    Take(0, Cons[String](Cons[Double]())) -> (Nil),
-    Take(1, Cons[String](Cons[Double]())) -> (t[String] :: Nil),
-    Take(2, Cons[String](Cons[Double]())) -> (t[String] :: t[Double] :: Nil),
-    Take(3, Cons[String](Cons[Double]())) -> (t[String] :: t[Double] :: Nil),
+    take(0, cons[Double]())               -> (Nil),
+    take(1, cons[Double]())               -> (t[Double] :: Nil),
+    take(2, cons[Double]())               -> (t[Double] :: Nil),
+    take(0, cons[String](cons[Double]())) -> (Nil),
+    take(1, cons[String](cons[Double]())) -> (t[String] :: Nil),
+    take(2, cons[String](cons[Double]())) -> (t[String] :: t[Double] :: Nil),
+    take(3, cons[String](cons[Double]())) -> (t[String] :: t[Double] :: Nil),
 
-    Drop(0, Cons[Double]())               -> (t[Double] :: Nil),
-    Drop(1, Cons[Double]())               -> (Nil),
-    Drop(2, Cons[Double]())               -> (Nil),
-    Drop(0, Cons[String](Cons[Double]())) -> (t[String] :: t[Double] :: Nil),
-    Drop(1, Cons[String](Cons[Double]())) -> (t[Double] :: Nil),
-    Drop(2, Cons[String](Cons[Double]())) -> (Nil),
-    Drop(3, Cons[String](Cons[Double]())) -> (Nil)
+    drop(0, cons[Double]())               -> (t[Double] :: Nil),
+    drop(1, cons[Double]())               -> (Nil),
+    drop(2, cons[Double]())               -> (Nil),
+    drop(0, cons[String](cons[Double]())) -> (t[String] :: t[Double] :: Nil),
+    drop(1, cons[String](cons[Double]())) -> (t[Double] :: Nil),
+    drop(2, cons[String](cons[Double]())) -> (Nil),
+    drop(3, cons[String](cons[Double]())) -> (Nil)
   )
 
   evalChecks.foreach { case (in, out) =>
-    property(s"evalTree $in") = tb.evalTree(in) ?= out }
+    property(s"evalTree $in") = cata(in)(tb.evalTree) ?= out }
 }
 
 object IotaReflectiveToolbeltTests {
