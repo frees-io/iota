@@ -184,7 +184,7 @@ import iota.debug.options.ShowTrees
 // import iota.debug.options.ShowTrees
 
 CopK.FunctionK.of[Algebra, Future](evalOrderOp, evalPriceOp, evalUserOp)
-// res32: iota.CopKFunctionK[Algebra,scala.concurrent.Future] = CopKFunctionK[Algebra, scala.concurrent.Future]<<generated>>
+// res32: iota.internal.FastFunctionK[Algebra,scala.concurrent.Future] = FastFunctionK[Algebra, scala.concurrent.Future]<<generated>>
 ```
 
 #### Is it actually faster?

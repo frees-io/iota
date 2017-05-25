@@ -77,34 +77,21 @@ final class CopKFunctionKMacros(val c: Context) {
     arrs: List[Tree]
   ): Tree = {
 
-    val namedArrs = arrs.zipWithIndex.map { case (arr, i) =>
-      (TermName(s"arr$i"), arr, i) }
-
-    val defs = namedArrs.map { case (n, arr, _) =>
-      q"private[this] val $n = $arr.asInstanceOf[_root_.cats.arrow.FunctionK[Any, $G]]" }
-
-    val cases = namedArrs.map { case (n, _, i) =>
-      cq"$i => $n(ca.value)" }
-
-    val toStringValue = s"CopKFunctionK[$F, $G]<<generated>>"
-
-    def symbol(tpe: Type): Symbol = tpe match {
-      case TypeRef(_, sym, Nil) => sym
-      case _                    => tpe.typeSymbol
+    val handlers = arrs.zipWithIndex.map { case (arr, i) =>
+      val name = TermName(s"arr$i")
+      val pre = q"private[this] val $name = $arr.asInstanceOf[_root_.cats.arrow.FunctionK[Any, $G]]"
+      val handler = (fa: TermName) => q"$name($fa.value)"
+      (pre, handler)
     }
 
-    q"""
-    new _root_.iota.CopKFunctionK[$F, $G] {
-      ..$defs
-      override def apply[A](ca: ${symbol(F)}[A]): ${symbol(G)}[A] =
-        (ca.index: @_root_.scala.annotation.switch) match {
-          case ..$cases
-          case i => throw new _root_.java.lang.Exception(
-            s"iota internal error: index " + i + " out of bounds for " + this)
-        }
-      override def toString: String = $toStringValue
-    }
-    """
+    val name = TypeName(c.freshName("CopKFunctionK"))
+    val defn = tb.defineFastFunctionK(
+      name, F, G,
+      preamble = handlers.map(_._1),
+      toIndex  = fa => q"$fa.index",
+      handlers = handlers.map(_._2))
+
+    q"""$defn; new $name"""
   }
 
   private[this] def summonFunctionK(F: Type, G: Type): ValidatedNel[String, Tree] =

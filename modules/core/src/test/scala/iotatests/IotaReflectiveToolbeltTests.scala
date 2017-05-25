@@ -28,7 +28,7 @@ import scala.reflect.runtime.{ universe => runtimeUniverse }
 
 import org.scalacheck._
 import org.scalacheck.Prop._
-import shapeless._
+import shapeless. { Id => _, _ }
 import shapeless.ops.hlist.{ ToList => HListToList }
 
 class IotaReflectiveToolbeltTests extends Properties("IotaReflectiveToolbelt") {

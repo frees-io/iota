@@ -29,6 +29,7 @@ lazy val examplesJS  = examples.js
 
 lazy val readme = jvmModule("readme")
   .dependsOn(coreJVM)
+  .enablePlugins(TutPlugin)
   .settings(noPublishSettings)
   .settings(readmeSettings)
 

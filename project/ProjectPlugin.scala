@@ -10,7 +10,7 @@ import sbtorgpolicies.runnable.syntax._
 import scoverage.ScoverageKeys._
 import org.scalajs.sbtplugin.cross.{CrossProject, CrossType}
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
-import tut.Plugin._
+import tut.TutPlugin.autoImport._
 
 object ProjectPlugin extends AutoPlugin {
 
@@ -28,8 +28,8 @@ object ProjectPlugin extends AutoPlugin {
       Project(modName, file(s"""modules/$modName"""))
         .settings(moduleName := s"iota-$modName")
 
-    lazy val readmeSettings: Seq[Def.Setting[_]] = tutSettings ++ Seq(
-      tutScalacOptions := Nil,
+    lazy val readmeSettings: Seq[Def.Setting[_]] = Seq(
+      scalacOptions in Tut := Nil,
       tutSourceDirectory :=
         (baseDirectory in LocalRootProject).value / "modules" / "readme" / "src" / "main" / "tut",
       tutTargetDirectory := baseDirectory.value.getParentFile.getParentFile

@@ -249,4 +249,37 @@ private[internal] sealed abstract class IotaCommonToolbelt {
       weakTypeOf[KCons[Nothing, _]].typeConstructor,
       weakTypeOf[KNil])
 
+  private[this] def toSymbol(tpe: Type): Symbol = tpe match {
+    case TypeRef(_, sym, Nil) => sym
+    case _                    => tpe.typeSymbol
+  }
+
+  final def defineFastFunctionK(
+    className: TypeName,
+    F: Type, G: Type,
+    preamble: List[Tree],
+    toIndex: TermName => Tree,
+    handlers: List[TermName => Tree]
+  ): Tree = {
+
+    val fa = TermName("fa")
+    val A  = TypeName("Ξ")
+    val cases = handlers.zipWithIndex
+      .map { case (h, i) => cq"$i => ${h(fa)}" }
+    val toStringValue = s"FastFunctionK[$F, $G]<<generated>>"
+
+    q"""
+    class $className extends _root_.iota.internal.FastFunctionK[$F, $G] {
+      ..$preamble
+      override def apply[$A]($fa: ${toSymbol(F)}[$A]): ${toSymbol(G)}[$A] =
+        (${toIndex(fa)}: @_root_.scala.annotation.switch) match {
+          case ..$cases
+          case i => throw new _root_.java.lang.Exception(
+            s"iota internal error: index " + i + " out of bounds for " + this)
+        }
+      override def toString: String = $toStringValue
+    }
+    """
+  }
+
 }
