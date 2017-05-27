@@ -25,7 +25,7 @@ final class Cop[LL <: TList] private[iota](
 
   override def equals(anyOther: Any): Boolean = anyOther match {
     case other: Cop[LL] => (index == other.index) && (value == other.value)
-    case _             => false
+    case _              => false
   }
 
   override def toString: String =

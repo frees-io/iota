@@ -19,11 +19,14 @@ package internal
 
 import Recursion._
 
-import cats.{Id, Eval}
-import cats.{Applicative, FlatMap, Foldable, Traverse}
+import cats.Applicative
+import cats.Id
+import cats.Eval
+import cats.FlatMap
+import cats.Foldable
+import cats.Traverse
 import cats.instances.either._
 import cats.instances.list._
-import cats.syntax.applicative._
 import cats.syntax.either._ //#=2.12
 import cats.syntax.foldable._
 import cats.syntax.functor._
@@ -32,6 +35,45 @@ import scala.collection.immutable.Map
 import scala.reflect.api.Universe
 import scala.reflect.runtime.{ universe => runtimeUniverse }
 import scala.reflect.macros.blackbox.Context
+
+trait Toolbelt {
+  type Uu <: Universe
+  val u: Uu
+}
+
+trait MacroToolbelt extends Toolbelt {
+  type Cc <: Context
+  val c: Cc
+
+  final override type Uu = c.universe.type
+  final override val u: Uu = c.universe
+}
+
+object IotaReflectiveToolbelt {
+  def apply[U <: Universe](u: U): IotaReflectiveToolbelt[u.type] =
+    new IotaReflectiveToolbelt[u.type](u)
+
+  def apply(): IotaReflectiveToolbelt[runtimeUniverse.type] =
+    apply(runtimeUniverse)
+}
+
+final class IotaReflectiveToolbelt[U <: Universe](val u: U)
+    extends Toolbelt
+    with TypeListTrees
+    with TypeListParsers
+    with TypeListEvaluators
+    with TypeListBuilders
+    with CoproductAPI { override type Uu = U }
+
+
+private[internal] class IotaMacroToolbelt[C <: Context](val c: C)
+    extends MacroToolbelt
+    with TypeListTrees
+    with TypeListParsers
+    with TypeListEvaluators
+    with TypeListBuilders
+    with CoproductAPI
+    with MacroAPI { override type Cc = C }
 
 private[internal] object IotaMacroToolbelt {
   def apply[C <: Context](c: C): IotaMacroToolbelt[c.type] =
@@ -44,12 +86,229 @@ private[internal] object IotaMacroToolbelt {
   final val typeListCache: Cache = new Cache()
 }
 
-private[internal] class IotaMacroToolbelt[C <: Context](val c: C)
-    extends IotaCommonToolbelt
-{
-  override type Uu = c.universe.type
-  override val u: Uu = c.universe
+// --
+// - implementation
 
+private[internal] sealed trait TypeListTrees { self: Toolbelt =>
+  import u._
+
+  sealed trait NodeF  [+A]
+  case class   ConsF   [A](head: Type, tail: A) extends NodeF[A]
+  case class   ConcatF [A](nodes: List[A])      extends NodeF[A]
+  case class   ReverseF[A](node: A)             extends NodeF[A]
+  case class   TakeF   [A](n: Int, node: A)     extends NodeF[A]
+  case class   DropF   [A](n: Int, node: A)     extends NodeF[A]
+  case object  NNilF                            extends NodeF[Nothing]
+
+  object NodeF {
+    implicit val nodeTraverse: Traverse[NodeF] = new Traverse[NodeF] {
+      def traverse[G[_], A, B](fa: NodeF[A])(f: A => G[B])(implicit G: Applicative[G]): G[NodeF[B]] = fa match {
+        case ConsF(hd, a) => G.map(f(a))(ConsF(hd, _))
+        case ConcatF(as)  => G.map(Traverse[List].traverse(as)(f))(ConcatF(_))
+        case ReverseF(a)  => G.map(f(a))(ReverseF(_))
+        case TakeF(n, a)  => G.map(f(a))(TakeF(n, _))
+        case DropF(n, a)  => G.map(f(a))(DropF(n, _))
+        case NNilF        => G.pure(NNilF: NodeF[B])
+      }
+
+      def foldLeft[A, B](fa: NodeF[A], b: B)(f: (B, A) => B): B = fa match {
+        case ConsF(_, a)  => f(b, a)
+        case ConcatF(as)  => Foldable[List].foldLeft(as, b)(f)
+        case ReverseF(a)  => f(b, a)
+        case TakeF(_, a)  => f(b, a)
+        case DropF(_, a)  => f(b, a)
+        case NNilF        => b
+      }
+
+      def foldRight[A, B](fa: NodeF[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B] = fa match {
+        case ConsF(_, a)  => f(a, lb)
+        case ConcatF(as)  => Foldable[List].foldRight(as, lb)(f)
+        case ReverseF(a)  => f(a, lb)
+        case TakeF(_, a)  => f(a, lb)
+        case DropF(_, a)  => f(a, lb)
+        case NNilF        => lb
+      }
+    }
+  }
+}
+
+private[internal] sealed trait TypeListParsers { self: Toolbelt with TypeListTrees =>
+  import u._
+
+  private[this] def literalInt(tpe: Type): Either[Id[String], Int] =
+    tpe match {
+      case ConstantType(Constant(value: Int)) => value.asRight
+      case _ => s"Expected $tpe to be a literal integer".asLeft
+    }
+
+  class TypeListParser private[TypeListParsers](
+    ConsSym   : Symbol,
+    NilSym    : Symbol,
+    ConcatSym : Symbol,
+    ReverseSym: Symbol,
+    TakeSym   : Symbol,
+    DropSym   : Symbol
+  ) {
+    private final def coalgH: Type => Either[Id[String], NodeF[Type]] = tpe => tpe.dealias match {
+      case TypeRef(_, sym, args) =>
+        sym.asType.toType.dealias.typeSymbol match {
+          case ConsSym    => ConsF(args(0), args(1)).asRight
+          case NilSym     => NNilF.asRight
+          case ConcatSym  => ConcatF(args).asRight
+          case ReverseSym => ReverseF(args(0)).asRight
+          case TakeSym    => literalInt(args(0)).map(TakeF(_, args(1)))
+          case DropSym    => literalInt(args(0)).map(DropF(_, args(1)))
+          case sym        => s"Unexpected symbol $sym for type $tpe".asLeft
+        }
+      case ExistentialType(_, res) => coalgH(res)
+      case _ => s"Unable to parse type $tpe".asLeft
+    }
+
+    final def parse: CoalgebraM[Either[Id[String], ?], NodeF, List[Type]] = {
+      case tpe :: Nil => coalgH(tpe).map(_.map(_ :: Nil))
+      case tpes => s"Unable to parse type $tpes".asLeft
+    }
+  }
+
+
+  private[this] def symbolOf[T](implicit evT: WeakTypeTag[T]): Symbol = evT.tpe.typeSymbol
+
+  final lazy val parseTList: TypeListParser = new TypeListParser(
+    NilSym     = symbolOf[iota.TNil],
+    ConsSym    = symbolOf[iota.TCons[Nothing, Nothing]],
+    ConcatSym  = symbolOf[iota.TList.Op.Concat[Nothing, Nothing]],
+    ReverseSym = symbolOf[iota.TList.Op.Reverse[Nothing]],
+    TakeSym    = symbolOf[iota.TList.Op.Take[Nothing, Nothing]],
+    DropSym    = symbolOf[iota.TList.Op.Drop[Nothing, Nothing]])
+
+  final lazy val parseKList: TypeListParser = new TypeListParser(
+    NilSym     = symbolOf[iota.KNil],
+    ConsSym    = symbolOf[iota.KCons[Nothing, Nothing]],
+    ConcatSym  = symbolOf[iota.KList.Op.Concat[Nothing, Nothing]],
+    ReverseSym = symbolOf[iota.KList.Op.Reverse[Nothing]],
+    TakeSym    = symbolOf[iota.KList.Op.Take[Nothing, Nothing]],
+    DropSym    = symbolOf[iota.KList.Op.Drop[Nothing, Nothing]])
+}
+
+private[internal] sealed trait TypeListEvaluators { self: Toolbelt with TypeListTrees with TypeListParsers =>
+  import u._
+
+  final def evalTree: Algebra[NodeF, List[Type]] = {
+    case ConsF(head, types) => head :: types
+    case ConcatF(typeLists) => FlatMap[List].flatten(typeLists)
+    case ReverseF(types)    => types.reverse
+    case TakeF(n, types)    => types.take(n)
+    case DropF(n, types)    => types.drop(n)
+    case NNilF              => Nil
+  }
+
+  final def tlistTypes(tpe: Type): Either[Id[String], List[Type]] =
+    hyloM(tpe :: Nil)(
+      evalTree.generalizeM[Either[Id[String], ?]],
+      parseTList.parse)
+
+  final def klistTypes(tpe: Type): Either[Id[String], List[Type]] =
+    hyloM(tpe :: Nil)(
+      evalTree.generalizeM[Either[Id[String], ?]],
+      parseKList.parse)
+
+  final def klistTypeConstructors(tpe: Type): Either[Id[String], List[Type]] =
+    klistTypes(tpe).map(_.map(_.etaExpand.resultType))
+}
+
+private[internal] sealed trait TypeListBuilders { self: Toolbelt =>
+  import u._
+
+  class TypeListBuilder private[TypeListBuilders](
+    consTpe: Type,
+    nilTpe: Type
+  ) {
+    final def apply(tpes: List[Type]): Type =
+      tpes.foldRight(nilTpe)(makeCons)
+
+    private[this] lazy val (consPrefix, consSym) = consTpe match {
+      case TypeRef(prefix, sym, _) => (prefix, sym)
+      case _ => sys.error("internal iota initialization error")
+    }
+
+    private[this] def makeCons(head: Type, tail: Type): Type =
+      internal.typeRef(consPrefix, consSym, head :: tail :: Nil)
+  }
+
+  final lazy val buildTList: TypeListBuilder =
+    new TypeListBuilder(
+      weakTypeOf[TCons[_, _]].typeConstructor,
+      weakTypeOf[TNil])
+
+  final lazy val buildKList: TypeListBuilder =
+    new TypeListBuilder(
+      weakTypeOf[KCons[Nothing, _]].typeConstructor,
+      weakTypeOf[KNil])
+}
+
+private[internal] sealed trait CoproductAPI { self: Toolbelt =>
+  import u._
+
+  case class CopTypes(L: Type)
+  case class CopKTypes(L: Type, A: Type)
+
+  private[this] final lazy val CopTpe =
+    typeOf[iota.Cop[Nothing]].etaExpand.resultType
+  private[this] final lazy val CopKTpe =
+    typeOf[iota.CopK[Nothing, Nothing]].etaExpand.resultType
+
+  private[this] def resultType(sym: Symbol): Type =
+    sym.asType.toType.etaExpand.resultType
+
+  final def destructCop(tpe: Type): Either[Id[String], CopTypes] =
+    tpe.dealias match {
+      case TypeRef(_, sym, l :: Nil) if resultType(sym) <:< CopTpe => Right(CopTypes(l))
+      case TypeRef(_, sym, Nil) => destructCop(sym.asType.toType)
+      case t => Left(s"unexpected type $t ${showRaw(t)} when destructuring Cop $tpe")
+    }
+
+  final def destructCopK(tpe: Type): Either[Id[String], CopKTypes] =
+    tpe.dealias match {
+      case TypeRef(_, sym, l :: a :: Nil) if resultType(sym) <:< CopKTpe => Right(CopKTypes(l, a))
+      case TypeRef(_, sym, Nil) => destructCopK(sym.asType.toType)
+      case t => Left(s"unexpected type $t ${showRaw(t)} when destructuring CopK $tpe")
+    }
+
+  private[this] def toSymbol(tpe: Type): Symbol = tpe match {
+    case TypeRef(_, sym, Nil) => sym
+    case _                    => tpe.typeSymbol
+  }
+
+  final def defineFastFunctionK(
+    className: TypeName,
+    F: Type, G: Type,
+    preamble: List[Tree],
+    toIndex: TermName => Tree,
+    handlers: List[TermName => Tree]
+  ): Tree = {
+
+    val fa = TermName("fa")
+    val A  = TypeName("Ξ")
+    val cases = handlers.zipWithIndex
+      .map { case (h, i) => cq"$i => ${h(fa)}" }
+    val toStringValue = s"FastFunctionK[$F, $G]<<generated>>"
+
+    q"""
+    class $className extends _root_.iota.internal.FastFunctionK[$F, $G] {
+      ..$preamble
+      override def apply[$A]($fa: ${toSymbol(F)}[$A]): ${toSymbol(G)}[$A] =
+        (${toIndex(fa)}: @_root_.scala.annotation.switch) match {
+          case ..$cases
+          case i => throw new _root_.java.lang.Exception(
+            s"iota internal error: index " + i + " out of bounds for " + this)
+        }
+      override def toString: String = $toStringValue
+    }
+    """
+  }
+}
+
+private[internal] sealed trait MacroAPI { self: MacroToolbelt with TypeListEvaluators =>
   import u._
 
   lazy val showAborts =
@@ -98,245 +357,4 @@ private[internal] class IotaMacroToolbelt[C <: Context](val c: C)
 
   def memoizedKListTypes(tpe: Type): Either[Id[String], List[Type]] =
     memoize(IotaMacroToolbelt.typeListCache)(tpe, klistTypes)
-
-}
-
-object IotaReflectiveToolbelt {
-  def apply[U <: Universe](u: U): IotaReflectiveToolbelt[u.type] =
-    new IotaReflectiveToolbelt[u.type](u)
-
-  def apply(): IotaReflectiveToolbelt[runtimeUniverse.type] =
-    apply(runtimeUniverse)
-}
-
-class IotaReflectiveToolbelt[U <: Universe](override val u: U)
-    extends IotaCommonToolbelt { override type Uu = U }
-
-private[internal] sealed abstract class IotaCommonToolbelt {
-
-  type Uu <: Universe
-  val u: Uu
-
-  import u._
-
-  object tree {
-    sealed trait NodeF[A]
-    case class Cons[A](head: Type, tail: A) extends NodeF[A]
-    case class Concat[A](nodes: List[A]) extends NodeF[A]
-    case class Reverse[A](node: A) extends NodeF[A]
-    case class Take[A](n: Int, node: A) extends NodeF[A]
-    case class Drop[A](n: Int, node: A) extends NodeF[A]
-    case class NNil[A]() extends NodeF[A]
-
-    object Concat { def apply[A](nodes: A*): Concat[A] = Concat(nodes.toList) }
-    object Cons {
-      def apply[T]: TPartiallyApplied[T] = new TPartiallyApplied[T]
-
-      class TPartiallyApplied[T] {
-        def apply[A](tail: A)(implicit evT: WeakTypeTag[T]): Cons[A] = Cons[A](evT.tpe, tail)
-      }
-
-      def k[T[_]]: KPartiallyApplied[T] = new KPartiallyApplied[T]()
-
-      class KPartiallyApplied[T[_]] {
-        def apply[A](tail: A)(implicit evT: WeakTypeTag[T[_]]): Cons[A] = Cons[A](evT.tpe.typeConstructor, tail)
-      }
-    }
-
-    object NodeF {
-      implicit val nodeTraverse: Traverse[NodeF] = new Traverse[NodeF] {
-        def traverse[G[_]: Applicative, A, B](fa: NodeF[A])(f: A => G[B]): G[NodeF[B]] = fa match {
-          case Cons(hd, a) => f(a).map(b => Cons(hd, b))
-          case Concat(as) => Traverse[List].traverse(as)(f).map(bs => Concat(bs))
-          case Reverse(a) => f(a).map(b => Reverse(b))
-          case Take(n, a) => f(a).map(b => Take(n, b))
-          case Drop(n, a) => f(a).map(b => Drop(n, b))
-          case NNil()     => (NNil(): NodeF[B]).pure[G]
-        }
-
-        def foldLeft[A, B](fa: NodeF[A], b: B)(f: (B, A) => B): B = fa match {
-          case Cons(_, a) => f(b, a)
-          case Concat(as) => Foldable[List].foldLeft(as, b)(f)
-          case Reverse(a) => f(b, a)
-          case Take(_, a) => f(b, a)
-          case Drop(_, a) => f(b, a)
-          case NNil()     => b
-        }
-
-        def foldRight[A, B](fa: NodeF[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B] = fa match {
-          case Cons(_, a) => f(a, lb)
-          case Concat(as) => Foldable[List].foldRight(as, lb)(f)
-          case Reverse(a) => f(a, lb)
-          case Take(_, a) => f(a, lb)
-          case Drop(_, a) => f(a, lb)
-          case NNil()     => lb
-        }
-      }
-    }
-  }
-
-  import tree._
-
-  private[this] def literalInt(tpe: Type): Either[Id[String], Int] =
-    tpe match {
-      case ConstantType(Constant(value: Int)) => value.asRight
-      case _ => s"Expected $tpe to be a literal integer".asLeft
-    }
-
-  class TypeListParser private[IotaCommonToolbelt](
-    ConsSym   : Symbol,
-    NilSym    : Symbol,
-    ConcatSym : Symbol,
-    ReverseSym: Symbol,
-    TakeSym   : Symbol,
-    DropSym   : Symbol
-  ) {
-    private final def coalgH: Type => Either[Id[String], NodeF[Type]] = tpe => tpe.dealias match {
-      case TypeRef(_, sym, args) =>
-        sym.asType.toType.dealias.typeSymbol match {
-          case ConsSym    => Cons(args(0), args(1)).asRight
-          case NilSym     => NNil().asRight
-          case ConcatSym  => Concat(args(0), args(1)).asRight
-          case ReverseSym => Reverse(args(0)).asRight
-          case TakeSym    => literalInt(args(0)).map(Take(_, args(1)))
-          case DropSym    => literalInt(args(0)).map(Drop(_, args(1)))
-          case sym        =>
-            s"Unexpected symbol $sym for type $tpe".asLeft
-        }
-      case ExistentialType(_, res) => coalgH(res)
-      case _ => s"Unable to parse type $tpe".asLeft
-    }
-
-    final def parse: CoalgebraM[Either[Id[String], ?], NodeF, List[Type]] = {
-      case tpe :: Nil => coalgH(tpe).map(_.map(_ :: Nil))
-      case tpes => s"Unable to parse type $tpes".asLeft
-    }
-  }
-
-
-  private[this] def symbolOf[T](implicit evT: WeakTypeTag[T]): Symbol = evT.tpe.typeSymbol
-
-  final lazy val parseTList: TypeListParser = new TypeListParser(
-    NilSym     = symbolOf[iota.TNil],
-    ConsSym    = symbolOf[iota.TCons[Nothing, Nothing]],
-    ConcatSym  = symbolOf[iota.TList.Op.Concat[Nothing, Nothing]],
-    ReverseSym = symbolOf[iota.TList.Op.Reverse[Nothing]],
-    TakeSym    = symbolOf[iota.TList.Op.Take[Nothing, Nothing]],
-    DropSym    = symbolOf[iota.TList.Op.Drop[Nothing, Nothing]])
-
-  final lazy val parseKList: TypeListParser = new TypeListParser(
-    NilSym     = symbolOf[iota.KNil],
-    ConsSym    = symbolOf[iota.KCons[Nothing, Nothing]],
-    ConcatSym  = symbolOf[iota.KList.Op.Concat[Nothing, Nothing]],
-    ReverseSym = symbolOf[iota.KList.Op.Reverse[Nothing]],
-    TakeSym    = symbolOf[iota.KList.Op.Take[Nothing, Nothing]],
-    DropSym    = symbolOf[iota.KList.Op.Drop[Nothing, Nothing]])
-
-
-  final def evalTree: Algebra[NodeF, List[Type]] = {
-    case Cons(head, types) => head :: types
-    case Concat(typeLists) => FlatMap[List].flatten(typeLists)
-    case Reverse(types)    => types.reverse
-    case Take(n, types)    => types.take(n)
-    case Drop(n, types)    => types.drop(n)
-    case NNil()            => Nil
-  }
-
-  final def tlistTypes(tpe: Type): Either[Id[String], List[Type]] =
-    hyloM(tpe :: Nil)(
-      evalTree.generalizeM[Either[Id[String], ?]],
-      parseTList.parse)
-
-  final def klistTypes(tpe: Type): Either[Id[String], List[Type]] =
-    hyloM(tpe :: Nil)(
-      evalTree.generalizeM[Either[Id[String], ?]],
-      parseKList.parse)
-
-  final def klistTypeConstructors(tpe: Type): Either[Id[String], List[Type]] =
-    klistTypes(tpe).map(_.map(_.etaExpand.resultType))
-
-  case class CopTypes(L: Type)
-  case class CopKTypes(L: Type, A: Type)
-
-  private[this] final lazy val CopTpe =
-    typeOf[iota.Cop[Nothing]].etaExpand.resultType
-  private[this] final lazy val CopKTpe =
-    typeOf[iota.CopK[Nothing, Nothing]].etaExpand.resultType
-
-  private[this] def resultType(sym: Symbol): Type =
-    sym.asType.toType.etaExpand.resultType
-
-  final def destructCop(tpe: Type): Either[Id[String], CopTypes] =
-    tpe.dealias match {
-      case TypeRef(_, sym, l :: Nil) if resultType(sym) <:< CopTpe => Right(CopTypes(l))
-      case TypeRef(_, sym, Nil) => destructCop(sym.asType.toType)
-      case t => Left(s"unexpected type $t ${showRaw(t)} when destructuring Cop $tpe")
-    }
-
-  final def destructCopK(tpe: Type): Either[Id[String], CopKTypes] =
-    tpe.dealias match {
-      case TypeRef(_, sym, l :: a :: Nil) if resultType(sym) <:< CopKTpe => Right(CopKTypes(l, a))
-      case TypeRef(_, sym, Nil) => destructCopK(sym.asType.toType)
-      case t => Left(s"unexpected type $t ${showRaw(t)} when destructuring CopK $tpe")
-    }
-
-  class TypeListBuilder private[IotaCommonToolbelt](
-    consTpe: Type,
-    nilTpe: Type
-  ) {
-    final def apply(tpes: List[Type]): Type =
-      tpes.foldRight(nilTpe)(makeCons)
-
-    private[this] lazy val (consPrefix, consSym) = consTpe match {
-      case TypeRef(prefix, sym, _) => (prefix, sym)
-      case _ => sys.error("internal iota initialization error")
-    }
-
-    private[this] def makeCons(head: Type, tail: Type): Type =
-      internal.typeRef(consPrefix, consSym, head :: tail :: Nil)
-  }
-
-  final lazy val buildTList: TypeListBuilder =
-    new TypeListBuilder(
-      weakTypeOf[TCons[_, _]].typeConstructor,
-      weakTypeOf[TNil])
-
-  final lazy val buildKList: TypeListBuilder =
-    new TypeListBuilder(
-      weakTypeOf[KCons[Nothing, _]].typeConstructor,
-      weakTypeOf[KNil])
-
-  private[this] def toSymbol(tpe: Type): Symbol = tpe match {
-    case TypeRef(_, sym, Nil) => sym
-    case _                    => tpe.typeSymbol
-  }
-
-  final def defineFastFunctionK(
-    className: TypeName,
-    F: Type, G: Type,
-    preamble: List[Tree],
-    toIndex: TermName => Tree,
-    handlers: List[TermName => Tree]
-  ): Tree = {
-
-    val fa = TermName("fa")
-    val A  = TypeName("Ξ")
-    val cases = handlers.zipWithIndex
-      .map { case (h, i) => cq"$i => ${h(fa)}" }
-    val toStringValue = s"FastFunctionK[$F, $G]<<generated>>"
-
-    q"""
-    class $className extends _root_.iota.internal.FastFunctionK[$F, $G] {
-      ..$preamble
-      override def apply[$A]($fa: ${toSymbol(F)}[$A]): ${toSymbol(G)}[$A] =
-        (${toIndex(fa)}: @_root_.scala.annotation.switch) match {
-          case ..$cases
-          case i => throw new _root_.java.lang.Exception(
-            s"iota internal error: index " + i + " out of bounds for " + this)
-        }
-      override def toString: String = $toStringValue
-    }
-    """
-  }
-
 }

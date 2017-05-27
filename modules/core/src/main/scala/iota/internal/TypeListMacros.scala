@@ -19,10 +19,10 @@ package internal
 
 import scala.reflect.macros.blackbox.Context
 
-private[iota] final class TypeListMacros(
-  cc: Context
-) extends IotaMacroToolbelt(cc) {
+private[iota] final class TypeListMacros(val c: Context) {
   import c.universe._
+
+  private[this] val tb = IotaMacroToolbelt(c)
 
   def materializeTListPos[L <: TList, A](
     implicit
@@ -33,8 +33,8 @@ private[iota] final class TypeListMacros(
     val L = evL.tpe
     val A = evA.tpe
 
-    foldAbort(for {
-      algebras <- memoizedTListTypes(L)
+    tb.foldAbort(for {
+      algebras <- tb.memoizedTListTypes(L)
       index    <- Right(algebras.indexWhere(_ =:= A))
                     .filterOrElse(_ >= 0, s"$A is not a member of $L")
     } yield
@@ -50,8 +50,8 @@ private[iota] final class TypeListMacros(
     val L = evL.tpe
     val F = evF.tpe
 
-    foldAbort(for {
-      algebras <- memoizedKListTypes(L)
+    tb.foldAbort(for {
+      algebras <- tb.memoizedKListTypes(L)
       index    <- Right(algebras.indexWhere(_ =:= F))
                     .filterOrElse(_ >= 0, s"$F is not a member of $L")
     } yield
@@ -65,9 +65,9 @@ private[iota] final class TypeListMacros(
 
     val L = evL.tpe
 
-    foldAbort(for {
-      algebras <- memoizedTListTypes(L)
-      tpe       = buildTList(algebras)
+    tb.foldAbort(for {
+      algebras <- tb.memoizedTListTypes(L)
+      tpe       = tb.buildTList(algebras)
     } yield
       q"new _root_.iota.TList.Compute[$L]{ override type Out = $tpe }", true)
   }
@@ -79,9 +79,9 @@ private[iota] final class TypeListMacros(
 
     val L = evL.tpe
 
-    foldAbort(for {
-      algebras <- memoizedKListTypes(L)
-      tpe       = buildKList(algebras)
+    tb.foldAbort(for {
+      algebras <- tb.memoizedKListTypes(L)
+      tpe       = tb.buildKList(algebras)
     } yield
       q"new _root_.iota.KList.Compute[$L]{ override type Out = $tpe }", true)
   }
