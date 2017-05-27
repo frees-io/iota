@@ -17,52 +17,69 @@
 package iota
 package internal
 
-import cats.{ Applicative, Functor, Monad, Traverse }
-import cats.syntax.applicative._
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import cats.syntax.traverse._
+import cats.Applicative
+import cats.Functor
+import cats.Monad
+import cats.Traverse
 
-// based on Matryoshka (https://github.com/slamdata/matryoshka)
-object Recursion {
+private[internal] object Recursion {
 
-  type Algebra[F[_], A] = F[A] => A
-  type Coalgebra[F[_], A] = A => F[A]
-  type AlgebraM[M[_], F[_], A] = F[A] => M[A]
-  type CoalgebraM[M[_], F[_], A] = A => M[F[A]]
+  // The following code is based on Matryoshka
+  // See https://github.com/slamdata/matryoshka
 
-  case class Fix[F[_]](unfix: F[Fix[F]])
+  type Algebra   [F[_], A]       = F[A] =>     A
+  type AlgebraM  [M[_], F[_], A] = F[A] =>   M[A]
+  type Coalgebra [F[_], A]       =   A  =>   F[A]
+  type CoalgebraM[M[_], F[_], A] =   A  => M[F[A]]
+
+  final case class Fix[F[_]](unfix: F[Fix[F]])
 
   /** Equivalent to ana andThen cata */
-  def hylo[F[_]: Functor, A, B](a: A)(algebra: Algebra[F, B], coalgebra: Coalgebra[F, A]): B =
-    algebra(coalgebra(a).map(aa => hylo(aa)(algebra, coalgebra)))
+  final def hylo[F[_], A, B]
+    (a: A)
+    (alg: Algebra[F, B], coalg: Coalgebra[F, A])
+    (implicit F: Functor[F])
+      : B =
+    alg(F.map(coalg(a))(hylo(_)(alg, coalg)))
 
   /** Monadic [[hylo]] */
-  def hyloM[M[_], F[_], A, B]
+  final def hyloM[M[_], F[_], A, B]
     (a: A)
-    (f: AlgebraM[M, F, B], g: CoalgebraM[M, F, A])
+    (algM: AlgebraM[M, F, B], coalgM: CoalgebraM[M, F, A])
     (implicit M: Monad[M], F: Traverse[F])
       : M[B] =
-    hylo[λ[α => M[F[α]]], A, M[B]](a)(_ flatMap (_.sequence flatMap f), g)(M compose F)
+    hylo[ λ[α => M[F[α]]], A, M[B] ](a)(
+      fb => M.flatMap(fb)(b => M.flatMap(F.sequence(b))(algM)),
+      coalgM)(M compose F)
 
   // the following schemes are fixed for Fix
 
   /** Unfold */
-  def ana[F[_]: Functor, A](a: A)(f: Coalgebra[F, A]): Fix[F] =
-    hylo(a)((fxf: F[Fix[F]]) => Fix[F](fxf), f)
+  final def ana[F[_] : Functor, A]
+    (a: A)
+    (coalg: Coalgebra[F, A])
+      : Fix[F] =
+    hylo(a)(Fix(_: F[Fix[F]]), coalg)
 
   /** Fold */
-  def cata[F[_]: Functor, A](fix: Fix[F])(f: Algebra[F, A]): A =
-    hylo(fix)(f, (_: Fix[F]).unfix)
+  final def cata[F[_] : Functor, A]
+    (fix: Fix[F])
+    (alg: Algebra[F, A])
+      : A =
+    hylo(fix)(alg, _.unfix)
 
   /** Monadic [[ana]] */
-  def anaM[M[_]: Monad, F[_]: Traverse, A](a: A)(f: CoalgebraM[M, F, A]): M[Fix[F]] =
-    hyloM[M, F, A, Fix[F]](a)(Fix[F](_).pure[M], f)
+  final def anaM[M[_], F[_]: Traverse, A]
+    (a: A)
+    (coalgM: CoalgebraM[M, F, A])
+    (implicit M: Monad[M])
+      : M[Fix[F]] =
+    hyloM[M, F, A, Fix[F]](a)(ffxf => M.pure(Fix(ffxf)), coalgM)
 
   /** generalize an `Algebra[F, A]` to an `AlgebraM[M, F, A]` */
-  implicit class Algebraops[F[_], A](val alg: Algebra[F, A]) extends AnyVal {
-    def generalizeM[M[_]: Applicative](implicit F: Functor[F]): AlgebraM[M, F, A] =
-      node => alg(node).pure[M]
+  implicit final class Algebraops[F[_], A](val alg: Algebra[F, A]) extends AnyVal {
+    def generalizeM[M[_]](implicit M: Applicative[M], F: Functor[F]): AlgebraM[M, F, A] =
+      node => M.pure(alg(node))
   }
 
 }

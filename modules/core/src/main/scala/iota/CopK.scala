@@ -25,7 +25,7 @@ final class CopK[LL <: KList, A] private[iota](
 
   override def equals(anyOther: Any): Boolean = anyOther match {
     case other: CopK[LL, A] => (index == other.index) && (value == other.value)
-    case _                 => false
+    case _                => false
   }
 
   override def toString: String =

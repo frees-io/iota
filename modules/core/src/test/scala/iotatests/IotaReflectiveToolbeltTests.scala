@@ -20,7 +20,6 @@ package iotatests
 
 import iota._
 import iota.internal.IotaReflectiveToolbelt
-import iota.internal.Recursion.{anaM, cata, Fix}
 
 import cats._
 import cats.instances.all._
@@ -34,18 +33,10 @@ import shapeless.ops.hlist.{ ToList => HListToList }
 
 class IotaReflectiveToolbeltTests extends Properties("IotaReflectiveToolbelt") {
   import IotaReflectiveToolbeltTests._
-  import TList.::
-  import KList.:::
+  import FooAndFriends._
 
   val tb = IotaReflectiveToolbelt(runtimeUniverse)
-  import runtimeUniverse.{ weakTypeOf, typeOf, Type, WeakTypeTag }
-
-  trait Foo
-  trait Bar
-  trait Baz
-
-  type FooBarBazL = Foo :: Bar :: Baz :: TNil
-  type BazBarFooL = Baz :: Bar :: Foo :: TNil
+  import runtimeUniverse.{ weakTypeOf, typeOf }
 
   property("tlistTypes FooBarBazL") =
     tb.tlistTypes(weakTypeOf[FooBarBazL]) ?=:= Right(
@@ -55,13 +46,6 @@ class IotaReflectiveToolbeltTests extends Properties("IotaReflectiveToolbelt") {
     tb.tlistTypes(weakTypeOf[BazBarFooL]) ?=:= Right(
       typeOf[Baz] :: typeOf[Bar] :: typeOf[Foo] :: Nil)
 
-  trait FooK[A]
-  trait BarK[A]
-  trait BazK[A]
-
-  type FooBarBazKL = FooK ::: BarK ::: BazK ::: KNil
-  type BazBarFooKL = BazK ::: BarK ::: FooK ::: KNil
-
   property("klistTypeConstructors FooBarBazKL") =
     tb.klistTypeConstructors(weakTypeOf[FooBarBazKL]) ?=:= Right(
       typeOfK[FooK] :: typeOfK[BarK] :: typeOfK[BazK] :: Nil)
@@ -69,10 +53,6 @@ class IotaReflectiveToolbeltTests extends Properties("IotaReflectiveToolbelt") {
   property("klistTypeConstructors BazBarFooKL") =
     tb.klistTypeConstructors(weakTypeOf[BazBarFooKL]) ?=:= Right(
       typeOfK[BazK] :: typeOfK[BarK] :: typeOfK[FooK] :: Nil)
-
-
-  type FooBarBaz = Cop[FooBarBazL]
-  type BazBarFoo = Cop[BazBarFooL]
 
   property("destructCop Cop[FooBarBazL]") =
     tb.destructCop(weakTypeOf[Cop[FooBarBazL]]) ?=:= Right(tb.CopTypes(weakTypeOf[FooBarBazL]))
@@ -86,9 +66,6 @@ class IotaReflectiveToolbeltTests extends Properties("IotaReflectiveToolbelt") {
   property("destructCop BazBarFoo") =
     tb.destructCop(weakTypeOf[BazBarFoo]) ?=:= Right(tb.CopTypes(weakTypeOf[BazBarFooL]))
 
-  type FooBarBazK[A] = CopK[FooBarBazKL, A]
-  type BazBarFooK[A] = CopK[BazBarFooKL, A]
-
   property("destructCopK CopK[FooBarBazKL]") =
     tb.destructCopK(weakTypeOf[CopK[FooBarBazKL, Int]]) ?=:= Right(tb.CopKTypes(weakTypeOf[FooBarBazKL], typeOf[Int]))
 
@@ -100,138 +77,6 @@ class IotaReflectiveToolbeltTests extends Properties("IotaReflectiveToolbelt") {
 
   property("destructCopK BazBarFooK") =
     tb.destructCopK(weakTypeOf[BazBarFooK[Int]]) ?=:= Right(tb.CopKTypes(weakTypeOf[BazBarFooKL], typeOf[Int]))
-
-
-  implicit final class ArrowAssoc[A](self: A) {
-    @inline def -> [B](y: B): Tuple2[A, B] = Tuple2(self, y)
-  }
-
-  def t[T](implicit evT: WeakTypeTag[T]): Type = evT.tpe
-
-  import tb.tree._
-
-  def cons[T](node: Fix[NodeF] = nnil)(implicit evT: WeakTypeTag[T]) =
-    Fix[NodeF](Cons[T](node)(evT))
-  def consk[T[_]](node: Fix[NodeF] = nnil)(implicit evT: WeakTypeTag[T[_]]) =
-    Fix[NodeF](Cons.k[T](node)(evT))
-  def concat(nodes: Fix[NodeF]*)     = Fix[NodeF](Concat(nodes.toList))
-  def reverse(node: Fix[NodeF])      = Fix[NodeF](Reverse(node))
-  def take(n: Int, node: Fix[NodeF]) = Fix[NodeF](Take(n, node))
-  def drop(n: Int, node: Fix[NodeF]) = Fix[NodeF](Drop(n, node))
-  val nnil: Fix[NodeF] = Fix(NNil())
-
-  import TList.Op.{
-    Concat  => TConcat,
-    Reverse => TReverse,
-    Take    => TTake,
-    Drop    => TDrop
-  }
-
-  val parseTListChecks: List[(Type, Fix[NodeF])] = List(
-    t[TNil] -> nnil,
-    t[Int :: TNil] -> cons[Int](),
-    t[String :: Int :: TNil] -> cons[String](cons[Int]()),
-
-    t[TReverse[TNil]] -> reverse(nnil),
-
-    t[Cop[BazBarFooL]#L] -> cons[Baz](cons[Bar](cons[Foo]())),
-
-    t[TConcat[BazBarFoo#L, FooBarBaz#L]] -> concat(
-      cons[Baz](cons[Bar](cons[Foo]())),
-      cons[Foo](cons[Bar](cons[Baz]()))
-    ),
-
-    t[TTake[0, BazBarFoo#L]] -> take(0, cons[Baz](cons[Bar](cons[Foo]()))),
-    t[TTake[1, BazBarFoo#L]] -> take(1, cons[Baz](cons[Bar](cons[Foo]()))),
-
-    t[TDrop[2, BazBarFoo#L]] -> drop(2, cons[Baz](cons[Bar](cons[Foo]()))),
-    t[TDrop[3, BazBarFoo#L]] -> drop(3, cons[Baz](cons[Bar](cons[Foo]())))
-  )
-
-  parseTListChecks.foreach { case (in, out) =>
-    property(s"parseTList $in") = anaM(in :: Nil)(tb.parseTList.parse) ?= Right(out) }
-
-
-  import KList.Op.{
-    Concat  => KConcat,
-    Reverse => KReverse,
-    Take    => KTake,
-    Drop    => KDrop
-  }
-
-  val parseKListChecks: List[(Type, Fix[NodeF])] = List(
-
-    t[KReverse[KNil]] -> reverse(nnil),
-
-    t[CopK[BazBarFooKL, Nothing]#L] -> consk[BazK](consk[BarK](consk[FooK]())),
-
-    t[KConcat[BazBarFooK[_]#L, FooBarBazK[_]#L]] -> concat(
-      consk[BazK](consk[BarK](consk[FooK]())),
-      consk[FooK](consk[BarK](consk[BazK]()))
-    ),
-
-    t[KTake[0, BazBarFooK[_]#L]] -> take(0, consk[BazK](consk[BarK](consk[FooK]()))),
-    t[KTake[1, BazBarFooK[_]#L]] -> take(1, consk[BazK](consk[BarK](consk[FooK]()))),
-
-    t[KDrop[2, BazBarFooK[_]#L]] -> drop(2, consk[BazK](consk[BarK](consk[FooK]()))),
-    t[KDrop[3, BazBarFooK[_]#L]] -> drop(3, consk[BazK](consk[BarK](consk[FooK]())))
-  )
-
-  parseKListChecks.foreach { case (in, out) =>
-    property(s"parseKList $in") = anaM(in :: Nil)(tb.parseKList.parse) ?= Right(out) }
-
-  val evalChecks: List[(Fix[NodeF], List[Type])] = List(
-
-    nnil               -> (Nil),
-    reverse(nnil)      -> (Nil),
-    concat(nnil)       -> (Nil),
-    concat(nnil, nnil) -> (Nil),
-
-    cons[Int]()        -> (t[Int] :: Nil),
-    cons[String]()     -> (t[String] :: Nil),
-    cons[Double]()     -> (t[Double] :: Nil),
-
-    cons[Double](cons[String](cons[Int]()))
-      -> (t[Double] :: t[String] :: t[Int] :: Nil),
-
-    reverse(cons[Double](cons[String](cons[Int]())))
-      -> (t[Int] :: t[String] :: t[Double] :: Nil),
-
-    concat(
-      cons[Double](cons[String](cons[Int]())),
-      cons[Double](cons[String](cons[Int]()))
-    ) -> (t[Double] :: t[String] :: t[Int] :: t[Double] :: t[String] :: t[Int] :: Nil),
-
-    concat(
-      cons[Double](cons[String](cons[Int]())),
-      nnil,
-      cons[Double](cons[String](cons[Int]()))
-    ) -> (t[Double] :: t[String] :: t[Int] :: t[Double] :: t[String] :: t[Int] :: Nil),
-
-    concat(
-      cons[Double](cons[String](cons[Int]())),
-      reverse(cons[Double](cons[String](cons[Int]())))
-    ) -> (t[Double] :: t[String] :: t[Int] :: t[Int] :: t[String] :: t[Double] :: Nil),
-
-    take(0, cons[Double]())               -> (Nil),
-    take(1, cons[Double]())               -> (t[Double] :: Nil),
-    take(2, cons[Double]())               -> (t[Double] :: Nil),
-    take(0, cons[String](cons[Double]())) -> (Nil),
-    take(1, cons[String](cons[Double]())) -> (t[String] :: Nil),
-    take(2, cons[String](cons[Double]())) -> (t[String] :: t[Double] :: Nil),
-    take(3, cons[String](cons[Double]())) -> (t[String] :: t[Double] :: Nil),
-
-    drop(0, cons[Double]())               -> (t[Double] :: Nil),
-    drop(1, cons[Double]())               -> (Nil),
-    drop(2, cons[Double]())               -> (Nil),
-    drop(0, cons[String](cons[Double]())) -> (t[String] :: t[Double] :: Nil),
-    drop(1, cons[String](cons[Double]())) -> (t[Double] :: Nil),
-    drop(2, cons[String](cons[Double]())) -> (Nil),
-    drop(3, cons[String](cons[Double]())) -> (Nil)
-  )
-
-  evalChecks.foreach { case (in, out) =>
-    property(s"evalTree $in") = cata(in)(tb.evalTree) ?= out }
 }
 
 object IotaReflectiveToolbeltTests {
