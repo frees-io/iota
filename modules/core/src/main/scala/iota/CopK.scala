@@ -34,7 +34,7 @@ final class CopK[LL <: KList, A] private[iota](
 
 object CopK {
 
-  def apply[L <: KList, F[_], A](index: Int, fa: F[A]): CopK[L, A] =
+  def unsafeApply[L <: KList, F[_], A](index: Int, fa: F[A]): CopK[L, A] =
     new CopK[L, A](index, fa)
 
   /** A type class witnessing the ability to inject type constructor `F`

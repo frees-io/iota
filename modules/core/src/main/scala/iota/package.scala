@@ -51,6 +51,10 @@ package object iota {
       case Left(a)      => Left(f(a))
       case r @ Right(_) => r.asInstanceOf[Either[C, B]]
     }
+    def toValidated: Validated[A, B] = eab match {
+      case Left(a)  => Validated.invalid(a)
+      case Right(b) => Validated.valid(b)
+    }
     def toValidatedNel[AA >: A]: ValidatedNel[AA, B] = eab match {
       case Left(a)  => Validated.invalidNel(a)
       case Right(b) => Validated.valid(b)

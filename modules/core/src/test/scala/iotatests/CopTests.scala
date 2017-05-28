@@ -46,7 +46,7 @@ object CopTests extends Properties("CopTests") {
     index: Int
   ): Prop =
     forAll(gen)(v =>
-      inj.inj(v) ?= Cop(index, v))
+      inj.inj(v) ?= Cop.unsafeApply(index, v))
 
   property("inject One into OneTwoThreeL") =
     checkInjectL(
