@@ -21,19 +21,19 @@ package iotatests
 import iota._
 import iota.internal.IotaReflectiveToolbelt
 
-import cats._
 import cats.instances.all._
-
 import scala.reflect.runtime.{ universe => runtimeUniverse }
 
 import org.scalacheck._
-import org.scalacheck.Prop._
-import shapeless. { Id => _, _ }
-import shapeless.ops.hlist.{ ToList => HListToList }
 
 class IotaReflectiveToolbeltTests extends Properties("IotaReflectiveToolbelt") {
-  import IotaReflectiveToolbeltTests._
+  import TypeEqv.syntax._
   import FooAndFriends._
+
+  import runtimeUniverse.{ Type, TypeTag, WeakTypeTag }
+
+  def typeOfK[F[_]](implicit evF: TypeTag[F[Nothing]]): Type = evF.tpe.etaExpand.resultType
+  def weakTypeOfK[F[_]](implicit evF: WeakTypeTag[F[Nothing]]): Type = evF.tpe.etaExpand.resultType
 
   val tb = IotaReflectiveToolbelt(runtimeUniverse)
   import runtimeUniverse.{ weakTypeOf, typeOf }
@@ -77,60 +77,6 @@ class IotaReflectiveToolbeltTests extends Properties("IotaReflectiveToolbelt") {
 
   property("destructCopK BazBarFooK") =
     tb.destructCopK(weakTypeOf[BazBarFooK[Int]]) ?=:= Right(tb.CopKTypes(weakTypeOf[BazBarFooKL], typeOf[Int]))
-}
-
-object IotaReflectiveToolbeltTests {
-  import runtimeUniverse._
-
-  sealed trait TypeEqv[A] {
-    def check(x: A, y: A): Prop
-  }
-
-  object TypeEqv extends TypeEqvInstances0
-
-  sealed class TypeEqvInstances0 extends TypeEqvInstances1 {
-    implicit val idTypeEqv: TypeEqv[Type] = new TypeEqv[Type] {
-      def check(x: Type, y: Type): Prop =
-        Prop(x =:= y) :| s"$x was not =:= to $y"
-    }
-
-    implicit def eitherTypeEqv[A, B](
-      implicit eqv: TypeEqv[B]
-    ): TypeEqv[Either[A, B]] = new TypeEqv[Either[A, B]] {
-      def check(ex: Either[A, B], ey: Either[A, B]): Prop =
-        (ex, ey) match {
-          case (Right(bx), Right(by)) => eqv.check(bx, by)
-          case _                      => ex ?= ey
-        }
-    }
-  }
-
-  sealed class TypeEqvInstances1 {
-    implicit def foldableTypeEqv[F[_], A](
-      implicit F: Foldable[F], eqv: TypeEqv[A]
-    ): TypeEqv[F[A]] = new TypeEqv[F[A]] {
-      def check(fx: F[A], fy: F[A]): Prop =
-        (F.toList(fx) zip F.toList(fy)).foldLeft(proved)((acc, vv) =>
-          acc && eqv.check(vv._1, vv._2))
-    }
-
-    implicit def genericTypeEqv[P, L <: HList, A](
-      implicit
-        gen: Generic.Aux[P, L],
-        toList: HListToList[L, A],
-        eqv: TypeEqv[List[A]]
-    ): TypeEqv[P] = new TypeEqv[P] {
-      def check(x: P, y: P): Prop =
-        eqv.check(toList(gen.to(x)), toList(gen.to(y)))
-    }
-  }
-
-  final implicit class TypeEqvOps[A](x: A)(implicit eqv: TypeEqv[A]) {
-    def ?=:=(y: A): Prop = eqv.check(x, y)
-  }
-
-  def typeOfK[F[_]](implicit evF: TypeTag[F[Nothing]]): Type = evF.tpe.etaExpand.resultType
-  def weakTypeOfK[F[_]](implicit evF: WeakTypeTag[F[Nothing]]): Type = evF.tpe.etaExpand.resultType
 }
 
 //#-jvm

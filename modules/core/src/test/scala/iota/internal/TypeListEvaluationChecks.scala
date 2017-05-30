@@ -24,13 +24,14 @@ import scala.Predef.ArrowAssoc
 import org.scalacheck._
 import org.scalacheck.Prop._
 
+import catryoshka._
+
 object TypeListEvaluationChecks extends Properties("TypeListEvaluators") {
-  import Recursion.cata
 
   val checks = new TypeListEvaluationChecks(IotaReflectiveToolbelt())
 
   checks.evalChecks.foreach { case (in, out) =>
-    property(s"eval $in") = cata(in)(checks.tb.evalTree) ?= out }
+    property(s"eval $in") = Recursive[checks.Node].cata(in)(checks.tb.evalTree) ?= out }
 }
 
 class TypeListEvaluationChecks(
