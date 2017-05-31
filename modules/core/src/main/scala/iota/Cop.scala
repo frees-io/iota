@@ -34,7 +34,7 @@ final class Cop[LL <: TList] private[iota](
 
 object Cop {
 
-  def apply[L <: TList, A](index: Int, a: A): Cop[L] =
+  def unsafeApply[L <: TList, A](index: Int, a: A): Cop[L] =
     new Cop[L](index, a)
 
   /** A type class witnessing the ability to inject type `A` into a
