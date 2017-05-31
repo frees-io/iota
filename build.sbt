@@ -12,7 +12,7 @@ lazy val core = module("core", true)
     yaxPlatform = true))
   .crossDepSettings(
     %%("cats-core"),
-    %%("cats-free")       % "test",
+    %%("cats-free"),
     %%("scalacheck")      % "test",
     %%("shapeless")       % "test",
     %%("scheckShapeless") % "test")

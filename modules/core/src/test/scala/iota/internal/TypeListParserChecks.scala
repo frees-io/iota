@@ -25,19 +25,19 @@ import org.scalacheck._
 import org.scalacheck.Prop._
 
 import cats.instances.either._
+import catryoshka._
 
 import iotatests.FooAndFriends._
 
 object TypeListParserChecks extends Properties("TypeListParsers") {
-  import Recursion.anaM
 
   val checks = new TypeListParserChecks(IotaReflectiveToolbelt())
 
   checks.tlists.foreach { case (in, out) =>
-    property(s"parse TList $in") = anaM(in :: Nil)(checks.tb.parseTList.parse) ?= Right(out) }
+    property(s"parse TList $in") = Corecursive[checks.Node].anaM(in)(checks.tb.tlistParser) ?= Right(out) }
 
   checks.klists.foreach { case (in, out) =>
-    property(s"parse KList $in") = anaM(in :: Nil)(checks.tb.parseKList.parse) ?= Right(out) }
+    property(s"parse KList $in") = Corecursive[checks.Node].anaM(in)(checks.tb.klistParser) ?= Right(out) }
 
 }
 

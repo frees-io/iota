@@ -17,8 +17,6 @@
 package iota
 package internal
 
-import Recursion._
-
 import cats.Applicative
 import cats.Id
 import cats.Eval
@@ -29,8 +27,10 @@ import cats.instances.either._
 import cats.instances.list._
 import cats.syntax.either._ //#=2.12
 import cats.syntax.foldable._
-import cats.syntax.functor._
 
+import catryoshka._
+
+import scala.annotation.tailrec
 import scala.collection.immutable.Map
 import scala.reflect.api.Universe
 import scala.reflect.runtime.{ universe => runtimeUniverse }
@@ -141,15 +141,17 @@ private[internal] sealed trait TypeListParsers { self: Toolbelt with TypeListTre
       case _ => s"Expected $tpe to be a literal integer".asLeft
     }
 
-  class TypeListParser private[TypeListParsers](
+  private[internal] type Parser = CoalgebraM[Either[Id[String], ?], NodeF, Type]
+
+  private[internal] def typeListParser(
     ConsSym   : Symbol,
     NilSym    : Symbol,
     ConcatSym : Symbol,
     ReverseSym: Symbol,
     TakeSym   : Symbol,
     DropSym   : Symbol
-  ) {
-    private final def coalgH: Type => Either[Id[String], NodeF[Type]] = tpe => tpe.dealias match {
+  ): Parser = tpe0 => {
+    @tailrec def loop(tpe: Type): Either[Id[String], NodeF[Type]] = tpe.dealias match {
       case TypeRef(_, sym, args) =>
         sym.asType.toType.dealias.typeSymbol match {
           case ConsSym    => ConsF(args(0), args(1)).asRight
@@ -160,20 +162,15 @@ private[internal] sealed trait TypeListParsers { self: Toolbelt with TypeListTre
           case DropSym    => literalInt(args(0)).map(DropF(_, args(1)))
           case sym        => s"Unexpected symbol $sym for type $tpe".asLeft
         }
-      case ExistentialType(_, res) => coalgH(res)
+      case ExistentialType(_, res) => loop(res) // the irony...
       case _ => s"Unable to parse type $tpe".asLeft
     }
-
-    final def parse: CoalgebraM[Either[Id[String], ?], NodeF, List[Type]] = {
-      case tpe :: Nil => coalgH(tpe).map(_.map(_ :: Nil))
-      case tpes => s"Unable to parse type $tpes".asLeft
-    }
+    loop(tpe0)
   }
-
 
   private[this] def symbolOf[T](implicit evT: WeakTypeTag[T]): Symbol = evT.tpe.typeSymbol
 
-  final lazy val parseTList: TypeListParser = new TypeListParser(
+  final lazy val tlistParser: Parser = typeListParser(
     NilSym     = symbolOf[iota.TNil],
     ConsSym    = symbolOf[iota.TCons[Nothing, Nothing]],
     ConcatSym  = symbolOf[iota.TList.Op.Concat[Nothing, Nothing]],
@@ -181,7 +178,7 @@ private[internal] sealed trait TypeListParsers { self: Toolbelt with TypeListTre
     TakeSym    = symbolOf[iota.TList.Op.Take[Nothing, Nothing]],
     DropSym    = symbolOf[iota.TList.Op.Drop[Nothing, Nothing]])
 
-  final lazy val parseKList: TypeListParser = new TypeListParser(
+  final lazy val klistParser: Parser = typeListParser(
     NilSym     = symbolOf[iota.KNil],
     ConsSym    = symbolOf[iota.KCons[Nothing, Nothing]],
     ConcatSym  = symbolOf[iota.KList.Op.Concat[Nothing, Nothing]],
@@ -203,20 +200,20 @@ private[internal] sealed trait TypeListEvaluators { self: Toolbelt with TypeList
   }
 
   final def tlistTypes(tpe: Type): Either[Id[String], List[Type]] =
-    hyloM(tpe :: Nil)(
+    hyloM(tpe)(
       evalTree.generalizeM[Either[Id[String], ?]],
-      parseTList.parse)
+      tlistParser)
 
   final def klistTypes(tpe: Type): Either[Id[String], List[Type]] =
-    hyloM(tpe :: Nil)(
+    hyloM(tpe)(
       evalTree.generalizeM[Either[Id[String], ?]],
-      parseKList.parse)
+      klistParser)
 
   final def klistTypeConstructors(tpe: Type): Either[Id[String], List[Type]] =
     klistTypes(tpe).map(_.map(_.etaExpand.resultType))
 }
 
-private[internal] sealed trait TypeListBuilders { self: Toolbelt =>
+private[internal] sealed trait TypeListBuilders { self: Toolbelt with TypeListTrees =>
   import u._
 
   class TypeListBuilder private[TypeListBuilders](
@@ -233,6 +230,9 @@ private[internal] sealed trait TypeListBuilders { self: Toolbelt =>
 
     private[this] def makeCons(head: Type, tail: Type): Type =
       internal.typeRef(consPrefix, consSym, head :: tail :: Nil)
+
+    val bleep: Algebra[ConsF, Type] = cons =>
+      internal.typeRef(consPrefix, consSym, cons.head :: cons.tail :: Nil)
   }
 
   final lazy val buildTList: TypeListBuilder =
