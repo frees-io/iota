@@ -1,5 +1,19 @@
 # Changelog
 
+## 06/01/2017 - Version 0.2.0
+
+Release changes:
+
+* Add operations to type lists ([#31](https://github.com/47deg/iota/pull/31))
+* Generalize creation of FastFunctionK as a toolbelt API ([#30](https://github.com/47deg/iota/pull/30))
+* Fix ShowTrees flag ([#32](https://github.com/47deg/iota/pull/32))
+* Use recursion schemes in toolbelt ([#33](https://github.com/47deg/iota/pull/33))
+* Reorganize toolbelt code & other misc cleanup ([#34](https://github.com/47deg/iota/pull/34))
+* Add Product type for TList ([#35](https://github.com/47deg/iota/pull/35))
+* Refactor recursion to support Cofree ([#36](https://github.com/47deg/iota/pull/36))
+* Release 0.2.0 ([#39](https://github.com/47deg/iota/pull/39))
+
+
 ## 05/11/2017 - Version 0.1.0
 
 Release changes:
