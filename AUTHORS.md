@@ -12,4 +12,5 @@ The maintainers of the project are:
 These are the people that have contributed to the Iota project:
 
 * Juan Pedro Moreno <[juanpedromoreno](https://github.com/juanpedromoreno)>
+* Peter Neyens <[peterneyens](https://github.com/peterneyens)>
 * Raúl Raja Martínez <[raulraja](https://github.com/raulraja)>
