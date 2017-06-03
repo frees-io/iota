@@ -54,13 +54,13 @@ For Scala 2.11.x and 2.12.x:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "com.47deg" %% "iota-core" % "0.1.0"
+libraryDependencies += "com.47deg" %% "iota-core" % "0.2.0"
 ```
 
 Or, if using Scala.js (0.6.x):
 
 ```scala
-libraryDependencies += "com.47deg" %%% "iota-core" % "0.1.0"
+libraryDependencies += "com.47deg" %%% "iota-core" % "0.2.0"
 ```
 
 [comment]: # (End Replace)
