@@ -92,12 +92,16 @@ object ProjectPlugin extends AutoPlugin {
     scalacOptions in (Compile, doc) :=
       (scalacOptions in (Compile, doc)).value.filter(_ != "-Xfatal-warnings"),
 
+<<<<<<< HEAD
     scalacOptions in (Compile, console) ~= (_.filterNot(Set(
       "-Ywarn-unused:imports",
       "-Ywarn-unused-import",
       "-Xfatal-warnings"
     ))),
 
+=======
+    scalacOptions in (Compile, console) ~= (_ filterNot (_ == "-Ywarn-unused-import")),
+>>>>>>> cf374b2... Add QList
     scalacOptions in (Test, console) := (scalacOptions in (Compile, console)).value
   )
 

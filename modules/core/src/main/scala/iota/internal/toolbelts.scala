@@ -191,11 +191,39 @@ private[internal] sealed trait TypeListParsers { self: Toolbelt with TypeListAST
     loop(tpe0)
   }
 
+<<<<<<< HEAD
   private[this] def literalInt(tpe: Type): Either[Id[String], Int] =
     tpe match {
       case ConstantType(Constant(value: Int)) => value.asRight
       case _ => s"Expected $tpe to be a literal integer".asLeft
     }
+=======
+  private[this] def symbolOf[T](implicit evT: WeakTypeTag[T]): Symbol = evT.tpe.typeSymbol
+
+  final lazy val tlistParser: Parser = typeListParser(
+    NilSym     = symbolOf[iota.TNil],
+    ConsSym    = symbolOf[iota.TCons[Nothing, Nothing]],
+    ConcatSym  = symbolOf[iota.TList.Op.Concat[Nothing, Nothing]],
+    ReverseSym = symbolOf[iota.TList.Op.Reverse[Nothing]],
+    TakeSym    = symbolOf[iota.TList.Op.Take[Nothing, Nothing]],
+    DropSym    = symbolOf[iota.TList.Op.Drop[Nothing, Nothing]])
+
+  final lazy val klistParser: Parser = typeListParser(
+    NilSym     = symbolOf[iota.KNil],
+    ConsSym    = symbolOf[iota.KCons[Nothing, Nothing]],
+    ConcatSym  = symbolOf[iota.KList.Op.Concat[Nothing, Nothing]],
+    ReverseSym = symbolOf[iota.KList.Op.Reverse[Nothing]],
+    TakeSym    = symbolOf[iota.KList.Op.Take[Nothing, Nothing]],
+    DropSym    = symbolOf[iota.KList.Op.Drop[Nothing, Nothing]])
+
+  final lazy val qlistParser: Parser = typeListParser(
+    NilSym     = symbolOf[iota.QNil],
+    ConsSym    = symbolOf[iota.QCons[Nothing, Nothing]],
+    ConcatSym  = symbolOf[iota.QList.Op.Concat[Nothing, Nothing]],
+    ReverseSym = symbolOf[iota.QList.Op.Reverse[Nothing]],
+    TakeSym    = symbolOf[iota.QList.Op.Take[Nothing, Nothing]],
+    DropSym    = symbolOf[iota.QList.Op.Drop[Nothing, Nothing]])
+>>>>>>> cf374b2... Add QList
 }
 
 private[internal] sealed trait TypeListEvaluators { self: Toolbelt with TypeListAST =>
@@ -213,10 +241,30 @@ private[internal] sealed trait TypeListEvaluators { self: Toolbelt with TypeList
     case NNilF              => Nil
   }
 
+<<<<<<< HEAD
   private[this] def removeFirst[T](list: List[T])(pred: T => Boolean): List[T] = {
     val (before, atAndAfter) = list.span(!pred(_))
     before ::: atAndAfter.drop(1)
   }
+=======
+  final def tlistTypes(tpe: Type): Either[Id[String], List[Type]] =
+    hyloM(tpe)(
+      evalTree.generalizeM[Either[Id[String], ?]],
+      tlistParser)
+
+  final def klistTypes(tpe: Type): Either[Id[String], List[Type]] =
+    hyloM(tpe)(
+      evalTree.generalizeM[Either[Id[String], ?]],
+      klistParser)
+
+  final def klistTypeConstructors(tpe: Type): Either[Id[String], List[Type]] =
+    klistTypes(tpe).map(_.map(_.etaExpand.resultType))
+
+  final def qlistTypes(tpe: Type): Either[Id[String], List[Type]] =
+    hyloM(tpe)(
+      evalTree.generalizeM[Either[Id[String], ?]],
+      qlistParser)
+>>>>>>> cf374b2... Add QList
 }
 
 private[internal] sealed trait TypeListBuilders { self: Toolbelt with TypeListAST =>
@@ -271,6 +319,18 @@ private[internal] sealed trait TypeListAPIs
   final def tlistkTypeConstructors(tpe: Type): Either[Id[String], List[Type]] =
     tlistkTypes(tpe).map(_.map(_.etaExpand.resultType))
 
+<<<<<<< HEAD
+=======
+  final lazy val buildKList: TypeListBuilder =
+    new TypeListBuilder(
+      weakTypeOf[KCons[Nothing, _]].typeConstructor,
+      weakTypeOf[KNil])
+
+  final lazy val buildQList: TypeListBuilder =
+    new TypeListBuilder(
+      weakTypeOf[QCons[Nothing, _]].typeConstructor,
+      weakTypeOf[QNil])
+>>>>>>> cf374b2... Add QList
 }
 
 private[internal] sealed trait CoproductAPIs { self: Toolbelt =>
@@ -410,6 +470,14 @@ private[internal] sealed trait TypeListMacroAPIs extends TypeListAPIs { self: Ma
   def memoizedTListTypes(tpe: Type): Either[Id[String], List[Type]] =
     memoize(IotaMacroToolbelt.typeListCache)(tpe, tlistTypes)
 
+<<<<<<< HEAD
   def memoizedTListKTypes(tpe: Type): Either[Id[String], List[Type]] =
     memoize(IotaMacroToolbelt.typeListCache)(tpe, tlistkTypes)
+=======
+  def memoizedKListTypes(tpe: Type): Either[Id[String], List[Type]] =
+    memoize(IotaMacroToolbelt.typeListCache)(tpe, klistTypes)
+
+  def memoizedQListTypes(tpe: Type): Either[Id[String], List[Type]] =
+    memoize(IotaMacroToolbelt.typeListCache)(tpe, qlistTypes)
+>>>>>>> cf374b2... Add QList
 }

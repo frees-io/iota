@@ -16,7 +16,8 @@
 
 package iota
 
-/** A heterogenous list of type constructors */
+/** A heterogenous list of type constructors of type "K": `T[_]`
+  */
 trait TListK
 
 object TListK {
