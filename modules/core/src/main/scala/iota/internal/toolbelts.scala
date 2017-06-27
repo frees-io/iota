@@ -185,6 +185,14 @@ private[internal] sealed trait TypeListParsers { self: Toolbelt with TypeListTre
     ReverseSym = symbolOf[iota.KList.Op.Reverse[Nothing]],
     TakeSym    = symbolOf[iota.KList.Op.Take[Nothing, Nothing]],
     DropSym    = symbolOf[iota.KList.Op.Drop[Nothing, Nothing]])
+
+  final lazy val qlistParser: Parser = typeListParser(
+    NilSym     = symbolOf[iota.QNil],
+    ConsSym    = symbolOf[iota.QCons[Nothing, Nothing]],
+    ConcatSym  = symbolOf[iota.QList.Op.Concat[Nothing, Nothing]],
+    ReverseSym = symbolOf[iota.QList.Op.Reverse[Nothing]],
+    TakeSym    = symbolOf[iota.QList.Op.Take[Nothing, Nothing]],
+    DropSym    = symbolOf[iota.QList.Op.Drop[Nothing, Nothing]])
 }
 
 private[internal] sealed trait TypeListEvaluators { self: Toolbelt with TypeListTrees with TypeListParsers =>
@@ -211,6 +219,11 @@ private[internal] sealed trait TypeListEvaluators { self: Toolbelt with TypeList
 
   final def klistTypeConstructors(tpe: Type): Either[Id[String], List[Type]] =
     klistTypes(tpe).map(_.map(_.etaExpand.resultType))
+
+  final def qlistTypes(tpe: Type): Either[Id[String], List[Type]] =
+    hyloM(tpe)(
+      evalTree.generalizeM[Either[Id[String], ?]],
+      qlistParser)
 }
 
 private[internal] sealed trait TypeListBuilders { self: Toolbelt with TypeListTrees =>
@@ -244,6 +257,11 @@ private[internal] sealed trait TypeListBuilders { self: Toolbelt with TypeListTr
     new TypeListBuilder(
       weakTypeOf[KCons[Nothing, _]].typeConstructor,
       weakTypeOf[KNil])
+
+  final lazy val buildQList: TypeListBuilder =
+    new TypeListBuilder(
+      weakTypeOf[QCons[Nothing, _]].typeConstructor,
+      weakTypeOf[QNil])
 }
 
 private[internal] sealed trait CoproductAPI { self: Toolbelt =>
@@ -357,4 +375,7 @@ private[internal] sealed trait MacroAPI { self: MacroToolbelt with TypeListEvalu
 
   def memoizedKListTypes(tpe: Type): Either[Id[String], List[Type]] =
     memoize(IotaMacroToolbelt.typeListCache)(tpe, klistTypes)
+
+  def memoizedQListTypes(tpe: Type): Either[Id[String], List[Type]] =
+    memoize(IotaMacroToolbelt.typeListCache)(tpe, qlistTypes)
 }

@@ -39,6 +39,9 @@ package object iota {
     */
   type TCons[H, T <: TList] <: TList
 
+  type QNil <: QList
+  type QCons[H[_, _[_], _[_], _], T <: QList] <: QList
+
   //#+2.11
   private[iota] implicit final class EitherCompatOps[A, B](
     val eab: Either[A, B]

@@ -11,7 +11,6 @@ lazy val core = module("core", true)
   .settings(yax(file("modules/core/src/test/scala"), Test,
     yaxPlatform = true))
   .crossDepSettings(
-    %%("cats-core"),
     %%("cats-free"),
     %%("scalacheck")      % "test",
     %%("shapeless")       % "test",
