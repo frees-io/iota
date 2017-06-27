@@ -45,6 +45,7 @@ object KList {
     type Reverse[L <: KList]                    <: KList
     type Take   [N <: SingletonInt, L <: KList] <: KList
     type Drop   [N <: SingletonInt, L <: KList] <: KList
+    type Without[K[_], L <: KList]              <: KList
   }
 
   trait Compute[L <: KList] {

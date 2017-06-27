@@ -48,4 +48,7 @@ object TListChecks {
   check[Concat[StringInt#L, IntString#L],
     String :: Int :: Int :: String :: TNil]
 
+  check[Without[String, StringIntL], Int :: TNil]
+  check[Without[Int, StringIntL], String :: TNil]
+
 }

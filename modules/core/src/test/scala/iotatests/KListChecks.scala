@@ -56,4 +56,7 @@ object KListChecks {
 
   check[Drop[1, OptionListL], List :: KNil]
 
+  check[Without[Option, OptionListL], List :: KNil]
+  check[Without[List, OptionListL], Option :: KNil]
+
 }
