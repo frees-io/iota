@@ -68,6 +68,13 @@ object Cop {
       else None
     def apply(a: A): Cop[L] = inj(a)
     def unapply(c: Cop[L]): Option[A] = proj(c)
+
+    type Rest = TList.Compute[TList.Op.Without[A, L]]#Out
+    def fold(c: Cop[L]): Either[Cop[Rest], A] =
+      Either.cond(
+        c.index == index,
+        c.value.asInstanceOf[A],
+        new Cop(if (c.index < index) c.index else c.index - 1, c.value))
   }
 
   object InjectL {
