@@ -50,6 +50,8 @@ object KList {
 
   trait Compute[L <: KList] {
     type Out <: KList
+
+    def apply: cats.arrow.FunctionK[CopK[Compute[L]#Out, ?], CopK[Out, ?]]
   }
 
   object Compute {

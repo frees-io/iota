@@ -25,7 +25,7 @@ final class CopK[LL <: KList, A] private[iota](
 
   override def equals(anyOther: Any): Boolean = anyOther match {
     case other: CopK[LL, A] => (index == other.index) && (value == other.value)
-    case _                => false
+    case _                  => false
   }
 
   override def toString: String =
@@ -68,12 +68,22 @@ object CopK {
       else None
     def apply[A](fa: F[A]): CopK[L, A] = inj(fa)
     def unapply[A](ca: CopK[L, A]): Option[F[A]] = proj(ca)
+
+    type Rest = KList.Compute[KList.Op.Without[F, L]]#Out
+    def projEither[A](c: CopK[L, A]): Either[CopK[Rest, A], F[A]] =
+      Either.cond(
+        c.index == index,
+        c.value.asInstanceOf[F[A]],
+        new CopK(if (c.index < index) c.index else c.index - 1, c.value))
+
   }
 
   object InjectL {
     def apply[F[_], L <: KList](implicit ev: InjectL[F, L]): InjectL[F, L] = ev
     implicit def makeInjectL[F[_], L <: KList](implicit ev: KList.Pos[L, F]): InjectL[F, L] =
       new InjectL[F, L](ev.index)
+
+    type Aux[F[_], L <: KList, K <: KList] = InjectL[F, L] { type Rest = K }
   }
 
   val FunctionK: CopKFunctionK.type = CopKFunctionK
