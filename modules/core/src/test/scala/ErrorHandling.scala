@@ -103,11 +103,18 @@ object Example {
     //   PolyType(List(TypeName("β$12$")), TypeRef(ThisType(iota), iota.CopK, List(TypeRef(SingleType(ThisType(iota), iota.package), TypeName("KCons"), List(TypeRef(ThisType(Example), Example.FooOp, List()), TypeRef(SingleType(ThisType(iota), iota.package), TypeName("KCons"), List(TypeRef(ThisType(Example), Example.BarOp, List()), TypeRef(SingleType(SingleType(ThisType(<root>), iota), iota.package), TypeName("KNil"), List()))))), TypeRef(NoPrefix, TypeName("β$12$"), List()))))
     // when destructuring CopK [β$12$]iota.CopK[iota.KCons[Example.FooOp,iota.KCons[Example.BarOp,iota.KNil]],β$12$]
 
+    // wrong number of type arguments for scala.util.Either, should be 2
+
   // with type aliases -> ok
   type FB[A] = CopK[FooOp :: BarOp :: KNil, A]
   type ErrorOr[A] = Either[String, A]
-  val fbHandler = interpretIotaCopK[FB, ErrorOr] // CopKFunctionK.summon[FB, ErrorOr]
+  val fbHandler = interpretIotaCopK[FB, ErrorOr]
 
+  // val restHandler = CopKFunctionK.summon[CopK[FooOp :: BarOp :: KNil, ?], ErrorOr] // nope
+  val restHandler = CopKFunctionK.summon[FB, ErrorOr]
+  // val restHandler2 = CopKFunctionK.of[CopK[FooOp :: BarOp :: KNil, ?], ErrorOr](fooHandler, barHandler) // nope
+  val restHandler2 = CopKFunctionK.of[FB, ErrorOr](fooHandler, barHandler)
+    // wrong number of type arguments for iota.CopK, should be 2
 
   // handler FBE (FooOp :: BarOp :: ErrorHandling :: KNil)
 

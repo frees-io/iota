@@ -280,6 +280,7 @@ private[internal] sealed trait CoproductAPI { self: Toolbelt =>
     tpe.dealias match {
       case TypeRef(_, sym, l :: a :: Nil) if resultType(sym) <:< CopKTpe => Right(CopKTypes(l, a))
       case TypeRef(_, sym, Nil) => destructCopK(sym.asType.toType)
+      case PolyType(_, tpe) => destructCopK(tpe) // no idea if this makes sense
       case t => Left(s"unexpected type $t ${showRaw(t)} when destructuring CopK $tpe")
     }
 

@@ -98,7 +98,7 @@ final class CopKFunctionKMacros(val c: Context) {
     Validated
       .catchOnly[TypecheckException](
         c.typecheck(q"_root_.scala.Predef.implicitly[_root_.cats.arrow.FunctionK[$F, $G]]"))
-      .leftMap(t => NonEmptyList.of(t.msg))
+      .leftMap(t => NonEmptyList.of(s"Error while summoning FunctionK[$F, $G] :\n" + t.msg))
 
   private[this] def destructFunctionKInput(tpe: Type, G: Type): ValidatedNel[String, Type] =
     tpe match {
