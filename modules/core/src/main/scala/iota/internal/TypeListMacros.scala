@@ -87,10 +87,10 @@ private[iota] final class TypeListMacros(val c: Context) {
       q"""new _root_.iota.KList.Compute[$L]{
             override type Out = $tpe
             def apply = new _root_.cats.arrow.FunctionK[
-              ({ type λ[α] = _root_.iota.CopK[_root_.iota.KList.Compute[$L]#Out, α] })#λ,
+              ({ type λ[α] = _root_.iota.CopK[$L, α] })#λ,
               ({ type λ[α] = _root_.iota.CopK[$tpe, α] })#λ
             ] {
-              def apply[ZZ](a: _root_.iota.CopK[_root_.iota.KList.Compute[$L]#Out, ZZ]) =
+              def apply[ZZ](a: _root_.iota.CopK[$L, ZZ]) =
                 a.asInstanceOf[CopK[$tpe, ZZ]]
             }
           }""", true)

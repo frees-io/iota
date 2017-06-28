@@ -31,7 +31,7 @@ class ErrorProvider[E] {
   implicit def handler[KL <: KList, M[_], KL2 <: KList](
     implicit 
       M: MonadError[M, E],
-      injL: CopK.InjectL.Aux[ErrorHandling, KL, KList.Compute[KList.Op.Without[ErrorHandling, KL]]#Out],
+      injL: CopK.InjectL[ErrorHandling, KL],
       compute: KList.Compute.Aux[KList.Op.Without[ErrorHandling, KL], KL2],
       restHandler: CopK[KL2, ?] ~> M,
   ): CopK[KL, ?] ~> M = 
@@ -118,9 +118,11 @@ object Example {
 
   // handler FBE (FooOp :: BarOp :: ErrorHandling :: KNil)
 
-  implicit val fbHandler2: FB ~> ErrorOr = fbHandler
-  val h2: FBE ~> ErrorOr = stringError.handler[FooBarErrorOpL, ErrorOr, FooOp :: BarOp :: KNil]
-  
+  val h2: FBE ~> ErrorOr = {
+    implicit val fbHandler2: FB ~> ErrorOr = fbHandler
+    stringError.handler[FooBarErrorOpL, ErrorOr, FooOp :: BarOp :: KNil]
+  }
+
   // I am not sure if this will be possible ?
   //   (without specifying FooOp :: BarOp :: KNil)
   // val h3: FBE ~> ErrorOr = scala.Predef.implicitly[FBE ~> ErrorOr]

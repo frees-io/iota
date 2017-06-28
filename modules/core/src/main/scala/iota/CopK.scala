@@ -69,7 +69,7 @@ object CopK {
     def apply[A](fa: F[A]): CopK[L, A] = inj(fa)
     def unapply[A](ca: CopK[L, A]): Option[F[A]] = proj(ca)
 
-    type Rest = KList.Compute[KList.Op.Without[F, L]]#Out
+    type Rest = KList.Op.Without[F, L]
     def projEither[A](c: CopK[L, A]): Either[CopK[Rest, A], F[A]] =
       Either.cond(
         c.index == index,
