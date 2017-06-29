@@ -38,7 +38,10 @@ class TestTreeHelper(val tb: Toolbelt with TypeListTrees) {
   def reverse(node: Fix[NodeF])     : Fix[NodeF] = Fix[NodeF](ReverseF(node))
   def take(n: Int, node: Fix[NodeF]): Fix[NodeF] = Fix[NodeF](TakeF(n, node))
   def drop(n: Int, node: Fix[NodeF]): Fix[NodeF] = Fix[NodeF](DropF(n, node))
-
+  def remove[T](node: Fix[NodeF] = nnil)(
+    implicit evT: WeakTypeTag[T])   : Fix[NodeF] = Fix[NodeF](RemoveF(evT.tpe, node))
+  def removek[T[_]](node: Fix[NodeF] = nnil)(
+    implicit evT: WeakTypeTag[T[_]]): Fix[NodeF] = Fix[NodeF](RemoveF(evT.tpe.typeConstructor, node))
 }
 
 //#-jvm

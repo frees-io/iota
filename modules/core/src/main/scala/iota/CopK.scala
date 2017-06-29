@@ -76,5 +76,19 @@ object CopK {
       new InjectL[F, L](ev.index)
   }
 
+  final class RemoveL[F[_], L <: KList] private[RemoveL](index: Int) {
+    def apply[A](c: CopK[L, A]): Either[CopK[KList.Op.Remove[F, L], A], F[A]] =
+      Either.cond(
+        c.index == index,
+        c.value.asInstanceOf[F[A]],
+        new CopK(if (c.index < index) c.index else c.index - 1, c.value))
+  }
+
+  object RemoveL {
+    def apply[F[_], L <: KList](implicit ev: RemoveL[F, L]): RemoveL[F, L] = ev
+    implicit def makeRemoveL[F[_], L <: KList](implicit ev: KList.Pos[L, F]): RemoveL[F, L] =
+      new RemoveL[F, L](ev.index)
+  }
+
   val FunctionK: CopKFunctionK.type = CopKFunctionK
 }
