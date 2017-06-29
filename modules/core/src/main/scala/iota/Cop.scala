@@ -69,8 +69,7 @@ object Cop {
     def apply(a: A): Cop[L] = inj(a)
     def unapply(c: Cop[L]): Option[A] = proj(c)
 
-    type Rest = TList.Compute[TList.Op.Without[A, L]]#Out
-    def fold(c: Cop[L]): Either[Cop[Rest], A] =
+    def projEither(c: Cop[L]): Either[Cop[TList.Op.Without[A, L]], A] =
       Either.cond(
         c.index == index,
         c.value.asInstanceOf[A],
