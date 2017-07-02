@@ -17,7 +17,7 @@
 package iota
 package internal
 
-import scala.reflect.macros.blackbox.Context
+import scala.reflect.macros.whitebox.Context
 
 private[iota] final class TypeListMacros(val c: Context) {
   import c.universe._
@@ -84,6 +84,43 @@ private[iota] final class TypeListMacros(val c: Context) {
       tpe       = tb.buildKList(algebras)
     } yield
       q"new _root_.iota.KList.Compute[$L]{ override type Out = $tpe }", true)
+  }
+
+  def materializeTListGen[A, R <: TList](
+    implicit
+      evA: c.WeakTypeTag[A]
+  ): c.Expr[TList.Gen.Aux[A, R]] = {
+
+    val A = evA.tpe
+
+    val aSym = A.typeSymbol
+
+    def fieldType(symbol: MethodSymbol): Type =
+      internal.refinedType(List(
+        symbol.returnType,
+        appliedType(
+          weakTypeOf[iota.gen.Meta[_, _]], List(
+            internal.constantType(Constant(0)),
+            internal.constantType(Constant(symbol.name.encodedName.toString))))
+      ), NoSymbol)
+
+    val tpe = if (aSym.isClass) {
+      val aClassSym = aSym.asClass
+      if (aClassSym.isCaseClass) {
+        val accessors = A.decls
+          .collect { case m: MethodSymbol if m.isCaseAccessor => m.asMethod }
+          .toList
+        tb.buildTList(accessors.map(fieldType))
+      } else if (aClassSym.isSealed) {
+        NoType
+      } else {
+        NoType
+      }
+    } else
+      NoType
+
+    tb.foldAbort(Right(
+      q"new _root_.iota.TList.Gen[$A] { override type Repr = $tpe }"))
   }
 
 }
