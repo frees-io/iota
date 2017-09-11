@@ -58,22 +58,21 @@ private[iota] final class TypeListMacros(val c: Context) {
       q"new _root_.iota.TListK.Pos[$L, $F]{ override val index: Int = $index }", true)
   }
 
-  def materializeQListPos[L <: QList, T[_, _[_], _[_], _]](
+  def materializeTListQPos[L <: TListQ, T[_, _[_], _[_], _]](
     implicit
       evL: c.WeakTypeTag[L],
-      // evF: c.WeakTypeTag[T[_, _[_], _[_], _]]
       evT: c.WeakTypeTag[T[_, z, f, _] forSome { type z[_]; type f[_] }]
-  ): c.Expr[QList.Pos[L, T]] = {
+  ): c.Expr[TListQ.Pos[L, T]] = {
 
     val L = evL.tpe
     val T = evT.tpe
 
     tb.foldAbort(for {
-      algebras <- tb.memoizedQListTypes(L)
+      algebras <- tb.memoizedTListQTypes(L)
       index    <- Right(algebras.indexWhere(_ =:= T))
                     .filterOrElse(_ >= 0, s"$T is not a member of $L")
     } yield
-      q"new _root_.iota.QList.Pos[$L, $T]{ override val index: Int = $index }", true)
+      q"new _root_.iota.TListQ.Pos[$L, $T]{ override val index: Int = $index }", true)
   }
 
   def materializeTListCompute[L <: TList, O <: TList](
@@ -104,18 +103,18 @@ private[iota] final class TypeListMacros(val c: Context) {
       q"new _root_.iota.TListK.Compute[$L]{ override type Out = $tpe }", true)
   }
 
-  def materializeQListCompute[L <: QList, O <: QList](
+  def materializeTListQCompute[L <: TListQ, O <: TListQ](
     implicit
       evL: c.WeakTypeTag[L]
-  ): c.Expr[QList.Compute.Aux[L, O]] = {
+  ): c.Expr[TListQ.Compute.Aux[L, O]] = {
 
     val L = evL.tpe
 
     tb.foldAbort(for {
-      algebras <- tb.memoizedQListTypes(L)
-      tpe       = tb.buildQList(algebras)
+      algebras <- tb.memoizedTListQTypes(L)
+      tpe       = tb.buildTListQ(algebras)
     } yield
-      q"new _root_.iota.QList.Compute[$L]{ override type Out = $tpe }", true)
+      q"new _root_.iota.TListQ.Compute[$L]{ override type Out = $tpe }", true)
   }
 
 }
