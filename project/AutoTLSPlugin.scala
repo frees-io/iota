@@ -1,7 +1,9 @@
 import sbt._
 import sbt.Keys._
-
-import Def.{ ScopedKey, Setting }
+import sbt.internal.util.complete.DefaultParsers._
+import sbt.internal.util.complete.{DefaultParsers, Parser}
+import sbt.internal.CommandStrings._
+import sbt.Def.{ ScopedKey, Setting }
 
 /** Assigns the correct version of TLS scala if you're scala org
   * is set to "org.typelevel".
@@ -14,14 +16,17 @@ object AutoTLSPlugin extends AutoPlugin {
     commands ~= { existing => Seq(overrideSwitchCommand) ++ existing })
 
   def overrideSwitchCommand: Command =
-    Command.arb(Cross.requireSession(Cross.switchParser), CommandStrings.switchHelp)(switchCommandImpl)
+    Command.arb(requireSession(switchParser), switchHelp)(switchCommandImpl _)
 
-  def switchCommandImpl(state: State, args: (String, String)): State = {
-    val (arg, command) = args
-    val (fixedState, version) = updateState(state, arg)
+  def switchCommandImpl(state: State, args: Switch): State = {
+    val version = args.version match {
+      case NamedScalaVersion(v, _) => v
+      case _ =>sys.error("failure")
+    }
 
-    if (!command.isEmpty) command :: fixedState
-    else fixedState
+    val (fixedState, _) = updateState(state, version)
+
+    args.command.toList ::: fixedState
   }
 
   // based off of SBT's Cross.switchVersion, and sbt-doge...
@@ -65,7 +70,7 @@ object AutoTLSPlugin extends AutoPlugin {
 
   private[this] def hasKey(s: Setting[_], searchKey: AttributeKey[_]): Boolean =
     s.key match {
-      case ScopedKey(Scope(_, Global, Global, _), key) if key == searchKey => true
+      case ScopedKey(Scope(_, Zero, Zero, _), key) if key == searchKey => true
       case _ => false
     }
 
@@ -75,4 +80,62 @@ object AutoTLSPlugin extends AutoPlugin {
       case _ => false
     }
 
+  /** The code below this comment is copy pasted from
+   * https://github.com/sbt/sbt/blob/v1.0.1/main/src/main/scala/sbt/Cross.scala
+   * with the following license https://github.com/sbt/sbt/blob/v1.0.1/LICENSE.
+   * This code is copied because there is not an easy way to achieve the same
+   * effect, to override the switchCommand, due to the required methods being
+   * private in Cross.scala.
+   */
+  private def spacedFirst(name: String) = opOrIDSpaced(name) ~ any.+
+
+  private case class Switch(version: ScalaVersion, verbose: Boolean, command: Option[String])
+  private trait ScalaVersion {
+    def force: Boolean
+  }
+  private case class NamedScalaVersion(name: String, force: Boolean) extends ScalaVersion
+  private case class ScalaHomeVersion(home: File, resolveVersion: Option[String], force: Boolean)
+      extends ScalaVersion
+
+  private def switchParser(state: State): Parser[Switch] = {
+    import DefaultParsers._
+    def versionAndCommand(spacePresent: Boolean) = {
+      val x = Project.extract(state)
+      import x._
+      val knownVersions = crossVersions(x, currentRef)
+      val version = token(StringBasic.examples(knownVersions: _*)).map { arg =>
+        val force = arg.endsWith("!")
+        val versionArg = if (force) arg.dropRight(1) else arg
+        versionArg.split("=", 2) match {
+          case Array(home) if new File(home).exists() =>
+            ScalaHomeVersion(new File(home), None, force)
+          case Array(v) => NamedScalaVersion(v, force)
+          case Array(v, home) =>
+            ScalaHomeVersion(new File(home), Some(v).filterNot(_.isEmpty), force)
+        }
+      }
+      val spacedVersion = if (spacePresent) version else version & spacedFirst(SwitchCommand)
+      val verbose = Parser.opt(token(Space ~> "-v"))
+      val optionalCommand = Parser.opt(token(Space ~> matched(state.combinedParser)))
+      (spacedVersion ~ verbose ~ optionalCommand).map {
+        case v ~ verbose ~ command =>
+          Switch(v, verbose.isDefined, command)
+      }
+    }
+
+    token(SwitchCommand ~> OptSpace) flatMap { sp =>
+      versionAndCommand(sp.nonEmpty)
+    }
+  }
+
+  private def crossVersions(extracted: Extracted, proj: ProjectRef): Seq[String] = {
+    import extracted._
+    (crossScalaVersions in proj get structure.data) getOrElse {
+      // reading scalaVersion is a one-time deal
+      (scalaVersion in proj get structure.data).toSeq
+    }
+  }
+
+  private def requireSession[T](p: State => Parser[T]): State => Parser[T] =
+    s => if (s get sessionSettings isEmpty) failure("No project loaded") else p(s)
 }

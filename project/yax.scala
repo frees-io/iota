@@ -88,15 +88,17 @@ object yax {
 
   private def foo(root: File, flags: List[String], yaxScala: Boolean, yaxPlatform: Boolean) = Def.task {
 
+    val scalaV = scalaVersion.value
+    val isScalaJS = isScalaJSProject.value
     val scalaFlags =
       if (!yaxScala) Nil
-      else CrossVersion.partialVersion(scalaVersion.value) match {
+      else CrossVersion.partialVersion(scalaV) match {
         case Some((x, y))  => List(s"$x.$y")
         case _             => Nil
       }
 
     val platformFlags =
-      if (yaxPlatform && isScalaJSProject.value) List("js")
+      if (yaxPlatform && isScalaJS) List("js")
       else List("jvm")
 
     val dest = sourceManaged.value
@@ -121,6 +123,6 @@ object yax {
     yaxPlatform: Boolean = false
   ): Seq[Setting[_]] =
     inConfig(config)(Seq(sourceGenerators += foo(root, flags, yaxScala, yaxPlatform).taskValue)) ++
-    Seq(watchSources := watchSources.value ++ closure(root))
+    Seq(watchSources ++= closure(root).get)
 
 }
