@@ -1,5 +1,35 @@
 # Changelog
 
+## 09/27/2017 - Version 0.3.0
+
+Release changes:
+
+* Update ProjectPlugin.scala ([#40](https://github.com/frees-io/iota/pull/40))
+* Take ScalaJS back in time so that the badge shows up ([#42](https://github.com/frees-io/iota/pull/42))
+* Show raw type trees for parser errors ([#47](https://github.com/frees-io/iota/pull/47))
+* Ensure type refinements are carried through computations ([#46](https://github.com/frees-io/iota/pull/46))
+* Fix polytype bug ([#48](https://github.com/frees-io/iota/pull/48))
+* Migrates iota to frees-io organization ([#50](https://github.com/frees-io/iota/pull/50))
+* Add Remove operation ([#45](https://github.com/frees-io/iota/pull/45))
+* Adjust toolbelt organization/documentation ([#52](https://github.com/frees-io/iota/pull/52))
+* Rename KList to TListK ([#54](https://github.com/frees-io/iota/pull/54))
+* fix typo in README.md ([#55](https://github.com/frees-io/iota/pull/55))
+* Fix typo in the source for the README.me file ([#56](https://github.com/frees-io/iota/pull/56))
+* Add a CODEOWNERS file ([#57](https://github.com/frees-io/iota/pull/57))
+* Bump cats to 1.0.0-MF; adjust Injects ([#58](https://github.com/frees-io/iota/pull/58))
+* adds comm support statement ([#59](https://github.com/frees-io/iota/pull/59))
+* Ensure Idents are qualified/attributed when creating FastFunctionKs ([#60](https://github.com/frees-io/iota/pull/60))
+* Use NEL.one instead of NEL.of ([#61](https://github.com/frees-io/iota/pull/61))
+* Add error handling free algebra example ([#62](https://github.com/frees-io/iota/pull/62))
+* Use TL Scala for tests only ([#63](https://github.com/frees-io/iota/pull/63))
+* Fix the links to tests in README.md ([#65](https://github.com/frees-io/iota/pull/65))
+* Upgrade to sbt 1.0.x ([#68](https://github.com/frees-io/iota/pull/68))
+* Release 0.3.0 ([#69](https://github.com/frees-io/iota/pull/69))
+* [WIP] Support Scalaz ([#70](https://github.com/frees-io/iota/pull/70))
+* Skip publishing for Scalaz until it is ready ([#72](https://github.com/frees-io/iota/pull/72))
+* Remove Typelevel Scala from test code ([#71](https://github.com/frees-io/iota/pull/71))
+
+
 ## 06/01/2017 - Version 0.2.0
 
 Release changes:
