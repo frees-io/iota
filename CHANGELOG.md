@@ -1,5 +1,15 @@
 # Changelog
 
+## 09/29/2017 - Version 0.3.1
+
+Release changes:
+
+* Support Scalaz ([#73](https://github.com/frees-io/iota/pull/73))
+* Fix module names: iota-corez to iotaz-core ([#75](https://github.com/frees-io/iota/pull/75))
+* Cleanup readme ([#74](https://github.com/frees-io/iota/pull/74))
+* Cut release of version 0.3.1 ([#77](https://github.com/frees-io/iota/pull/77))
+
+
 ## 09/27/2017 - Version 0.3.0
 
 Release changes:
