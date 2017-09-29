@@ -1,8 +1,10 @@
+
 [comment]: # (Start Badges)
 
-[![Build Status](https://travis-ci.org/frees-io/iota.svg?branch=master)](https://travis-ci.org/frees-io/iota) [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.0-green.svg)](https://oss.sonatype.org/#nexus-search;gav~io.frees~iota*) [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/frees-io/iota/master/LICENSE) [![Latest version](https://img.shields.io/badge/iota-0.3.0-green.svg)](https://index.scala-lang.org/frees-io/iota) [![Scala.js](http://scala-js.org/assets/badges/scalajs-0.6.17.svg)](http://scala-js.org) [![GitHub Issues](https://img.shields.io/github/issues/frees-io/iota.svg)](https://github.com/frees-io/iota/issues)
+[![Build Status](https://travis-ci.org/frees-io/iota.svg?branch=master)](https://travis-ci.org/frees-io/iota) [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.1-green.svg)](https://oss.sonatype.org/#nexus-search;gav~io.frees~iota*) [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/frees-io/iota/master/LICENSE) [![Latest version](https://img.shields.io/badge/iota-0.3.1-green.svg)](https://index.scala-lang.org/frees-io/iota) [![Scala.js](http://scala-js.org/assets/badges/scalajs-0.6.20.svg)](http://scala-js.org) [![GitHub Issues](https://img.shields.io/github/issues/frees-io/iota.svg)](https://github.com/frees-io/iota/issues)
 
 [comment]: # (End Badges)
+
 # Iota
 
 ## Introduction
@@ -56,15 +58,15 @@ For Scala 2.11.x and 2.12.x:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "iota-core"  % "0.3.0" // for cats
-libraryDependencies += "io.frees" %% "iotaz-core" % "0.3.0" // for scalaz
+libraryDependencies += "io.frees" %% "iota-core"  % "0.3.1" // for cats
+libraryDependencies += "io.frees" %% "iotaz-core" % "0.3.1" // for scalaz
 ```
 
 Or, if using Scala.js (0.6.x):
 
 ```scala
-libraryDependencies += "io.frees" %%% "iota-core"  % "0.3.0" // for cats
-libraryDependencies += "io.frees" %%% "iotaz-core" % "0.3.0" // for scalaz
+libraryDependencies += "io.frees" %%% "iota-core"  % "0.3.1" // for cats
+libraryDependencies += "io.frees" %%% "iotaz-core" % "0.3.1" // for scalaz
 ```
 
 [comment]: # (End Replace)
@@ -211,7 +213,7 @@ CopK.FunctionK.of[Algebra, Future](evalOrderOp, evalPriceOp, evalUserOp)
 //       case 0 => arr0(η$.value)
 //       case 1 => arr1(η$.value)
 //       case 2 => arr2(η$.value)
-//       case (i @ _) => throw new _root_.java.lang.Exception(StringContext("iota internal error: index ").s().+(i).+(" out of bounds for ")...
+//       case (i @ _) => throw new _root_.java.lang.Exception(StringContext("iota internal error: index ").s().+(i).+(" out of bounds for ").+(this)...
 // res33: iota.internal.FastFunctionK[Algebra,scala.concurrent.Future] = FastFunctionK[Algebra, scala.concurrent.Future]<<generated>>
 ```
 
