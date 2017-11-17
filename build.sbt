@@ -85,8 +85,6 @@ lazy val examplesScalaz = module("examples-scalaz")
 lazy val examplesScalazJVM = examplesScalaz.jvm
 lazy val examplesScalazJS  = examplesScalaz.js
 
-
-
 lazy val readme = jvmModule("readme")
   .dependsOn(coreJVM)
   .dependsOn(corezJVM)

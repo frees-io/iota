@@ -1,20 +1,4 @@
-/*
- * Copyright 2016-2017 47 Degrees, LLC. <http://www.47deg.com>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package iotaexamples
+package example
 
 import cats.{~>, ApplicativeError, Monad}
 import cats.free.Free
@@ -33,7 +17,7 @@ class ErrorProvider[E] {
   /**
    * Error handling algebra.
    *
-   * We wrap the algebra in an `ErrorProvider[E]` class to have one `E` type 
+   * We wrap the algebra in an `ErrorProvider[E]` class to have one `E` type
    * for both `Error` and `Recover`.
    */
   sealed abstract class ErrorHandling[A] extends Product with Serializable
@@ -46,7 +30,7 @@ class ErrorProvider[E] {
    */
   implicit def applicativeErrorFreeWithErrorHandling[CP[_] <: CopK[_, _]](
     implicit inj: Inject[ErrorHandling, CP]
-  ): ApplicativeError[Free[CP, ?], E] = 
+  ): ApplicativeError[Free[CP, ?], E] =
     new ApplicativeError[Free[CP, ?], E]{
       def pure[A](a: A):       Free[CP, A] = Free.pure(a)
       def raiseError[A](e: E): Free[CP, A] = Free.liftF(inj.inj(Error[A](e)))
@@ -58,8 +42,8 @@ class ErrorProvider[E] {
 
   /**
    * An interpreter for a `CopK[KL, ?]` where `KL` contains the `ErrorHandling` algebra.
-   * 
-   * Using the `CopK.RemoveL` type class we can split a coproduct into either 
+   *
+   * Using the `CopK.RemoveL` type class we can split a coproduct into either
    * an `ErrorHandling` operation or a coproduct without `ErrorHandling` operations.
    *
    * If we have an interpreter for all the other algebras in the coproduct, we can use it
@@ -75,9 +59,9 @@ class ErrorProvider[E] {
       ME: ApplicativeError[M, E],
       removeL: CopK.RemoveL[ErrorHandling, KL],
       restHandler: CopK[TListK.Op.Remove[ErrorHandling, KL], ?] ~> M
-  ): CopK[KL, ?] ~> M = 
+  ): CopK[KL, ?] ~> M =
     new (CopK[KL, ?] ~> M) {
-      def apply[A](c: CopK[KL, A]): M[A] = 
+      def apply[A](c: CopK[KL, A]): M[A] =
         removeL(c) match {
           case Right(errorOp) =>
             errorOp match {
@@ -129,7 +113,7 @@ object FreeErrorAlgebra {
   implicit class FreeInterpret[F[_], A](val fa: Free[F, A]) extends AnyVal {
     def interpret[M[_]: Monad](implicit fk: F ~> M): M[A] = fa.foldMap(fk)
   }
-  
+
   def main(args: Array[String]): Unit = {
     val result = example.interpret[Either[String, ?]]
     scala.Predef.assert(result == Right(5))

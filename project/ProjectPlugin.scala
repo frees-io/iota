@@ -10,6 +10,7 @@ import sbtorgpolicies.runnable.syntax._
 import scoverage.ScoverageKeys._
 import org.scalajs.sbtplugin.cross.{CrossProject, CrossType}
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
+import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 import tut.TutPlugin.autoImport._
 
 object ProjectPlugin extends AutoPlugin {
@@ -71,6 +72,8 @@ object ProjectPlugin extends AutoPlugin {
       (baseDirectory in LocalRootProject).value / "modules" / "readme" / "src" / "main" / "tut",
     orgEnforcedFilesSetting ~= (_ filterNot (_ == ScalafmtFileType)),
 
+    headerCreate in Compile := Nil,
+    headerCreate in Test := Nil,
     orgMaintainersSetting += Dev("andyscott", Some("Andy Scott (twitter: [@andygscott](https://twitter.com/andygscott))"), Some("andy.g.scott@gmail.com")),
 
     coverageFailOnMinimum := false,
