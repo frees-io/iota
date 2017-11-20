@@ -75,6 +75,7 @@ object CopTests extends Properties("CopTests") {
       Cop.InjectL[Three, Reverse[ThreeTwoOneL]],
       2)
 
+  //#+cats
   type First = Int
   type Last  = String
   type Y
@@ -116,4 +117,5 @@ object CopTests extends Properties("CopTests") {
       arbitrary[Last],
       Cop.InjectL[Last, Yuge],
       301)
+  //#-cats
 }
