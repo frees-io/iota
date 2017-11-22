@@ -1,5 +1,19 @@
 # Changelog
 
+## 11/22/2017 - Version 0.3.3
+
+Release changes:
+
+* Add Scalaz examples ([#90](https://github.com/frees-io/iota/pull/90))
+* Add 100 algebra entry bench plot data ([#92](https://github.com/frees-io/iota/pull/92))
+* Stop file validations in build ([#93](https://github.com/frees-io/iota/pull/93))
+* Add inject/injectK syntax ([#81](https://github.com/frees-io/iota/pull/81))
+* Split README / Fix Scalaz ([#94](https://github.com/frees-io/iota/pull/94))
+* Release 0.3.3 ([#96](https://github.com/frees-io/iota/pull/96))
+* Move scalac options to a "plugin" ([#97](https://github.com/frees-io/iota/pull/97))
+* Upgrades sbt-freestyle plugin ([#100](https://github.com/frees-io/iota/pull/100))
+
+
 ## 11/20/2017 - Version 0.3.3
 
 Release changes:
