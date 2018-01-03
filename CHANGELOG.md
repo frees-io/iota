@@ -1,5 +1,15 @@
 # Changelog
 
+## 01/03/2018 - Version 0.3.4
+
+Release changes:
+
+* Fixes CHANGELOG.md and README.md ([#101](https://github.com/frees-io/iota/pull/101))
+* Bump to cats 1.0.1 ([#106](https://github.com/frees-io/iota/pull/106))
+* Release 0.3.4 with support for Cats 1.0.1 ([#107](https://github.com/frees-io/iota/pull/107))
+* Upgrade iota Build ([#109](https://github.com/frees-io/iota/pull/109))
+
+
 ## 11/22/2017 - Version 0.3.3
 
 Release changes:
