@@ -45,6 +45,23 @@ final class TypeListMacros(val c: Context) {
       q"new ${tb.iotaPackage}.TListK.Pos[$L, $F]{ override val index: Int = $index }", true)
   }
 
+  def materializeTListHPos[L <: TListH, F[_[_]]](
+    implicit
+      evL: c.WeakTypeTag[L],
+      evF: c.WeakTypeTag[F[Nothing]]
+  ): c.Expr[TListH.Pos[L, F]] = {
+
+    val L = evL.tpe
+    val F = evF.tpe
+
+    tb.foldAbort(for {
+      algebras <- tb.memoizedTListHTypes(L)
+      index    <- Right(algebras.indexWhere(_ =:= F))
+                    .filterOrElse(_ >= 0, s"$F is not a member of $L")
+    } yield
+        q"new ${tb.iotaPackage}.TListH.Pos[$L, $F]{ override val index: Int = $index }", true)
+  }
+
   def materializeTListCompute[L <: TList, O <: TList](
     implicit
       evL: c.WeakTypeTag[L]
@@ -71,6 +88,20 @@ final class TypeListMacros(val c: Context) {
       tpe       = tb.buildTListK(algebras)
     } yield
       q"new ${tb.iotaPackage}.TListK.Compute[$L]{ override type Out = $tpe }", true)
+  }
+
+  def materializeTListHCompute[L <: TListH, O <: TListH](
+    implicit
+      evL: c.WeakTypeTag[L]
+  ): c.Expr[TListH.Compute.Aux[L, O]] = {
+
+    val L = evL.tpe
+
+    tb.foldAbort(for {
+      algebras <- tb.memoizedTListHTypes(L)
+      tpe       = tb.buildTListH(algebras)
+    } yield
+        q"new ${tb.iotaPackage}.TListH.Compute[$L]{ override type Out = $tpe }", true)
   }
 
 }
