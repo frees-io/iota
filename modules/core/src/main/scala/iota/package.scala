@@ -26,6 +26,17 @@ package object
     */
   type TConsK[H[_], T <: TListK] <: TListK
 
+  /** The terminal element of a type list for shapes `T[_[_]]` */
+  type TNilH <: TListH
+
+  /** A type list characterized by a head type and a list of tail types
+    * all of shape `T[_[_]]`
+    *
+    * @tparam H the head type constructor
+    * @tparam T the list of tail type constructors
+    */
+  type TConsH[H[_[_]], T <: TListH] <: TListH
+
   // -- internals --
 
   private[iota]  //#=cats
