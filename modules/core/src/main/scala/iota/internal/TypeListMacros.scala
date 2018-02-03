@@ -62,6 +62,23 @@ final class TypeListMacros(val c: Context) {
         q"new ${tb.iotaPackage}.TListH.Pos[$L, $F]{ override val index: Int = $index }", true)
   }
 
+  def materializeTListLength[L <: TList](
+    implicit
+      evL: c.WeakTypeTag[L]
+  ): c.Expr[TList.Length[L]] = {
+
+    val L = evL.tpe
+
+    tb.foldAbort(for {
+      algebras <- tb.memoizedTListTypes(L)
+      length    = algebras.length
+    } yield
+        q"""new ${tb.iotaPackage}.TList.Length[$L] {
+              type Value = ${internal.constantType(Constant(length))}
+              override val value: Value = $length
+            }""", true)
+  }
+
   def materializeTListCompute[L <: TList, O <: TList](
     implicit
       evL: c.WeakTypeTag[L]

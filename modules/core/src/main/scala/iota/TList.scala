@@ -25,6 +25,21 @@ object TList {
       macro internal.TypeListMacros.materializeTListPos[L, A]
   }
 
+  trait Length[L <: TList] {
+    type Value <: SingletonInt
+    def value: Value
+  }
+
+  object Length {
+    type Aux[L <: TList, N <: SingletonInt] = Length[L] {
+      type Value = N
+    }
+
+    def apply[L <: TList](implicit ev: Length[L]): Length.Aux[L, ev.Value] = ev
+    implicit def materializeLength[L <: TList]: Length[L] =
+      macro internal.TypeListMacros.materializeTListLength[L]
+  }
+
   object Op {
     type Concat [L <: TList, R <: TList]        <: TList
     type Reverse[L <: TList]                    <: TList

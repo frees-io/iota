@@ -1,11 +1,13 @@
 lazy val root = (project in file("."))
   .settings(noPublishSettings)
   .aggregate(coreJVM, coreJS)
+  .aggregate(scalacheckJVM, scalacheckJS)
   .aggregate(testsJVM, testsJS)
   .aggregate(examplesCatsJVM, examplesCatsJS)
   .aggregate(examplesScalazJVM, examplesScalazJS)
   .aggregate(bench)
   .aggregate(corezJVM, corezJS)
+  .aggregate(scalacheckzJVM, scalacheckzJS)
   .aggregate(testszJVM, testszJS)
   .aggregate(readme, docs)
 
@@ -32,8 +34,33 @@ lazy val corez = module("core", hideFolder = true, prefixSuffix = "z")
 lazy val corezJVM = corez.jvm
 lazy val corezJS  = corez.js
 
+lazy val scalacheck = module("scalacheck", hideFolder = true)
+  .dependsOn(core)
+  .settings(macroSettings)
+  .settings(yax(file("modules/scalacheck/src/main/scala"), Compile,
+    flags    = "cats" :: Nil,
+    yaxScala = true))
+  .crossDepSettings(
+    %%("scalacheck"))
+
+lazy val scalacheckJVM = scalacheck.jvm
+lazy val scalacheckJS  = scalacheck.js
+
+lazy val scalacheckz = module("scalacheck", hideFolder = true, prefixSuffix = "z")
+  .dependsOn(corez)
+  .settings(macroSettings)
+  .settings(yax(file("modules/scalacheck/src/main/scala"), Compile,
+    flags    = "scalaz" :: Nil,
+    yaxScala = true))
+  .crossDepSettings(
+    %%("scalacheck"))
+
+lazy val scalacheckzJVM = scalacheckz.jvm
+lazy val scalacheckzJS  = scalacheckz.js
+
 lazy val tests = module("tests", hideFolder = true)
   .dependsOn(core)
+  .dependsOn(scalacheck)
   .settings(noPublishSettings)
   .settings(macroSettings)
   .settings(yax(file("modules/tests/src/main/scala"), Compile,
@@ -52,6 +79,7 @@ lazy val testsJS  = tests.js
 
 lazy val testsz = module("tests", hideFolder = true, prefixSuffix = "z")
   .dependsOn(corez)
+  .dependsOn(scalacheckz)
   .settings(noPublishSettings)
   .settings(macroSettings)
   .settings(yax(file("modules/tests/src/main/scala"), Compile,
