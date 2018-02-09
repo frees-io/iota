@@ -30,3 +30,12 @@ object FirstK {
     macro internal.EvidenceMacros.materializeFirstK[L, A]
 
 }
+
+final class FirstH[L <: TListH, F[_]](val underlying: CopH[L, F]) extends AnyVal
+
+object FirstH {
+  def apply[L <: TListH, F[_]](implicit ev: FirstH[L, F]): FirstH[L, F] = ev
+
+  implicit def materializeFirstH[L <: TListH, F[_]]: FirstH[L, F] =
+    macro internal.EvidenceMacros.materializeFirstH[L, F]
+}
