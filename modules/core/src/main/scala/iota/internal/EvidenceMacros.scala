@@ -66,6 +66,32 @@ final class EvidenceMacros(val c: Context) {
       q"new ${tb.iotaPackage}.evidence.FirstK[$L, $A](${makeCopK(L, _F, A, index, fa)})")
   }
 
+  def materializeFirstH[L <: TListH, F[_]](
+    implicit
+      evL: c.WeakTypeTag[L],
+      evF: c.WeakTypeTag[F[Nothing]]
+  ): c.Expr[FirstH[L, F]] = {
+
+    val L = evL.tpe
+    val F = evF.tpe
+
+    type Acc = Either[List[String], (Type, Int, Tree)]
+
+    tb.foldAbort(for {
+      tpes <- tb.memoizedTListHTypes(L).leftMap(List(_))
+      tup3 <- tpes.foldLeft(Left(Nil): Acc)((acc, H) =>
+        acc match {
+          case Left(e) =>
+            summonEvidence(appliedType(H, F))
+              .leftMap(_ :: e)
+              .map(hf => (H, e.length, hf))
+          case other => other
+        })
+      (_H, index, hf) = tup3
+    } yield
+        q"new ${tb.iotaPackage}.evidence.FirstH[$L, $F](${makeCopH(L, _H, F, index, hf)})")
+  }
+
   private[this] def makeProd(
     L: Type,
     values: List[Tree]
@@ -80,6 +106,15 @@ final class EvidenceMacros(val c: Context) {
     fa: Tree
   ): Tree =
     q"${tb.iotaPackage}.CopK.unsafeApply[$L, $F, $A]($index, $fa)"
+
+  private[this] def makeCopH(
+    L: Type,
+    H: Type,
+    F: Type,
+    index: Int,
+    hf: Tree
+  ): Tree =
+    q"${tb.iotaPackage}.CopH.unsafeApply[$L, $H, $F]($index, $hf)"
 
   private[this] def summonEvidence(T: Type): Either[String, Tree] =
     Avowal
