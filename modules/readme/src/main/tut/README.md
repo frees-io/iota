@@ -114,9 +114,11 @@ If you wish to add your library here please consider a PR to include it in the l
 [comment]: # (Start Copyright)
 # Copyright
 
-Iota is designed and developed by 47 Degrees
+Copyright the maintainers, 2017-2018.
 
-Copyright (C) 2016-2017 47 Degrees. <http://47deg.com>
+All code is available to you under the Apache License, available at
+in [LICENSE](LICENSE). See [NOTICE](NOTICE) for more information.
+
 
 [comment]: # (End Copyright)
 
