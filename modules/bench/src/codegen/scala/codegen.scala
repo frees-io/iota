@@ -97,7 +97,7 @@ object BenchBoiler {
         ${iotaEvals.mkString("\n")}
       |
       |  private[this] implicit class InjectGenOps[F[_]](gf: Gen[F[_]]) {
-      |    def inj[G[_] <: CopK[_, _]](implicit ev: CopK.Inject[F, G]): Gen[G[_]] = gf.map(f => ev.inj(f))
+      |    def inj[G[α] <: CopK[_, α]](implicit ev: CopK.Inject[F, G]): Gen[G[_]] = gf.map(f => ev.inj(f))
       |  }
       |
         ${genAlgebras.mkString("\n")}

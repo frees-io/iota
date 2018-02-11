@@ -44,9 +44,9 @@ object FreeCopK extends Properties("FreeCopK") {
   implicit lazy val evalNeg   : Neg    ~> Id = λ[Neg    ~> Id] { case Neg.Value   (v) => -v    }
   implicit lazy val evalHalf  : Half   ~> Id = λ[Half   ~> Id] { case Half.Value  (v) => v / 2 }
 
-  def liftFree[G[_] <: CopK[_, _]]: LiftFreePartial[G] = new LiftFreePartial[G]
+  def liftFree[G[α] <: CopK[_, α]]: LiftFreePartial[G] = new LiftFreePartial[G]
 
-  final class LiftFreePartial[G[_] <: CopK[_, _]] {
+  final class LiftFreePartial[G[α] <: CopK[_, α]] {
     def apply[F[_], A](fa: F[A])(
       implicit I: CopK.Inject[F, G]): Free[G, A] = Free.liftF(I.inj(fa))
   }

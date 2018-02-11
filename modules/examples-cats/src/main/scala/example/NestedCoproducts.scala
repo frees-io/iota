@@ -24,7 +24,7 @@ object NestedCoproducts extends App {
   type ARev[A] = CopK[Reverse[Concat[AlgA[_]#L, AlgB[_]#L]], A]
 
   implicit class InjectAny[F[_], A](val fa: F[A]) extends AnyVal {
-    def inject[G[_] <: CopK[_, _]](implicit ev: CopK.Inject[F, G]): G[A] = ev(fa)
+    def inject[G[α] <: CopK[_, α]](implicit ev: CopK.Inject[F, G]): G[A] = ev(fa)
   }
 
   // ensure that everything gets injected to the right positions

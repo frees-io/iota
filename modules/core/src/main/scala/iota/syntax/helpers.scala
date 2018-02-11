@@ -20,7 +20,7 @@ trait InjectSyntax {
 }
 
 final class InjectKOps[F[_], A](val fa: F[A]) extends AnyVal {
-  def injectK[G[_] <: CopK[_, _]](implicit ev: CopK.Inject[F, G]): G[A] =
+  def injectK[G[α] <: CopK[_, α]](implicit ev: CopK.Inject[F, G]): G[A] =
     ev.inj(fa)
 }
 
