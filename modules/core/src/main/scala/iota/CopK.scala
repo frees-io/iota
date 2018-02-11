@@ -28,7 +28,7 @@ object CopK {
   /** A type class witnessing the ability to inject type constructor `F`
     * into a coproduct of type constructors `G`
     */
-  sealed abstract class Inject[F[_], G[_] <: CopK[_, _]]
+  sealed abstract class Inject[F[_], G[α] <: CopK[_, α]]
       extends cats.InjectK[F, G] //#=cats
   {
     //#+scalaz
@@ -40,7 +40,7 @@ object CopK {
   }
 
   object Inject {
-    def apply[F[_], G[_] <: CopK[_, _]](implicit ev: Inject[F, G]): Inject[F, G] = ev
+    def apply[F[_], G[α] <: CopK[_, α]](implicit ev: Inject[F, G]): Inject[F, G] = ev
 
     implicit def injectFromInjectL[F[_], L <: TListK](
       implicit ev: InjectL[F, L]

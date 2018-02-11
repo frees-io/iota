@@ -28,7 +28,7 @@ class ErrorProvider[E] {
    * `ApplicativeError` instance for `Free[CP, ?]` where `CP` is a `CopK` that
    * contains the `ErrorHandling` algebra.
    */
-  implicit def applicativeErrorFreeWithErrorHandling[CP[_] <: CopK[_, _]](
+  implicit def applicativeErrorFreeWithErrorHandling[CP[α] <: CopK[_, α]](
     implicit inj: Inject[ErrorHandling, CP]
   ): ApplicativeError[Free[CP, ?], E] =
     new ApplicativeError[Free[CP, ?], E]{
