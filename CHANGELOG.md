@@ -1,5 +1,19 @@
 # Changelog
 
+## 02/12/2018 - Version 0.3.5
+
+Release changes:
+
+* Add first item evidence for CopK ([#110](https://github.com/frees-io/iota/pull/110))
+* Use blackbox macros when possible ([#111](https://github.com/frees-io/iota/pull/111))
+* Add TListH ([#112](https://github.com/frees-io/iota/pull/112))
+* First pass of scalacheck module for summoning scalacheck evidence ([#113](https://github.com/frees-io/iota/pull/113))
+* Add support for coproducts of H functors ([#66](https://github.com/frees-io/iota/pull/66))
+* Fix bounds for CopK.Inject ([#114](https://github.com/frees-io/iota/pull/114))
+* Release 0.3.5 ([#115](https://github.com/frees-io/iota/pull/115))
+* Improves CI Pipeline ([#119](https://github.com/frees-io/iota/pull/119))
+
+
 ## 01/03/2018 - Version 0.3.4
 
 Release changes:
