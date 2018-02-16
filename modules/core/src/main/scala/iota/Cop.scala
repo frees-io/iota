@@ -5,7 +5,7 @@ package iotaz //#=scalaz
 final class Cop[LL <: TList] private(
   val index: Int,
   val value: Any
-) {
+) extends Serializable {
   type L = LL
 
   override def equals(anyOther: Any): Boolean = anyOther match {

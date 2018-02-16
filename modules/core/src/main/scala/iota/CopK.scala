@@ -8,7 +8,7 @@ import scalaz.~> //#=scalaz
 final class CopK[LL <: TListK, A] private(
   val index: Int,
   val value: Any
-) {
+) extends Serializable {
   type L = LL
 
   override def equals(anyOther: Any): Boolean = anyOther match {
