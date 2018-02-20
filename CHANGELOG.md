@@ -1,5 +1,13 @@
 # Changelog
 
+## 02/20/2018 - Version 0.3.6
+
+Release changes:
+
+* Makes coproducts serializable (fixes #151) ([#152](https://github.com/frees-io/iota/pull/152))
+* Release 0.3.6 ([#153](https://github.com/frees-io/iota/pull/153))
+
+
 ## 02/12/2018 - Version 0.3.5
 
 Release changes:
