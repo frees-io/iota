@@ -6,7 +6,7 @@ import iotaz._            //#=scalaz
 import iotaz.scalacheck._ //#=scalaz
 
 import TListH.::
-import evidence.FirstH
+import evidence.{AllH, FirstH}
 
 import cats._            //#=cats
 import cats.implicits._  //#=cats
@@ -54,5 +54,53 @@ object Evidence extends App {
   ))
 
   //#-cats
+}
+
+
+object EvidenceAllH extends App {
+
+  trait Foo[F[_]] { def get: F[Int] }
+  trait Bar[F[_]] { def get: F[Int] }
+
+  implicit val foo = new Foo[Option] { def get = Some(1) }
+  implicit val bar = new Bar[Option] { def get = Some(2) }
+
+  object getImplicits {
+    // try to get out an instance from AllH implicitly
+    implicit def fromAllH[H[_[_]], F[_], L2 <: TListH](
+      implicit
+        pos: TListH.Pos[L2, H],
+        allH: AllH[L2, F]
+    ): H[F] = allH.underlying.values(pos.index).asInstanceOf[H[F]]
+  }
+
+  def foo[F[_]](implicit allH: AllH[Foo :: Bar :: Apply :: TNilH, F]): F[Int] = {
+
+    // manually
+
+    val prodH = allH.underlying.values
+    implicit val a = prodH(0).asInstanceOf[Foo[F]]
+    implicit val b = prodH(1).asInstanceOf[Bar[F]]
+    implicit val c = prodH(2).asInstanceOf[Apply[F]]
+
+    // doesn't compile with `getImplicits`
+
+    // import getImplicits._
+
+    // cause ??
+    // not unified in materializeTListHPos ?
+
+    // [info] /Users/peterneyens/dev/iota/modules/.tests/.jvm/target/scala-2.12/src_managed/test/scala/iotatests/Evidence.scala:84:10: TListH.this.Pos.materializePos is not a valid implicit value for iota.TListH.Pos[L,H] because:
+    // [info] hasMatchingSymbol reported error: Unexpected symbol type L for type L: TypeRef(NoPrefix, TypeName("L"), List())
+    // [info]     Apply[F].map2(implicitly[Foo[F]].get, implicitly[Bar[F]].get)(_ + _)
+    // [info]          ^
+
+    val applyF: Apply[F] = getImplicits.fromAllH[Apply, F, Foo :: Bar :: Apply :: TNilH]
+    Apply[F]
+
+    Apply[F].map2(implicitly[Foo[F]].get, implicitly[Bar[F]].get)(_ + _)
+  }
+
+  println(foo[Option])
 
 }

@@ -69,6 +69,7 @@ lazy val tests = module("tests", hideFolder = true)
   .settings(yax(file("modules/tests/src/test/scala"), Test,
     flags       = "cats" :: Nil,
     yaxPlatform = true))
+  .settings(scalacOptions += "-Xlog-implicits")
   .crossDepSettings(
     %%("scalacheck")      % "test",
     %%("shapeless")       % "test",
