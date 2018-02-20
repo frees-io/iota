@@ -20,6 +20,14 @@ object All {
     macro internal.EvidenceMacros.materializeAll[L]
 }
 
+final class AllH[L <: TListH, F[_]](val underlying: ProdH[L, F]) extends AnyVal
+
+object AllH {
+  def apply[L <: TListH, F[_]](implicit ev: AllH[L, F]): AllH[L, F] = ev
+
+  implicit def materializeAllH[L <: TListH, F[_]]: AllH[L, F] =
+    macro internal.EvidenceMacros.materializeAllH[L, F]
+}
 
 final class FirstK[L <: TListK, A](val underlying: CopK[L, A]) extends AnyVal
 

@@ -46,4 +46,25 @@ final class ProductMacros(val c: Context) {
   private[this] def require(flag: Boolean, msg: => String): Either[NonEmptyList[String], Unit] =
     Either.cond(flag, (), msg).leftMap(NonEmptyList.one(_))
 
+
+  def prodHApply[L <: TListH, F[_]](args: c.Expr[Any]*)(
+    implicit
+      evL: c.WeakTypeTag[L],
+      evF: c.WeakTypeTag[F[Nothing]]
+  ): c.Expr[ProdH[L, F]] = {
+
+    val L = evL.tpe
+    val F = evF.tpe
+
+    tb.foldAbort(for {
+      algebras <- tb.memoizedTListHTypes(L).leftMap(NonEmptyList.one(_))
+      argTypes  = args.toList.map(_.tree.tpe)
+      _        <- require(argTypes.length == algebras.length,
+                    s"Expected ${algebras.length} arguments but received ${argTypes.length}")
+      _        <- Traverse[List].traverse(argTypes zip algebras)(tpes =>
+                    require(appliedType(tpes._1, F) <:< appliedType(tpes._2, F),
+                      s"Expected ${appliedType(tpes._1, F)} <:< ${appliedType(tpes._2, F)}").toAvowal).toEither
+    } yield
+      q"${tb.iotaPackage}.ProdH.unsafeApply[$L, $F](_root_.scala.collection.immutable.IndexedSeq[_root_.scala.Any](..$args))")
+  }
 }

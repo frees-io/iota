@@ -40,6 +40,24 @@ final class EvidenceMacros(val c: Context) {
       q"new ${tb.iotaPackage}.evidence.All[$L](${makeProd(L, evs)})")
   }
 
+  def materializeAllH[L <: TListH, F[_]](
+    implicit
+      evL: c.WeakTypeTag[L],
+      evF: c.WeakTypeTag[F[Nothing]]
+  ): c.Expr[AllH[L, F]] = {
+
+    val L = evL.tpe
+    val F = evF.tpe
+
+    tb.foldAbort(for {
+      tpes <- tb.memoizedTListHTypes(L).leftMap(NonEmptyList.one)
+      evs  <- tpes.traverse(t =>
+                summonEvidence(appliedType(t, F)).toAvowal.leftMap(NonEmptyList.one)).toEither
+    } yield
+      q"new ${tb.iotaPackage}.evidence.AllH[$L, $F](${makeProdH(L, F, evs)})")
+  }
+
+
   def materializeFirstK[L <: TListK, A](
     implicit
       evL: c.WeakTypeTag[L],
@@ -97,6 +115,13 @@ final class EvidenceMacros(val c: Context) {
     values: List[Tree]
   ): Tree =
     q"${tb.iotaPackage}.Prod.unsafeApply[$L]($values)"
+
+  private[this] def makeProdH(
+    L: Type,
+    F: Type,
+    values: List[Tree]
+  ): Tree =
+    q"${tb.iotaPackage}.ProdH.unsafeApply[$L, $F]($values)"
 
   private[this] def makeCopK(
     L: Type,

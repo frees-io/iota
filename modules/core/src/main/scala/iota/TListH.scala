@@ -13,7 +13,7 @@ object TListH {
 
   /** A type class that witnesses the position of `F` in type list `L`
     */
-  trait Pos[L <: TListH, F[_[_]]] {
+  trait Pos[L <: TListH, H[_[_]]] {
     def index: Int
   }
 
