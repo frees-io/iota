@@ -51,7 +51,9 @@ final class CopKFunctionKMacros(val c: Context) {
       lookup = unorderedPairs.toMap
 
       arrs <- Traverse[List].traverse(tpes)(tpe =>
-        lookup.get(tpe).toRight(s"Missing interpreter $NatTransName[$tpe, $G]").toAvowalNel).toEither
+        lookup.get(tpe).orElse {
+          lookup.keySet.find(_ =:= tpe).map(lookup.apply)
+        }.toRight(s"Missing interpreter $NatTransName[$tpe, $G]").toAvowalNel).toEither
     } yield makeInterpreter(F, copK.L, G, arrs))
   }
 
