@@ -1,5 +1,16 @@
 # Changelog
 
+## 05/14/2018 - Version 0.3.7
+
+Release changes:
+
+* Filter out some deps from the updates report ([#186](https://github.com/frees-io/iota/pull/186))
+* Add full path for scala.Int type to macros ([#188](https://github.com/frees-io/iota/pull/188))
+* Add fully quialified names to avoid problems with -Xno-import ([#189](https://github.com/frees-io/iota/pull/189))
+* Fixed bug in NT macro ([#190](https://github.com/frees-io/iota/pull/190))
+* Cut 0.3.7 release ([#191](https://github.com/frees-io/iota/pull/191))
+
+
 ## 02/20/2018 - Version 0.3.6
 
 Release changes:
