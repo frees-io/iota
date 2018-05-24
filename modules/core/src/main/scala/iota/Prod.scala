@@ -14,6 +14,10 @@ final class Prod[LL <: TList] private(
     case _               => false
   }
 
+  override def hashCode(): Int = {
+    values.hashCode()
+  }
+
   override def toString: String =
     s"""Prod(${values.mkString(", ")})"""
 }
