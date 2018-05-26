@@ -15,6 +15,10 @@ final class CopH[LL <: TListH, F[_]] private(
     case _                  => false
   }
 
+  override def hashCode(): Int = {
+    41 * index + value.##
+  }
+
   override def toString: String =
     s"CopH($value @ $index)"
 }

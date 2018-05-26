@@ -13,6 +13,10 @@ final class Cop[LL <: TList] private(
     case _              => false
   }
 
+  override def hashCode(): Int = {
+    41 * index + value.##
+  }
+
   override def toString: String =
     s"Cop($value @ $index)"
 }

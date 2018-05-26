@@ -16,6 +16,10 @@ final class CopK[LL <: TListK, A] private(
     case _                  => false
   }
 
+  override def hashCode(): Int = {
+    41 * index + value.##
+  }
+
   override def toString: String =
     s"CopK($value @ $index)"
 }
