@@ -1,5 +1,13 @@
 # Changelog
 
+## 06/05/2018 - Version 0.3.8
+
+Release changes:
+
+* Implement hashcode for all data types ([#219](https://github.com/frees-io/iota/pull/219))
+* Releases iota 0.3.8 ([#221](https://github.com/frees-io/iota/pull/221))
+
+
 ## 05/14/2018 - Version 0.3.7
 
 Release changes:
