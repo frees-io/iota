@@ -1,7 +1,7 @@
 
 [comment]: # (Start Badges)
 
-[![Build Status](https://travis-ci.org/frees-io/iota.svg?branch=master)](https://travis-ci.org/frees-io/iota) [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.7-green.svg)](https://oss.sonatype.org/#nexus-search;gav~io.frees~iota*) [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/frees-io/iota/master/LICENSE) [![Latest version](https://img.shields.io/badge/iota-0.3.7-green.svg)](https://index.scala-lang.org/frees-io/iota) [![Scala.js](http://scala-js.org/assets/badges/scalajs-0.6.17.svg)](http://scala-js.org) [![GitHub Issues](https://img.shields.io/github/issues/frees-io/iota.svg)](https://github.com/frees-io/iota/issues)
+[![Build Status](https://travis-ci.org/frees-io/iota.svg?branch=master)](https://travis-ci.org/frees-io/iota) [![Maven Central](https://img.shields.io/badge/maven%20central-0.3.8-green.svg)](https://oss.sonatype.org/#nexus-search;gav~io.frees~iota*) [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/frees-io/iota/master/LICENSE) [![Latest version](https://img.shields.io/badge/iota-0.3.8-green.svg)](https://index.scala-lang.org/frees-io/iota) [![Scala.js](http://scala-js.org/assets/badges/scalajs-0.6.17.svg)](http://scala-js.org) [![GitHub Issues](https://img.shields.io/github/issues/frees-io/iota.svg)](https://github.com/frees-io/iota/issues)
 
 [comment]: # (End Badges)
 
@@ -72,15 +72,15 @@ For Scala 2.11.x and 2.12.x:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "iota-core"  % "0.3.7" // for cats
-libraryDependencies += "io.frees" %% "iotaz-core" % "0.3.7" // for scalaz
+libraryDependencies += "io.frees" %% "iota-core"  % "0.3.8" // for cats
+libraryDependencies += "io.frees" %% "iotaz-core" % "0.3.8" // for scalaz
 ```
 
 Or, if using Scala.js (0.6.x):
 
 ```scala
-libraryDependencies += "io.frees" %%% "iota-core"  % "0.3.7" // for cats
-libraryDependencies += "io.frees" %%% "iotaz-core" % "0.3.7" // for scalaz
+libraryDependencies += "io.frees" %%% "iota-core"  % "0.3.8" // for cats
+libraryDependencies += "io.frees" %%% "iotaz-core" % "0.3.8" // for scalaz
 ```
 
 [comment]: # (End Replace)
