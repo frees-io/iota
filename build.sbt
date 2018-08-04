@@ -17,8 +17,8 @@ lazy val core = module("core", hideFolder = true)
     flags    = "cats" :: Nil,
     yaxScala = true))
   .crossDepSettings(
-    %%("cats-core", "1.0.1"),
-    %%("cats-free", "1.0.1"))
+    %%("cats-core", "1.2.0"),
+    %%("cats-free", "1.2.0"))
 
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
@@ -29,7 +29,7 @@ lazy val corez = module("core", hideFolder = true, prefixSuffix = "z")
     flags    = "scalaz" :: Nil,
     yaxScala = true))
   .crossDepSettings(
-    "org.scalaz" %% "scalaz-core" % "7.2.19")
+    "org.scalaz" %% "scalaz-core" % "7.2.25")
 
 lazy val corezJVM = corez.jvm
 lazy val corezJS  = corez.js
@@ -109,7 +109,7 @@ lazy val examplesScalaz = module("examples-scalaz")
   .settings(noPublishSettings)
   .settings(macroSettings)
   .crossDepSettings(
-    "org.scalaz" %% "scalaz-effect" % "7.2.19")
+    "org.scalaz" %% "scalaz-effect" % "7.2.25")
 
 lazy val examplesScalazJVM = examplesScalaz.jvm
 lazy val examplesScalazJS  = examplesScalaz.js
@@ -134,7 +134,7 @@ lazy val docs = jvmModule("docs")
     scalacOptions in Tut := Nil,
     tutTargetDirectory := (baseDirectory in LocalRootProject).value / "docs")
   .settings(libraryDependencies +=
-    "org.scalaz" %% "scalaz-effect" % "7.2.19")
+    "org.scalaz" %% "scalaz-effect" % "7.2.25")
 
 lazy val bench = jvmModule("bench")
   .enablePlugins(JmhPlugin)

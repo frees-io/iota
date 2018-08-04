@@ -5,7 +5,7 @@ jdk:
 
 scala:
 - 2.11.12
-- 2.12.4
+- 2.12.6
 
 before_install:
 - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
@@ -26,7 +26,7 @@ jobs:
       script:
         - sbt ++$TRAVIS_SCALA_VERSION orgValidateFiles
         - sbt ++$TRAVIS_SCALA_VERSION tutReadme
-      scala: 2.12.4
+      scala: 2.12.6
     - stage: deploy
       script:
         - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
@@ -42,7 +42,7 @@ jobs:
               sbt depUpdateDependencyIssues;
             fi
           fi
-      scala: 2.12.4
+      scala: 2.12.6
 
 cache:
   directories:

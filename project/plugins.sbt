@@ -1,2 +1,2 @@
 resolvers ++= Seq(Resolver.sonatypeRepo("snapshots"), Resolver.sonatypeRepo("releases"))
-addSbtPlugin("io.frees" % "sbt-freestyle" % "0.3.19")
+addSbtPlugin("io.frees" % "sbt-freestyle" % "0.3.23")
