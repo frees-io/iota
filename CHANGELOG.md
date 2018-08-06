@@ -1,5 +1,13 @@
 # Changelog
 
+## 08/06/2018 - Version 0.3.9
+
+Release changes:
+
+* update dependencies ([#248](https://github.com/frees-io/iota/pull/248))
+* Cut release with updated deps ([#249](https://github.com/frees-io/iota/pull/249))
+
+
 ## 06/05/2018 - Version 0.3.8
 
 Release changes:
