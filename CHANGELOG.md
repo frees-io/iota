@@ -1,5 +1,13 @@
 # Changelog
 
+## 08/10/2018 - Version 0.3.10
+
+Release changes:
+
+* Optimised Prod construction ([#261](https://github.com/frees-io/iota/pull/261))
+* Scalaz IsoSet macros ([#262](https://github.com/frees-io/iota/pull/262))
+
+
 ## 08/06/2018 - Version 0.3.9
 
 Release changes:
