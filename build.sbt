@@ -93,8 +93,12 @@ lazy val testsz = module("tests", hideFolder = true, prefixSuffix = "z")
     %%("shapeless")       % "test",
     %%("scheckShapeless") % "test")
 
-lazy val testszJVM = testsz.jvm
-lazy val testszJS  = testsz.js
+lazy val testszJVM = testsz.jvm.settings(
+  libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+)
+lazy val testszJS  = testsz.js.settings(
+  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.5" % "test"
+)
 
 lazy val examplesCats = module("examples-cats")
   .dependsOn(core)

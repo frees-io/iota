@@ -98,6 +98,54 @@ final class ProductMacros(val c: Context) {
    } yield q"${tb.iotaPackage}.Prod.unsafeApply[$L]($seq)")
   }
 
+  //#+scalaz
+  def prodGen[A, R <: iotaz.TList](
+    implicit
+    evA: c.WeakTypeTag[A],
+    evR: c.WeakTypeTag[R]
+  ): Tree = {
+    val A = evA.tpe
+    val R = evR.tpe
+
+    val aSym = A.typeSymbol
+
+    val Prod = weakTypeOf[iotaz.Prod[_]].typeSymbol
+
+    if (aSym.isModuleClass) {
+      q"""
+       _root_.scalaz.Isomorphism.IsoSet[$A, $Prod[$R]](
+         (a: $A) => ${Prod.companion}[$R](),
+         (p: $Prod[$R]) => ${A.termSymbol}
+       )
+       """
+    } else if (aSym.isClass) {
+      val aSym = A.typeSymbol.asClass
+
+      val accessors = A.decls.collect {
+        case m: MethodSymbol if m.isCaseAccessor => m.asMethod
+      }.toList
+
+      val to =
+        if (aSym.isCaseClass)
+          q"(a: $A) => ${Prod.companion}.unsafeApply[$R](new _root_.iotaz.internal.ProductSeq(a))"
+        else {
+          val toParts = accessors.map(method => q"a.${method.name}")
+          q"(a: $A) => ${Prod.companion}[$R](..$toParts)"
+        }
+
+      // inefficient if the underlying is a List...
+      val fromParts = (accessors.zipWithIndex).map {
+        case (method, i) =>
+          q"p.values($i).asInstanceOf[${method.typeSignatureIn(A).resultType}]"
+      }
+      val from = q"""(p: $Prod[$R]) => ${aSym.companion}(..$fromParts): $A"""
+
+      q"""_root_.scalaz.Isomorphism.IsoSet[$A, $Prod[$R]]($to, $from)"""
+    } else
+      c.abort(c.enclosingPosition, "macro only works for classes")
+  }
+  //#-scalaz
+
   private[this] def require(flag: Boolean, msg: => String): Either[NonEmptyList[String], Unit] =
     Either.cond(flag, (), msg).leftMap(NonEmptyList.one(_))
 
