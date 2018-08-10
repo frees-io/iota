@@ -72,15 +72,15 @@ For Scala 2.11.x and 2.12.x:
 [comment]: # (Start Replace)
 
 ```scala
-libraryDependencies += "io.frees" %% "iota-core"  % "0.3.9" // for cats
-libraryDependencies += "io.frees" %% "iotaz-core" % "0.3.9" // for scalaz
+libraryDependencies += "io.frees" %% "iota-core"  % "0.3.10" // for cats
+libraryDependencies += "io.frees" %% "iotaz-core" % "0.3.10" // for scalaz
 ```
 
 Or, if using Scala.js (0.6.x):
 
 ```scala
-libraryDependencies += "io.frees" %%% "iota-core"  % "0.3.9" // for cats
-libraryDependencies += "io.frees" %%% "iotaz-core" % "0.3.9" // for scalaz
+libraryDependencies += "io.frees" %%% "iota-core"  % "0.3.10" // for cats
+libraryDependencies += "io.frees" %%% "iotaz-core" % "0.3.10" // for scalaz
 ```
 
 [comment]: # (End Replace)
