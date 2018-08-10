@@ -24,6 +24,11 @@ final class Prod[LL <: TList] private(
 
 object Prod {
 
+  //#+scalaz
+  import scalaz.Isomorphism._
+  def gen[A, R <: TList]: A <=> Prod[R] = macro internal.ProductMacros.prodGen[A, R]
+  //#-scalaz
+
   def apply[L <: TList](args: Any*): Prod[L] =
     macro internal.ProductMacros.prodApply[L]
 

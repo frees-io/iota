@@ -23,6 +23,11 @@ final class Cop[LL <: TList] private(
 
 object Cop {
 
+  //#+scalaz
+  import scalaz.Isomorphism._
+  def gen[A, R <: TList]: A <=> Cop[R] = macro internal.CopMacros.copGen[A, R]
+  //#-scalaz
+
   def unsafeApply[L <: TList, A](index: Int, a: A): Cop[L] =
     new Cop[L](index, a)
 
