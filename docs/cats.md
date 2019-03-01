@@ -164,4 +164,4 @@ the deepest nested type in the coproduct.
 
 A `Free` example is available [in the tests][free example].
 
-[free example]: modules/tests/src/test/scala/iotatests/FreeCopKTests.scala
+[free example]: ../modules/tests/src/test/scala/iotatests/FreeCopKTests.scala
