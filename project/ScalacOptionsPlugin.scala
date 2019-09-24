@@ -5,17 +5,14 @@ import sbt.Keys._
 
 object ScalacOptionsPlugin extends AutoPlugin {
 
-  lazy val scalac211Options = taskKey[Seq[String]]("Options for the Scala 2.11 compiler.")
   lazy val scalac212Options = taskKey[Seq[String]]("Options for the Scala 2.12 compiler.")
 
   override def projectSettings: Seq[Def.Setting[_]] = Seq(
 
-    scalac211Options := defaultScalac211Options,
     scalac212Options := defaultScalac212Options,
 
     scalacOptions   ++= (CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, 12)) => scalac212Options.value
-      case Some((2, 11)) => scalac211Options.value
       case _             => Nil
     }),
 
@@ -70,15 +67,6 @@ object ScalacOptionsPlugin extends AutoPlugin {
     "-Ywarn-unused:patvars",             // Warn if a variable bound in a pattern is unused.
     "-Ywarn-unused:privates",            // Warn if a private member is unused.
     "-Ywarn-value-discard",              // Warn when non-Unit expression results are unused.
-    "-Yno-predef")
-
-  private[this] def defaultScalac211Options: List[String] = List(
-    "-encoding", "UTF-8",
-    "-feature",
-    "-language:existentials",
-    "-language:higherKinds",
-    "-language:implicitConversions",
-    "-Ypartial-unification",
     "-Yno-predef")
 
   private[this] def scalacOptionsConsoleFilter: Set[String] = Set(

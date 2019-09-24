@@ -1,3 +1,5 @@
+import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
+
 lazy val root = (project in file("."))
   .settings(noPublishSettings)
   .aggregate(coreJVM, coreJS)
@@ -11,112 +13,160 @@ lazy val root = (project in file("."))
   .aggregate(testszJVM, testszJS)
   .aggregate(readme, docs)
 
-lazy val core = module("core", hideFolder = true)
-  .settings(macroSettings)
-  .settings(yax(file("modules/core/src/main/scala"), Compile,
-    flags    = "cats" :: Nil,
-    yaxScala = true))
-  .crossDepSettings(
-    %%("cats-core", "1.6.1"),
-    %%("cats-free", "1.6.1"))
+lazy val core =
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Pure)
+    .in(file("modules/.core"))
+    .settings(name := "core")
+    .settings(moduleName := "iota-core")
+    .settings(macroSettings)
+    .settings(yax(file("modules/core/src/main/scala"), Compile,
+      flags = "cats" :: Nil,
+      yaxScala = true))
+    .settings(
+      libraryDependencies ++= Seq(
+        %%("cats-core", V.cats),
+        %%("cats-free", V.cats)))
 
 lazy val coreJVM = core.jvm
-lazy val coreJS  = core.js
+lazy val coreJS = core.js
 
-lazy val corez = module("core", hideFolder = true, prefixSuffix = "z")
-  .settings(macroSettings)
-  .settings(yax(file("modules/core/src/main/scala"), Compile,
-    flags    = "scalaz" :: Nil,
-    yaxScala = true))
-  .crossDepSettings(
-    "org.scalaz" %% "scalaz-core" % "7.2.28")
+lazy val corez =
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Pure)
+    .in(file("modules/.corez"))
+    .settings(name := "corez")
+    .settings(moduleName := "iotaz-core")
+    .settings(macroSettings)
+    .settings(yax(file("modules/core/src/main/scala"), Compile,
+      flags = "scalaz" :: Nil,
+      yaxScala = true))
+    .settings(
+      libraryDependencies +=
+        "org.scalaz" %% "scalaz-core" % V.scalaz)
 
 lazy val corezJVM = corez.jvm
-lazy val corezJS  = corez.js
+lazy val corezJS = corez.js
 
-lazy val scalacheck = module("scalacheck", hideFolder = true)
-  .dependsOn(core)
-  .settings(macroSettings)
-  .settings(yax(file("modules/scalacheck/src/main/scala"), Compile,
-    flags    = "cats" :: Nil,
-    yaxScala = true))
-  .crossDepSettings(
-    %%("scalacheck"))
+lazy val scalacheck =
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Pure)
+    .in(file("modules/.scalacheck"))
+    .settings(name := "scalacheck")
+    .settings(moduleName := "iota-scalacheck")
+    .dependsOn(core)
+    .settings(macroSettings)
+    .settings(yax(file("modules/scalacheck/src/main/scala"), Compile,
+      flags = "cats" :: Nil,
+      yaxScala = true))
+    .settings(
+      libraryDependencies +=
+        %%("scalacheck", V.scalacheck))
 
 lazy val scalacheckJVM = scalacheck.jvm
-lazy val scalacheckJS  = scalacheck.js
+lazy val scalacheckJS = scalacheck.js
 
-lazy val scalacheckz = module("scalacheck", hideFolder = true, prefixSuffix = "z")
-  .dependsOn(corez)
-  .settings(macroSettings)
-  .settings(yax(file("modules/scalacheck/src/main/scala"), Compile,
-    flags    = "scalaz" :: Nil,
-    yaxScala = true))
-  .crossDepSettings(
-    %%("scalacheck"))
+lazy val scalacheckz =
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Pure)
+    .in(file("modules/.scalacheckz"))
+    .settings(name := "scalacheckz")
+    .settings(moduleName := "iotaz-scalacheck")
+    .dependsOn(corez)
+    .settings(macroSettings)
+    .settings(yax(file("modules/scalacheck/src/main/scala"), Compile,
+      flags = "scalaz" :: Nil,
+      yaxScala = true))
+    .settings(
+      libraryDependencies +=
+        %%("scalacheck", V.scalacheck))
 
 lazy val scalacheckzJVM = scalacheckz.jvm
-lazy val scalacheckzJS  = scalacheckz.js
+lazy val scalacheckzJS = scalacheckz.js
 
-lazy val tests = module("tests", hideFolder = true)
-  .dependsOn(core)
-  .dependsOn(scalacheck)
-  .settings(noPublishSettings)
-  .settings(macroSettings)
-  .settings(yax(file("modules/tests/src/main/scala"), Compile,
-    flags       = "cats" :: Nil,
-    yaxPlatform = true))
-  .settings(yax(file("modules/tests/src/test/scala"), Test,
-    flags       = "cats" :: Nil,
-    yaxPlatform = true))
-  .crossDepSettings(
-    %%("scalacheck")      % "test",
-    %%("shapeless")       % "test",
-    %%("scheckShapeless") % "test")
+lazy val tests =
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Pure)
+    .in(file("modules/.tests"))
+    .settings(name := "tests")
+    .settings(moduleName := "iota-tests")
+    .dependsOn(core)
+    .dependsOn(scalacheck)
+    .settings(noPublishSettings)
+    .settings(macroSettings)
+    .settings(yax(file("modules/tests/src/main/scala"), Compile,
+      flags = "cats" :: Nil,
+      yaxPlatform = true))
+    .settings(yax(file("modules/tests/src/test/scala"), Test,
+      flags = "cats" :: Nil,
+      yaxPlatform = true))
+    .settings(
+      libraryDependencies ++= Seq(
+        %%("scalacheck", V.scalacheck) % "test",
+        %%("shapeless", V.shapeless) % "test",
+        %%("scheckShapeless", V.scalacheckShapeless) % "test")
+    )
 
 lazy val testsJVM = tests.jvm
-lazy val testsJS  = tests.js
+lazy val testsJS = tests.js
 
-lazy val testsz = module("tests", hideFolder = true, prefixSuffix = "z")
-  .dependsOn(corez)
-  .dependsOn(scalacheckz)
-  .settings(noPublishSettings)
-  .settings(macroSettings)
-  .settings(yax(file("modules/tests/src/main/scala"), Compile,
-    flags       = "scalaz" :: Nil,
-    yaxPlatform = true))
-  .settings(yax(file("modules/tests/src/test/scala"), Test,
-    flags       = "scalaz" :: Nil,
-    yaxPlatform = true))
-  .crossDepSettings(
-    %%("scalacheck")      % "test",
-    %%("shapeless")       % "test",
-    %%("scheckShapeless") % "test")
+lazy val testsz =
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Pure)
+    .in(file("modules/.testsz"))
+    .settings(name := "testsz")
+    .settings(moduleName := "iotaz-tests")
+    .dependsOn(corez)
+    .dependsOn(scalacheckz)
+    .settings(noPublishSettings)
+    .settings(macroSettings)
+    .settings(yax(file("modules/tests/src/main/scala"), Compile,
+      flags = "scalaz" :: Nil,
+      yaxPlatform = true))
+    .settings(yax(file("modules/tests/src/test/scala"), Test,
+      flags = "scalaz" :: Nil,
+      yaxPlatform = true))
+    .settings(
+      libraryDependencies ++= Seq(
+        %%("scalacheck", V.scalacheck) % "test",
+        %%("shapeless", V.shapeless) % "test",
+        %%("scheckShapeless", V.scalacheckShapeless) % "test")
+    )
 
 lazy val testszJVM = testsz.jvm.settings(
-  libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test"
+  libraryDependencies += "org.scalatest" %% "scalatest" % V.scalaTest % "test"
 )
-lazy val testszJS  = testsz.js.settings(
-  libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.8" % "test"
+lazy val testszJS = testsz.js.settings(
+  libraryDependencies += "org.scalatest" %%% "scalatest" % V.scalaTest % "test"
 )
 
-lazy val examplesCats = module("examples-cats")
-  .dependsOn(core)
-  .settings(noPublishSettings)
-  .settings(macroSettings)
+lazy val examplesCats =
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Pure)
+    .in(file("modules/examples-cats"))
+    .settings(name := "examples-cats")
+    .settings(moduleName := "iota-examples-cats")
+    .dependsOn(core)
+    .settings(noPublishSettings)
+    .settings(macroSettings)
 
 lazy val examplesCatsJVM = examplesCats.jvm
-lazy val examplesCatsJS  = examplesCats.js
+lazy val examplesCatsJS = examplesCats.js
 
-lazy val examplesScalaz = module("examples-scalaz")
-  .dependsOn(corez)
-  .settings(noPublishSettings)
-  .settings(macroSettings)
-  .crossDepSettings(
-    "org.scalaz" %% "scalaz-effect" % "7.2.28")
+lazy val examplesScalaz =
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Pure)
+    .in(file("modules/examples-scalaz"))
+    .settings(name := "examples-scalaz")
+    .settings(moduleName := "iota-examples-scalaz")
+    .dependsOn(corez)
+    .settings(noPublishSettings)
+    .settings(macroSettings)
+    .settings(
+      libraryDependencies += "org.scalaz" %% "scalaz-effect" % V.scalaz)
 
 lazy val examplesScalazJVM = examplesScalaz.jvm
-lazy val examplesScalazJS  = examplesScalaz.js
+lazy val examplesScalazJS = examplesScalaz.js
 
 lazy val readme = jvmModule("readme")
   .dependsOn(coreJVM)
@@ -138,7 +188,7 @@ lazy val docs = jvmModule("docs")
     scalacOptions in Tut := Nil,
     tutTargetDirectory := (baseDirectory in LocalRootProject).value / "docs")
   .settings(libraryDependencies +=
-    "org.scalaz" %% "scalaz-effect" % "7.2.28")
+    "org.scalaz" %% "scalaz-effect" % V.scalaz)
 
 lazy val bench = jvmModule("bench")
   .enablePlugins(JmhPlugin)
@@ -153,7 +203,7 @@ lazy val bench = jvmModule("bench")
   .settings(inConfig(Compile)(
     sourceGenerators += Def.task {
       val path = (sourceManaged in(Compile, compile)).value / "bench.scala"
-      (runner in (Codegen, run)).value.run(
+      (runner in(Codegen, run)).value.run(
         "iota.bench.BenchBoiler",
         Attributed.data((fullClasspath in Codegen).value),
         path.toString :: Nil,
@@ -168,8 +218,3 @@ pgpPassphrase := Some(getEnvVar("PGP_PASSPHRASE").getOrElse("").toCharArray)
 pgpPublicRing := file(s"$gpgFolder/pubring.asc")
 pgpSecretRing := file(s"$gpgFolder/secring.asc")
 
-lazy val macroSettings: Seq[Setting[_]] = Seq(
-  libraryDependencies ++= Seq(
-    scalaOrganization.value % "scala-compiler" % scalaVersion.value % Provided,
-    scalaOrganization.value % "scala-reflect" % scalaVersion.value % Provided,
-    compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.patch)))
